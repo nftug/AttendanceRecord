@@ -4,7 +4,7 @@ using AttendanceRecord.Domain.ValueObjects;
 
 namespace AttendanceRecord.Domain.Entities;
 
-public class WorkRecord(Guid id, TimeDuration duration, IReadOnlyList<RestRecord> restRecords)
+public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> restRecords)
 {
     public Guid Id { get; } = id;
     public TimeDuration Duration { get; private set; } = duration;
