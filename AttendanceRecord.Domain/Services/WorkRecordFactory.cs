@@ -1,5 +1,6 @@
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Interfaces;
+using AttendanceRecord.Domain.ValueObjects;
 
 namespace AttendanceRecord.Domain.Services;
 
@@ -17,12 +18,11 @@ public class WorkRecordFactory(AppConfigStore configStore, IWorkRecordRepository
         return workRecord?.SetStandardWorkMinutes(configStore.Config.StandardWorkMinutes);
     }
 
-    public async Task<IReadOnlyList<WorkRecord>> FindByMonthAsync(DateTime month)
+    public async Task<WorkRecordTally> GetMonthlyTallyAsync(DateTime month)
     {
-        var workRecords = await workRecordRepository.FindByMonthAsync(month);
-        return workRecords
-            .Select(x => x.SetStandardWorkMinutes(configStore.Config.StandardWorkMinutes))
-            .ToList();
+        var workRecords = (await workRecordRepository.FindByMonthAsync(month))
+            .Select(x => x.SetStandardWorkMinutes(configStore.Config.StandardWorkMinutes));
+        return new(workRecords);
     }
 
     public WorkRecord CreateAndStart()

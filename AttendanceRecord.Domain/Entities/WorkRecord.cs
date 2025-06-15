@@ -78,9 +78,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
         else
         {
             // 再開操作
-            var restDuration = TimeDuration.Create(Duration.FinishedOn!.Value, DateTime.Now.TruncateMs());
-            _restRecords.Add(new(Guid.NewGuid(), restDuration));
-
+            _restRecords.Add(RestRecord.Create(Duration.FinishedOn!.Value, DateTime.Now.TruncateMs()));
             Duration = Duration.GetRestart();
         }
 

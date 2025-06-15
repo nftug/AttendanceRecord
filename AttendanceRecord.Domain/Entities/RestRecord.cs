@@ -12,6 +12,9 @@ public class RestRecord(Guid id, TimeDuration duration)
     public TimeSpan TotalTime => Duration.TotalTime;
     public bool IsActive => Duration.IsActive && RecordedDate == DateTime.Today;
 
+    public static RestRecord Create(DateTime startedOn, DateTime? finishedOn)
+        => new(Guid.NewGuid(), TimeDuration.Create(startedOn, finishedOn));
+
     public RestRecord EditDuration(DateTime startedOn, DateTime? finishedOn)
     {
         Duration = TimeDuration.Create(startedOn, finishedOn);
