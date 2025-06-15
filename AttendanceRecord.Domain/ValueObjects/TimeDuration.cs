@@ -36,6 +36,8 @@ public record TimeDuration
         return new() { StartedOn = startedOn, FinishedOn = finishedOn };
     }
 
+    internal static TimeDuration Empty => new();
+
     internal static TimeDuration GetStart() => Create(DateTime.Now.TruncateMs());
 
     internal TimeDuration GetFinished() => Create(StartedOn, DateTime.Now.TruncateMs());

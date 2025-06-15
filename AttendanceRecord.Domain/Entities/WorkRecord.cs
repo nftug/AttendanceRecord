@@ -32,26 +32,18 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
         return this;
     }
 
-    public static WorkRecord Create(
-        DateTime startedOn, DateTime? finishedOn, IReadOnlyList<RestRecord> restTimes)
-        => new(Guid.NewGuid(), TimeDuration.Create(startedOn, finishedOn), restTimes);
+    public static WorkRecord Empty => new(Guid.Empty, TimeDuration.Empty, []);
 
-    public WorkRecord EditWorkDuration(DateTime startedOn, DateTime? finishedOn)
+    public WorkRecord Update(TimeDuration duration, IEnumerable<RestRecord> restRecords)
     {
-        Duration = TimeDuration.Create(startedOn, finishedOn);
+        Duration = duration;
+        _restRecords.Clear();
+        _restRecords.AddRange(restRecords.OrderBy(x => x.Duration.StartedOn));
+
         return this;
     }
 
-    public WorkRecord EditRestDuration(Guid restId, DateTime startedOn, DateTime? finishedOn)
-    {
-        var rest = _restRecords.FirstOrDefault(x => x.Id == restId)
-            ?? throw new DomainException("指定された休憩記録が見つかりません。");
-
-        rest.EditDuration(startedOn, finishedOn);
-        return this;
-    }
-
-    internal static WorkRecord Start() => new(Guid.NewGuid(), TimeDuration.GetStart(), []);
+    internal static WorkRecord Start(Guid id) => new(id, TimeDuration.GetStart(), []);
 
     internal WorkRecord ToggleRest()
     {

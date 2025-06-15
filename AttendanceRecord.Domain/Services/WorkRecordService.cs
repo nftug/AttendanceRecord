@@ -29,6 +29,10 @@ public class WorkRecordService(WorkRecordFactory workRecordFactory, IWorkRecordR
 
     public async Task<WorkRecord> SaveAsync(WorkRecord workRecord)
     {
+        var existingRecord = await workRecordFactory.FindByDateAsync(workRecord.RecordedDate);
+        if (existingRecord != null && existingRecord.Id != workRecord.Id)
+            throw new DomainException("同じ日に複数の勤務記録を保存することはできません。");
+
         await workRecordRepository.SaveAsync(workRecord);
         return workRecord;
     }

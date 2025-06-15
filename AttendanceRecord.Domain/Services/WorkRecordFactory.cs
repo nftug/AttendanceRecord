@@ -27,13 +27,15 @@ public class WorkRecordFactory(AppConfigStore configStore, IWorkRecordRepository
 
     public WorkRecord CreateAndStart()
     {
-        var workRecord = WorkRecord.Start();
+        Guid id = Guid.NewGuid();
+        var workRecord = WorkRecord.Start(id);
         return workRecord.SetStandardWorkMinutes(configStore.Config.StandardWorkMinutes);
     }
 
-    public WorkRecord Create(DateTime startedOn, DateTime? finishedOn, IReadOnlyList<RestRecord> restTimes)
+    public WorkRecord Create(TimeDuration duration, IReadOnlyList<RestRecord> restTimes)
     {
-        var workRecord = WorkRecord.Create(startedOn, finishedOn, restTimes);
+        Guid id = Guid.NewGuid();
+        var workRecord = new WorkRecord(id, duration, restTimes);
         return workRecord.SetStandardWorkMinutes(configStore.Config.StandardWorkMinutes);
     }
 }

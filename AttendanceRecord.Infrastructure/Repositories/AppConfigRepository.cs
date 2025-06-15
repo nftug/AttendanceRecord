@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Interfaces;
 using AttendanceRecord.Infrastructure.Constants;
@@ -13,7 +14,8 @@ public class AppConfigRepository(AppDataDirectoryService appDataDirectory) : IAp
 
     private readonly JsonContext _jsonContext = new(new()
     {
-        WriteIndented = true
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     });
 
     public async Task<AppConfig> LoadAsync()

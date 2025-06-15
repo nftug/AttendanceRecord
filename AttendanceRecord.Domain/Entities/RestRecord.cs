@@ -15,12 +15,6 @@ public class RestRecord(Guid id, TimeDuration duration)
     public static RestRecord Create(DateTime startedOn, DateTime? finishedOn)
         => new(Guid.NewGuid(), TimeDuration.Create(startedOn, finishedOn));
 
-    public RestRecord EditDuration(DateTime startedOn, DateTime? finishedOn)
-    {
-        Duration = TimeDuration.Create(startedOn, finishedOn);
-        return this;
-    }
-
     internal static RestRecord Start() => new(Guid.NewGuid(), TimeDuration.GetStart());
 
     internal RestRecord Finish()
