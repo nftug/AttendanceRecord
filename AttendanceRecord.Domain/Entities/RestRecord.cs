@@ -1,0 +1,31 @@
+using AttendanceRecord.Domain.Exceptions;
+using AttendanceRecord.Domain.ValueObjects;
+
+namespace AttendanceRecord.Domain.Entities;
+
+public class RestRecord(Guid id, TimeDuration duration)
+{
+    public Guid Id { get; } = id;
+    public TimeDuration Duration { get; private set; } = duration;
+
+    public DateTime RecordedDate => Duration.RecordedDate;
+    public TimeSpan TotalTime => Duration.TotalTime;
+    public bool IsActive => Duration.IsActive && RecordedDate == DateTime.Today;
+
+    public RestRecord EditDuration(DateTime startedOn, DateTime? finishedOn)
+    {
+        Duration = TimeDuration.Create(startedOn, finishedOn);
+        return this;
+    }
+
+    internal static RestRecord Start() => new(Guid.NewGuid(), TimeDuration.GetStart());
+
+    internal RestRecord Finish()
+    {
+        if (!IsActive)
+            throw new DomainException("進行中ではない休憩記録は完了できません。");
+
+        Duration = Duration.GetFinished();
+        return this;
+    }
+}
