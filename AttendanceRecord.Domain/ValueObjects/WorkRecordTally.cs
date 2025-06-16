@@ -17,11 +17,12 @@ public class WorkRecordTally(IEnumerable<WorkRecord> workRecords)
     public WorkRecordTally Recreate(WorkRecord workRecord)
     {
         var workRecords = _workRecords.ToList();
+        var idx = workRecords.FindIndex(wr => wr.Id == workRecord.Id);
 
-        var idx = workRecords.ToList().FindIndex(wr => wr.Id == workRecord.Id);
-        if (idx < 0) return this;
-
-        workRecords[idx] = workRecord;
+        if (idx >= 0)
+            workRecords[idx] = workRecord;
+        else
+            workRecords.Add(workRecord);
 
         return new(workRecords);
     }

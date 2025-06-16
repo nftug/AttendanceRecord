@@ -27,9 +27,6 @@ public record TimeDuration
 
     public static TimeDuration Create(DateTime startedOn, DateTime? finishedOn = null)
     {
-        if (startedOn > DateTime.Now || finishedOn > DateTime.Now)
-            throw new DomainException("未来の日付を指定することはできません。");
-
         if (startedOn > finishedOn)
             throw new DomainException("開始日が終了日よりも後に指定されています。");
 

@@ -27,6 +27,6 @@ public class SaveWorkRecordUseCase(
         }
 
         await workRecordService.SaveAsync(workRecord);
-        await workRecordStore.ResetAsync();
+        await workRecordStore.ReloadAsync();
     }
 }

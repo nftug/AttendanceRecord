@@ -8,6 +8,6 @@ public class ToggleRestUseCase(WorkRecordStore workRecordStore, WorkRecordServic
     public async Task ExecuteAsync()
     {
         var workRecord = await workRecordService.ToggleRestAsync();
-        await workRecordStore.ResetAsync();
+        await workRecordStore.ReloadAsync();
     }
 }

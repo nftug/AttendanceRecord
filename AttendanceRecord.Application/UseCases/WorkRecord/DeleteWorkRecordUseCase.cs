@@ -8,8 +8,6 @@ public class DeleteWorkRecordUseCase(WorkRecordStore workRecordStore, WorkRecord
     public async Task ExecuteAsync(Guid id)
     {
         await workRecordService.DeleteAsync(id);
-
-        // 今月分の記録を削除した場合のため、ストアをリセットする
-        await workRecordStore.ResetAsync();
+        await workRecordStore.ReloadAsync();
     }
 }
