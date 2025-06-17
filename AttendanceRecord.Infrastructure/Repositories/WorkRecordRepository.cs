@@ -8,72 +8,79 @@ using AttendanceRecord.Infrastructure.Services;
 
 namespace AttendanceRecord.Infrastructure.Repositories;
 
-public class WorkRecordRepository(AppDataDirectoryService appDataDirectory) : IWorkRecordRepository
+public class WorkRecordRepository : IWorkRecordRepository, IDisposable
 {
-    private readonly string _filePath = appDataDirectory.GetFilePath("work_records.json");
+    private readonly string _filePath;
+    private List<WorkRecord> _workRecords;
+    private FileStream _lockStream;
+    private readonly object _syncRoot = new();
 
-    private async Task<List<WorkRecordFileDto>> LoadAllAsync()
+    public WorkRecordRepository(AppDataDirectoryService appDataDirectory)
     {
-        if (!File.Exists(_filePath)) return [];
-        using var stream = File.OpenRead(_filePath);
-        var dtos = await JsonSerializer.DeserializeAsync(
-            stream,
-            JsonContext.Default.WorkRecordFileDtoArray
-        );
-        return dtos?.ToList() ?? [];
+        _filePath = appDataDirectory.GetFilePath("work_records.json");
+        // プロセス生存期間中、ファイルを排他ロックで開きっぱなしにする
+        _lockStream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        _workRecords = LoadFile(_lockStream);
     }
 
-    private async Task SaveAllAsync(List<WorkRecordFileDto> dtos)
+    private List<WorkRecord> LoadFile(FileStream stream)
     {
-        using var stream = File.Create(_filePath);
-        await JsonSerializer.SerializeAsync(
-            stream,
-            dtos.ToArray(),
-            JsonContext.Default.WorkRecordFileDtoArray
-        );
+        if (stream.Length == 0) return [];
+        stream.Position = 0;
+        var dtos = JsonSerializer.Deserialize(stream, JsonContext.Default.WorkRecordFileDtoArray);
+        return dtos?.Select(x => x.ToDomain()).ToList() ?? [];
     }
 
-    public async Task<WorkRecord?> FindByDateAsync(DateTime date)
-    {
-        var all = await LoadAllAsync();
-        var dto = all.FirstOrDefault(x => x.Duration.StartedOn.Date == date.Date);
-        return dto?.ToDomain();
-    }
+    public void Dispose() => _lockStream?.Dispose();
 
-    public async Task<WorkRecord?> FindByIdAsync(Guid id)
-    {
-        var all = await LoadAllAsync();
-        var dto = all.FirstOrDefault(x => x.Id == id);
-        return dto?.ToDomain();
-    }
+    public ValueTask<WorkRecord?> FindByDateAsync(DateTime date)
+        => new(_workRecords.FirstOrDefault(x => x.Duration.StartedOn.Date == date.Date));
 
-    public async Task<IReadOnlyList<WorkRecord>> FindByMonthAsync(DateTime month)
+    public ValueTask<WorkRecord?> FindByIdAsync(Guid id)
+        => new(_workRecords.FirstOrDefault(x => x.Id == id));
+
+    public ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(DateTime month)
     {
-        var all = await LoadAllAsync();
         var firstDay = new DateTime(month.Year, month.Month, 1);
         var nextMonth = firstDay.AddMonths(1);
-        return all
+        var result = _workRecords
             .Where(x => x.Duration.StartedOn >= firstDay && x.Duration.StartedOn < nextMonth)
-            .Select(x => x.ToDomain())
             .ToList();
+        return new(result);
     }
 
-    public async Task SaveAsync(WorkRecord workRecord)
+    public ValueTask SaveAsync(WorkRecord workRecord)
     {
-        var all = await LoadAllAsync();
-        var idx = all.FindIndex(x => x.Id == workRecord.Id);
-        var dto = WorkRecordFileDto.FromDomain(workRecord);
-        if (idx >= 0)
-            all[idx] = dto;
-        else
-            all.Add(dto);
-        await SaveAllAsync(all);
+        lock (_syncRoot)
+        {
+            var idx = _workRecords.FindIndex(x => x.Id == workRecord.Id);
+            if (idx >= 0)
+                _workRecords[idx] = workRecord;
+            else
+                _workRecords.Add(workRecord);
+            SaveAll();
+        }
+
+        return ValueTask.CompletedTask;
     }
 
-    public async Task DeleteAsync(Guid id)
+    public ValueTask DeleteAsync(Guid id)
     {
-        var all = await LoadAllAsync();
-        all.RemoveAll(x => x.Id == id);
-        await SaveAllAsync(all);
+        lock (_syncRoot)
+        {
+            _workRecords.RemoveAll(x => x.Id == id);
+            SaveAll();
+        }
+
+        return ValueTask.CompletedTask;
+    }
+
+    private void SaveAll()
+    {
+        _lockStream.SetLength(0);
+        _lockStream.Position = 0;
+        var dtos = _workRecords.Select(WorkRecordFileDto.FromDomain).ToArray();
+        JsonSerializer.Serialize(_lockStream, dtos, JsonContext.Default.WorkRecordFileDtoArray);
+        _lockStream.Flush();
     }
 }

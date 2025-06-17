@@ -4,6 +4,6 @@ namespace AttendanceRecord.Domain.Interfaces;
 
 public interface IAppConfigRepository
 {
-    Task<AppConfig> LoadAsync();
-    Task SaveAsync(AppConfig appConfig);
+    ValueTask<AppConfig> LoadAsync();
+    ValueTask SaveAsync(AppConfig appConfig);
 }

@@ -4,9 +4,9 @@ namespace AttendanceRecord.Domain.Interfaces;
 
 public interface IWorkRecordRepository
 {
-    Task SaveAsync(WorkRecord workRecord);
-    Task DeleteAsync(Guid id);
-    Task<WorkRecord?> FindByIdAsync(Guid id);
-    Task<WorkRecord?> FindByDateAsync(DateTime date);
-    Task<IReadOnlyList<WorkRecord>> FindByMonthAsync(DateTime month);
+    ValueTask SaveAsync(WorkRecord workRecord);
+    ValueTask DeleteAsync(Guid id);
+    ValueTask<WorkRecord?> FindByIdAsync(Guid id);
+    ValueTask<WorkRecord?> FindByDateAsync(DateTime date);
+    ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(DateTime month);
 }

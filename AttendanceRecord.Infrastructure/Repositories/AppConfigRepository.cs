@@ -8,30 +8,43 @@ using AttendanceRecord.Infrastructure.Services;
 
 namespace AttendanceRecord.Infrastructure.Repositories;
 
-public class AppConfigRepository(AppDataDirectoryService appDataDirectory) : IAppConfigRepository
+public class AppConfigRepository : IAppConfigRepository, IDisposable
 {
-    private readonly string _filePath = appDataDirectory.GetFilePath("config.json");
+    private readonly string _filePath;
+    private AppConfig _appConfig;
+    private FileStream _lockStream;
+    private readonly object _syncRoot = new();
 
-    private readonly JsonContext _jsonContext = new(new()
+    public AppConfigRepository(AppDataDirectoryService appDataDirectory)
     {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    });
+        _filePath = appDataDirectory.GetFilePath("config.json");
+        _lockStream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        _appConfig = LoadFile(_lockStream);
+    }
 
-    public async Task<AppConfig> LoadAsync()
+    private AppConfig LoadFile(FileStream stream)
     {
-        if (!File.Exists(_filePath)) return AppConfig.Default;
-
-        using var stream = File.OpenRead(_filePath);
-        var dto = await JsonSerializer.DeserializeAsync(stream, _jsonContext.AppConfigFileDto);
+        if (stream.Length == 0) return AppConfig.Default;
+        stream.Position = 0;
+        var dto = JsonSerializer.Deserialize(stream, JsonContext.Default.AppConfigFileDto);
         return dto?.ToDomain() ?? AppConfig.Default;
     }
 
-    public async Task SaveAsync(AppConfig appConfig)
+    public void Dispose() => _lockStream?.Dispose();
+
+    public ValueTask<AppConfig> LoadAsync() => new(_appConfig);
+
+    public ValueTask SaveAsync(AppConfig appConfig)
     {
-        var dto = AppConfigFileDto.FromDomain(appConfig);
-        using var stream = File.Create(_filePath);
-        await JsonSerializer.SerializeAsync(stream, dto, _jsonContext.AppConfigFileDto);
-        await stream.FlushAsync();
+        lock (_syncRoot)
+        {
+            _appConfig = appConfig;
+            _lockStream.SetLength(0);
+            _lockStream.Position = 0;
+            var dto = AppConfigFileDto.FromDomain(appConfig);
+            JsonSerializer.Serialize(_lockStream, dto, JsonContext.Default.AppConfigFileDto);
+            _lockStream.Flush();
+        }
+        return ValueTask.CompletedTask;
     }
 }
