@@ -10,8 +10,7 @@ public class WorkRecordStore : IDisposable
 {
     private readonly IntervalService _interval;
     private readonly WorkRecordFactory _workRecordFactory;
-    private readonly WorkRecordService _workRecordService;
-    private readonly CompositeDisposable _disposables = new();
+    private readonly CompositeDisposable _disposables = [];
 
     private readonly ReactiveProperty<WorkRecord> _workRecordToday = new();
     private readonly ReactiveProperty<WorkRecordTally> _workRecordTallyThisMonth = new();
@@ -21,12 +20,10 @@ public class WorkRecordStore : IDisposable
     public Observable<WorkRecordResponseDto> WorkRecordTodayResponse { get; }
     public Observable<WorkRecordTallyResponseDto> WorkRecordTallyThisMonthResponse { get; }
 
-    public WorkRecordStore(
-        IntervalService interval, WorkRecordFactory workRecordFactory, WorkRecordService workRecordService)
+    public WorkRecordStore(IntervalService interval, WorkRecordFactory workRecordFactory)
     {
         _interval = interval;
         _workRecordFactory = workRecordFactory;
-        _workRecordService = workRecordService;
 
         _workRecordToday.AddTo(_disposables);
         _workRecordTallyThisMonth.AddTo(_disposables);
@@ -52,7 +49,7 @@ public class WorkRecordStore : IDisposable
         {
             _workRecordToday.Value =
                 await _workRecordFactory.FindByDateAsync(DateTime.Today)
-                ?? Domain.Entities.WorkRecord.Empty;
+                ?? WorkRecord.Empty;
         }
 
         _workRecordTallyThisMonth.Value =

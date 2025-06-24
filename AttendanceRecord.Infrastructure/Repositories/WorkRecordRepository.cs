@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Interfaces;
 using AttendanceRecord.Infrastructure.Constants;
@@ -11,9 +10,9 @@ namespace AttendanceRecord.Infrastructure.Repositories;
 public class WorkRecordRepository : IWorkRecordRepository, IDisposable
 {
     private readonly string _filePath;
-    private List<WorkRecord> _workRecords;
-    private FileStream _lockStream;
-    private readonly object _syncRoot = new();
+    private readonly List<WorkRecord> _workRecords;
+    private readonly FileStream _lockStream;
+    private readonly Lock _syncRoot = new();
 
     public WorkRecordRepository(AppDataDirectoryService appDataDirectory)
     {
@@ -23,7 +22,7 @@ public class WorkRecordRepository : IWorkRecordRepository, IDisposable
         _workRecords = LoadFile(_lockStream);
     }
 
-    private List<WorkRecord> LoadFile(FileStream stream)
+    private static List<WorkRecord> LoadFile(FileStream stream)
     {
         if (stream.Length == 0) return [];
         stream.Position = 0;

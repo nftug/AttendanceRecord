@@ -7,7 +7,7 @@ public class ToggleWorkUseCase(WorkRecordStore workRecordStore, WorkRecordServic
 {
     public async Task ExecuteAsync()
     {
-        var workRecord = await workRecordService.ToggleWorkAsync();
+        await workRecordService.ToggleWorkAsync();
         await workRecordStore.ReloadAsync();
     }
 }

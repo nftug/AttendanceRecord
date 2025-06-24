@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Interfaces;
 using AttendanceRecord.Infrastructure.Constants;
@@ -12,8 +11,8 @@ public class AppConfigRepository : IAppConfigRepository, IDisposable
 {
     private readonly string _filePath;
     private AppConfig _appConfig;
-    private FileStream _lockStream;
-    private readonly object _syncRoot = new();
+    private readonly FileStream _lockStream;
+    private readonly Lock _syncRoot = new();
 
     public AppConfigRepository(AppDataDirectoryService appDataDirectory)
     {
@@ -22,7 +21,7 @@ public class AppConfigRepository : IAppConfigRepository, IDisposable
         _appConfig = LoadFile(_lockStream);
     }
 
-    private AppConfig LoadFile(FileStream stream)
+    private static AppConfig LoadFile(FileStream stream)
     {
         if (stream.Length == 0) return AppConfig.Default;
         stream.Position = 0;

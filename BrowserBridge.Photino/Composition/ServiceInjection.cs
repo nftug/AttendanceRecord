@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using StrongInject;
 
 namespace BrowserBridge.Photino;

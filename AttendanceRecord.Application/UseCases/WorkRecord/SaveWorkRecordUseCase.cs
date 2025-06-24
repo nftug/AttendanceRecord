@@ -22,7 +22,7 @@ public class SaveWorkRecordUseCase(
         {
             workRecord = workRecordFactory.Create(
                 request.Duration.ToDomain(),
-                request.RestRecords.Select(r => r.ToDomain()).ToArray()
+                [.. request.RestRecords.Select(r => r.ToDomain())]
             );
         }
 

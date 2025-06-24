@@ -11,6 +11,7 @@ public record TimeDuration
     public DateTime RecordedDate => StartedOn.Date;
     public bool IsActive => !IsEmpty && FinishedOn == null;
     public bool IsEmpty => StartedOn == default;
+
     public TimeSpan TotalTime
         => this switch
         {
@@ -19,7 +20,8 @@ public record TimeDuration
                 StartedOn.Date == DateTime.Now.TruncateMs().Date
                     ? DateTime.Now.TruncateMs() - StartedOn
                     : StartedOn.Date.AddDays(1) - StartedOn,
-            _ => (DateTime)FinishedOn! - StartedOn
+            { FinishedOn: { } } => FinishedOn.Value - StartedOn,
+            _ => throw new DomainException("無効な時間の状態です。")
         };
 
     public static TimeDuration Reconstruct(DateTime startedOn, DateTime? finishedOn = null)
