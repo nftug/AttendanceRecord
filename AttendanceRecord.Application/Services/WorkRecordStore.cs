@@ -12,13 +12,11 @@ public class WorkRecordStore : IDisposable
     private readonly WorkRecordFactory _workRecordFactory;
     private readonly CompositeDisposable _disposables = [];
 
-    private readonly ReactiveProperty<WorkRecord> _workRecordToday = new();
-    private readonly ReactiveProperty<WorkRecordTally> _workRecordTallyThisMonth = new();
+    private readonly ReactiveProperty<WorkRecord?> _workRecordToday = new();
+    private readonly ReactiveProperty<WorkRecordTally?> _workRecordTallyThisMonth = new();
 
-    public ReadOnlyReactiveProperty<WorkRecord> WorkRecordToday => _workRecordToday;
-    public ReadOnlyReactiveProperty<WorkRecordTally> WorkRecordTallyThisMonth => _workRecordTallyThisMonth;
-    public Observable<WorkRecordResponseDto> WorkRecordTodayResponse { get; }
-    public Observable<WorkRecordTallyResponseDto> WorkRecordTallyThisMonthResponse { get; }
+    public ReadOnlyReactiveProperty<WorkRecordResponseDto?> WorkRecordTodayResponse { get; }
+    public ReadOnlyReactiveProperty<WorkRecordTallyResponseDto?> WorkRecordTallyThisMonthResponse { get; }
 
     public WorkRecordStore(IntervalService interval, WorkRecordFactory workRecordFactory)
     {
@@ -28,12 +26,15 @@ public class WorkRecordStore : IDisposable
         _workRecordToday.AddTo(_disposables);
         _workRecordTallyThisMonth.AddTo(_disposables);
 
-        WorkRecordTodayResponse = _interval.OneSecondInterval
-            .CombineLatest(_workRecordToday, (_, w) => WorkRecordResponseDto.FromDomain(w))
-            .DistinctUntilChanged();
-        WorkRecordTallyThisMonthResponse = _interval.OneSecondInterval
-            .CombineLatest(_workRecordTallyThisMonth, (_, t) => WorkRecordTallyResponseDto.FromDomain(t))
-            .DistinctUntilChanged();
+        WorkRecordTodayResponse = _workRecordToday
+            .Select(x => x != null ? WorkRecordResponseDto.FromDomain(x) : null)
+            .ToReadOnlyReactiveProperty()
+            .AddTo(_disposables);
+
+        WorkRecordTallyThisMonthResponse = _workRecordTallyThisMonth
+            .Select(x => x != null ? WorkRecordTallyResponseDto.FromDomain(x) : null)
+            .ToReadOnlyReactiveProperty()
+            .AddTo(_disposables);
 
         _interval.OneSecondInterval
             .Prepend(Unit.Default) // 初回ロードのためにUnit.Defaultを追加
@@ -41,11 +42,15 @@ public class WorkRecordStore : IDisposable
             .AddTo(_disposables);
     }
 
-    public void Dispose() => _disposables.Dispose();
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        _disposables.Dispose();
+    }
 
     private async ValueTask LoadAsync(bool forceReload = false)
     {
-        if (forceReload || _workRecordToday.Value.RecordedDate != DateTime.Today)
+        if (forceReload || _workRecordToday.Value?.RecordedDate != DateTime.Today)
         {
             _workRecordToday.Value =
                 await _workRecordFactory.FindByDateAsync(DateTime.Today)
@@ -53,7 +58,7 @@ public class WorkRecordStore : IDisposable
         }
 
         _workRecordTallyThisMonth.Value =
-           forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != DateTime.Today.Month
+           forceReload || _workRecordTallyThisMonth.Value?.RecordedMonth != DateTime.Today.Month
                ? await _workRecordFactory.GetMonthlyTallyAsync(DateTime.Today)
                : _workRecordTallyThisMonth.Value.Recreate(_workRecordToday.Value);
     }

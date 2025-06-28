@@ -8,7 +8,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
 {
     public Guid Id { get; } = id;
     public TimeDuration Duration { get; private set; } = duration;
-    public IReadOnlyList<RestRecord> RestRecords => _restRecords.ToList();
+    public IReadOnlyList<RestRecord> RestRecords => [.. _restRecords];
 
     private readonly List<RestRecord> _restRecords = [.. restRecords.OrderBy(x => x.Duration.StartedOn)];
     private int _standardWorkMinutes;
