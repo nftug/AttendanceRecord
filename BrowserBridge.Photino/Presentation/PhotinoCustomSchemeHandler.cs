@@ -5,7 +5,6 @@ public static class PhotinoCustomSchemeHandler
     public static Stream HandleEmbeddedFile(object sender, string scheme, string urlString, out string contentType)
     {
         var uri = new Uri(urlString);
-        var filePath = uri.LocalPath;
 
         var result = EmbeddedFileSchemeHandler.GetEmbeddedFile(uri, "wwwroot");
         contentType = result.ContentType;

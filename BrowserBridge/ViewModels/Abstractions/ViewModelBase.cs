@@ -10,15 +10,15 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
     private readonly IEventDispatcher _dispatcher;
 
     private readonly ReactiveProperty<Guid> _viewId = new();
-    protected ReadOnlyReactiveProperty<Guid> ViewId { get; }
+    protected ReadOnlyReactiveProperty<Guid> ViewId => _viewId;
 
     public ViewModelBase(IEventDispatcher dispatcher)
     {
         _dispatcher = dispatcher;
         _viewId.AddTo(Disposable);
-        ViewId = _viewId.ToReadOnlyReactiveProperty().AddTo(Disposable);
 
         _viewId.Where(v => v != Guid.Empty)
+            .Take(1)
             .Subscribe(_ => OnFirstRender())
             .AddTo(Disposable);
     }

@@ -5,10 +5,12 @@ namespace AttendanceRecord.Domain.ValueObjects;
 public class WorkRecordTally(IEnumerable<WorkRecord> workRecords)
 {
     private readonly IReadOnlyList<WorkRecord> _workRecords
-        = workRecords.OrderBy(wr => wr.RecordedDate).ToList();
+        = [.. workRecords.OrderBy(wr => wr.RecordedDate)];
 
     public TimeSpan WorkTimeTotal => new(workRecords.Sum(wr => wr.TotalWorkTime.Ticks));
     public TimeSpan RestTimeTotal => new(workRecords.Sum(wr => wr.TotalRestTime.Ticks));
+    public TimeSpan OvertimeTotal => new(workRecords.Sum(wr => wr.Overtime.Ticks));
+
     public (Guid Id, DateTime Date)[] WorkRecords => [.. workRecords.Select(wr => (wr.Id, wr.RecordedDate))];
 
     public int RecordedMonth

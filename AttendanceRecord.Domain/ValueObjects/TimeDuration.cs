@@ -29,7 +29,7 @@ public record TimeDuration
 
     public static TimeDuration Create(DateTime startedOn, DateTime? finishedOn = null)
     {
-        if (startedOn > finishedOn)
+        if (finishedOn != null && startedOn > finishedOn)
             throw new DomainException("開始日が終了日よりも後に指定されています。");
 
         return new() { StartedOn = startedOn, FinishedOn = finishedOn };
