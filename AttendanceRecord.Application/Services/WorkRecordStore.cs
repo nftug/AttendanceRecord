@@ -12,11 +12,11 @@ public class WorkRecordStore : IDisposable
     private readonly WorkRecordFactory _workRecordFactory;
     private readonly CompositeDisposable _disposables = [];
 
-    private readonly ReactiveProperty<WorkRecord?> _workRecordToday = new();
-    private readonly ReactiveProperty<WorkRecordTally?> _workRecordTallyThisMonth = new();
+    private readonly ReactiveProperty<WorkRecord> _workRecordToday = new();
+    private readonly ReactiveProperty<WorkRecordTally> _workRecordTallyThisMonth = new();
 
-    public ReadOnlyReactiveProperty<WorkRecordResponseDto?> WorkRecordTodayResponse { get; }
-    public ReadOnlyReactiveProperty<WorkRecordTallyResponseDto?> WorkRecordTallyThisMonthResponse { get; }
+    public ReadOnlyReactiveProperty<WorkRecordResponseDto> WorkRecordTodayResponse { get; }
+    public ReadOnlyReactiveProperty<WorkRecordTallyResponseDto> WorkRecordTallyThisMonthResponse { get; }
 
     public WorkRecordStore(IntervalService interval, WorkRecordFactory workRecordFactory)
     {
@@ -27,13 +27,13 @@ public class WorkRecordStore : IDisposable
         _workRecordTallyThisMonth.AddTo(_disposables);
 
         WorkRecordTodayResponse = _workRecordToday
-            .Select(x => x != null ? WorkRecordResponseDto.FromDomain(x) : null)
-            .ToReadOnlyReactiveProperty()
+            .Select(WorkRecordResponseDto.FromDomain)
+            .ToReadOnlyReactiveProperty(WorkRecordResponseDto.FromDomain(WorkRecord.Empty))
             .AddTo(_disposables);
 
         WorkRecordTallyThisMonthResponse = _workRecordTallyThisMonth
-            .Select(x => x != null ? WorkRecordTallyResponseDto.FromDomain(x) : null)
-            .ToReadOnlyReactiveProperty()
+            .Select(WorkRecordTallyResponseDto.FromDomain)
+            .ToReadOnlyReactiveProperty(WorkRecordTallyResponseDto.FromDomain(new([])))
             .AddTo(_disposables);
 
         _interval.OneSecondInterval
