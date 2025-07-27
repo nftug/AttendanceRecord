@@ -6,4 +6,4 @@ namespace AttendanceRecord.Infrastructure.Constants;
 [JsonSerializable(typeof(WorkRecordFileDto[]))]
 [JsonSerializable(typeof(AppConfigFileDto))]
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
-public partial class JsonContext : JsonSerializerContext;
+public partial class InfrastructureJsonContext : JsonSerializerContext;

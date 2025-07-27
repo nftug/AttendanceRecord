@@ -7,13 +7,10 @@ public record WorkRecordResponseDto(
     DateTime RecordedDate,
     TimeDurationResponseDto Duration,
     RestRecordResponseDto[] RestRecords,
-    TimeSpan TotalRestTime,
     TimeSpan TotalWorkTime,
+    TimeSpan TotalRestTime,
     TimeSpan Overtime,
-    bool IsTodays,
-    bool IsTodaysOngoing,
-    bool IsResting,
-    bool IsWorking
+    bool IsTodaysOngoing
 )
 {
     public static WorkRecordResponseDto FromDomain(Domain.Entities.WorkRecord workRecord)
@@ -22,14 +19,15 @@ public record WorkRecordResponseDto(
             workRecord.RecordedDate,
             TimeDurationResponseDto.FromDomain(workRecord.Duration),
             [.. workRecord.RestRecords.Select(RestRecordResponseDto.FromDomain)],
-            workRecord.TotalRestTime,
             workRecord.TotalWorkTime,
+            workRecord.TotalRestTime,
             workRecord.Overtime,
-            workRecord.IsTodays,
-            workRecord.IsTodaysOngoing,
-            workRecord.IsResting,
-            workRecord.IsWorking
+            workRecord.IsTodaysOngoing
         );
+
+    public static WorkRecordResponseDto Empty => FromDomain(Domain.Entities.WorkRecord.Empty);
+
+    public bool IsEmpty => Id == Guid.Empty;
 }
 
 public record RestRecordResponseDto(
@@ -52,15 +50,4 @@ public record TimeDurationResponseDto(DateTime StartedOn, DateTime? FinishedOn)
 {
     public static TimeDurationResponseDto FromDomain(TimeDuration duration)
         => new(duration.StartedOn, duration.FinishedOn);
-
-    public TimeDuration ToDomain() => TimeDuration.Reconstruct(StartedOn, FinishedOn);
-}
-
-public record WorkRecordItemResponseDto(Guid Id, DateTime Date)
-{
-    public static WorkRecordItemResponseDto FromDomain(Domain.Entities.WorkRecord record)
-        => new(record.Id, record.RecordedDate);
-
-    public static WorkRecordItemResponseDto FromDomain((Guid Id, DateTime Date) record)
-        => new(record.Id, record.Date);
 }

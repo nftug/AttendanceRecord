@@ -4,7 +4,7 @@ namespace BrowserBridge;
 
 public abstract class DisposableBase : IDisposable
 {
-    protected readonly CompositeDisposable Disposable = new();
+    protected readonly CompositeDisposable Disposable = [];
 
     protected bool disposedValue;
 

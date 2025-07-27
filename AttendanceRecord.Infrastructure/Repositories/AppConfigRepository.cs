@@ -25,7 +25,7 @@ public class AppConfigRepository : IAppConfigRepository, IDisposable
     {
         if (stream.Length == 0) return AppConfig.Default;
         stream.Position = 0;
-        var dto = JsonSerializer.Deserialize(stream, JsonContext.Default.AppConfigFileDto);
+        var dto = JsonSerializer.Deserialize(stream, InfrastructureJsonContext.Default.AppConfigFileDto);
         return dto?.ToDomain() ?? AppConfig.Default;
     }
 
@@ -41,7 +41,7 @@ public class AppConfigRepository : IAppConfigRepository, IDisposable
             _lockStream.SetLength(0);
             _lockStream.Position = 0;
             var dto = AppConfigFileDto.FromDomain(appConfig);
-            JsonSerializer.Serialize(_lockStream, dto, JsonContext.Default.AppConfigFileDto);
+            JsonSerializer.Serialize(_lockStream, dto, InfrastructureJsonContext.Default.AppConfigFileDto);
             _lockStream.Flush();
         }
         return ValueTask.CompletedTask;

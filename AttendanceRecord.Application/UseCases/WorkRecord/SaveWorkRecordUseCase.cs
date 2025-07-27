@@ -5,7 +5,7 @@ using AttendanceRecord.Domain.Services;
 namespace AttendanceRecord.Application.UseCases.WorkRecord;
 
 public class SaveWorkRecordUseCase(
-    WorkRecordStore workRecordStore, WorkRecordService workRecordService, WorkRecordFactory workRecordFactory)
+    CurrentWorkRecordStateStore workRecordStore, WorkRecordService workRecordService, WorkRecordFactory workRecordFactory)
 {
     public async Task ExecuteAsync(WorkRecordSaveRequestDto request)
     {

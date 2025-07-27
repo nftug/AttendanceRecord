@@ -28,4 +28,6 @@ public class WorkRecordTally(IEnumerable<WorkRecord> workRecords)
 
         return new(workRecords);
     }
+
+    public static WorkRecordTally Empty => new([]);
 }

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrowserBridge", "BrowserBri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrowserBridge.Photino", "BrowserBridge.Photino\BrowserBridge.Photino.csproj", "{36A627DE-1EC0-431E-9B6C-04BA016AC95F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttendanceRecord", "AttendanceRecord\AttendanceRecord.csproj", "{18CFA293-51E5-426D-BEBE-363917F73408}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,18 @@ Global
 		{36A627DE-1EC0-431E-9B6C-04BA016AC95F}.Release|x64.Build.0 = Release|Any CPU
 		{36A627DE-1EC0-431E-9B6C-04BA016AC95F}.Release|x86.ActiveCfg = Release|Any CPU
 		{36A627DE-1EC0-431E-9B6C-04BA016AC95F}.Release|x86.Build.0 = Release|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Debug|x64.Build.0 = Debug|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Debug|x86.Build.0 = Debug|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Release|x64.ActiveCfg = Release|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Release|x64.Build.0 = Release|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Release|x86.ActiveCfg = Release|Any CPU
+		{18CFA293-51E5-426D-BEBE-363917F73408}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

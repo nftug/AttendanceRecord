@@ -14,8 +14,8 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
     private int _standardWorkMinutes;
 
     public DateTime RecordedDate => Duration.RecordedDate;
-    public TimeSpan TotalRestTime => new(RestRecords.Sum(x => x.TotalTime.Ticks));
     public TimeSpan TotalWorkTime => Duration.TotalTime - TotalRestTime;
+    public TimeSpan TotalRestTime => new(RestRecords.Sum(x => x.TotalTime.Ticks));
     public TimeSpan Overtime =>
         TotalWorkTime - new TimeSpan(_standardWorkMinutes / 60, _standardWorkMinutes % 60, 0);
 

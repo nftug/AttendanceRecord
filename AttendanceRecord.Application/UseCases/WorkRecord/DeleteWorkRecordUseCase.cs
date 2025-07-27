@@ -3,7 +3,7 @@ using AttendanceRecord.Domain.Services;
 
 namespace AttendanceRecord.Application.UseCases.WorkRecord;
 
-public class DeleteWorkRecordUseCase(WorkRecordStore workRecordStore, WorkRecordService workRecordService)
+public class DeleteWorkRecordUseCase(CurrentWorkRecordStateStore workRecordStore, WorkRecordService workRecordService)
 {
     public async Task ExecuteAsync(Guid id)
     {

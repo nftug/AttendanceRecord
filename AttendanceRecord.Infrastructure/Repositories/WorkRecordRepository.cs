@@ -26,7 +26,7 @@ public class WorkRecordRepository : IWorkRecordRepository, IDisposable
     {
         if (stream.Length == 0) return [];
         stream.Position = 0;
-        var dtos = JsonSerializer.Deserialize(stream, JsonContext.Default.WorkRecordFileDtoArray);
+        var dtos = JsonSerializer.Deserialize(stream, InfrastructureJsonContext.Default.WorkRecordFileDtoArray);
         return dtos?.Select(x => x.ToDomain()).ToList() ?? [];
     }
 
@@ -79,7 +79,7 @@ public class WorkRecordRepository : IWorkRecordRepository, IDisposable
         _lockStream.SetLength(0);
         _lockStream.Position = 0;
         var dtos = _workRecords.Select(WorkRecordFileDto.FromDomain).ToArray();
-        JsonSerializer.Serialize(_lockStream, dtos, JsonContext.Default.WorkRecordFileDtoArray);
+        JsonSerializer.Serialize(_lockStream, dtos, InfrastructureJsonContext.Default.WorkRecordFileDtoArray);
         _lockStream.Flush();
     }
 }

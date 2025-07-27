@@ -6,7 +6,7 @@ using R3;
 
 namespace AttendanceRecord.Application.Services;
 
-public class WorkRecordStore : IDisposable
+public class CurrentWorkRecordStateStore : IDisposable
 {
     private readonly IntervalService _interval;
     private readonly WorkRecordFactory _workRecordFactory;
@@ -15,10 +15,9 @@ public class WorkRecordStore : IDisposable
     private readonly ReactiveProperty<WorkRecord> _workRecordToday = new();
     private readonly ReactiveProperty<WorkRecordTally> _workRecordTallyThisMonth = new();
 
-    public ReadOnlyReactiveProperty<WorkRecordResponseDto> WorkRecordTodayResponse { get; }
-    public ReadOnlyReactiveProperty<WorkRecordTallyResponseDto> WorkRecordTallyThisMonthResponse { get; }
+    public ReadOnlyReactiveProperty<CurrentWorkRecordStateDto> CurrentWorkRecordState { get; }
 
-    public WorkRecordStore(IntervalService interval, WorkRecordFactory workRecordFactory)
+    public CurrentWorkRecordStateStore(IntervalService interval, WorkRecordFactory workRecordFactory)
     {
         _interval = interval;
         _workRecordFactory = workRecordFactory;
@@ -26,14 +25,9 @@ public class WorkRecordStore : IDisposable
         _workRecordToday.AddTo(_disposables);
         _workRecordTallyThisMonth.AddTo(_disposables);
 
-        WorkRecordTodayResponse = _workRecordToday
-            .Select(WorkRecordResponseDto.FromDomain)
-            .ToReadOnlyReactiveProperty(WorkRecordResponseDto.FromDomain(WorkRecord.Empty))
-            .AddTo(_disposables);
-
-        WorkRecordTallyThisMonthResponse = _workRecordTallyThisMonth
-            .Select(WorkRecordTallyResponseDto.FromDomain)
-            .ToReadOnlyReactiveProperty(WorkRecordTallyResponseDto.FromDomain(new([])))
+        CurrentWorkRecordState = _workRecordToday
+            .CombineLatest(_workRecordTallyThisMonth, CurrentWorkRecordStateDto.FromDomain)
+            .ToReadOnlyReactiveProperty(CurrentWorkRecordStateDto.Empty)
             .AddTo(_disposables);
 
         _interval.OneSecondInterval
