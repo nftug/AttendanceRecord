@@ -4,13 +4,13 @@ using StrongInject;
 namespace BrowserBridge;
 
 public interface IOwnedService<out T> : IDisposable
-    where T : class
+    where T : notnull
 {
     T Value { get; }
 }
 
 public class StrongInjectOwnedService<T>(IOwned<T> owned) : IOwnedService<T>
-    where T : class
+    where T : notnull
 {
     public T Value => owned.Value;
 
@@ -18,7 +18,7 @@ public class StrongInjectOwnedService<T>(IOwned<T> owned) : IOwnedService<T>
 }
 
 public class MsDependencyInjectionOwnedService<T>(IServiceProvider serviceProvider) : IOwnedService<T>
-    where T : class
+    where T : notnull
 {
     private readonly IServiceScope scope = serviceProvider.CreateAsyncScope();
 

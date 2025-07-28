@@ -4,15 +4,15 @@ using AttendanceRecord.Application.UseCases.WorkRecord;
 using AttendanceRecord.Constants;
 using AttendanceRecord.Dtos.HomePage;
 using BrowserBridge;
+using Mediator.Switch;
 using R3;
 
 namespace AttendanceRecord.ViewModels;
 
-public class HomePageViewModel(
+public sealed class HomePageViewModel(
     IEventDispatcher eventDispatcher,
     CurrentWorkRecordStateStore workRecordStore,
-    ToggleWorkUseCase toggleWorkUseCase,
-    ToggleRestUseCase toggleRestUseCase
+    ISender mediator
 ) : ViewModelBase<HomePageCommandType>(eventDispatcher)
 {
     protected override ValueTask HandleActionAsync(HomePageCommandType action, JsonElement? payload, Guid? commandId)
@@ -33,19 +33,15 @@ public class HomePageViewModel(
 
     private async ValueTask ToggleWorkAsync(Guid? commandId)
     {
-        if (commandId == null)
-            throw new ArgumentNullException(nameof(commandId));
-
-        await toggleWorkUseCase.ExecuteAsync();
-        Dispatch(new ToggleWorkEvent(commandId.Value), BridgeJsonContext.Default.EventMessageDummyEventPayload);
+        await mediator.Send(new ToggleWork());
+        if (commandId != null)
+            Dispatch(new ToggleWorkResultEvent(commandId.Value), BridgeJsonContext.Default.EventMessageDummyEventPayload);
     }
 
     private async ValueTask ToggleRestAsync(Guid? commandId)
     {
-        if (commandId == null)
-            throw new ArgumentNullException(nameof(commandId));
-
-        await toggleRestUseCase.ExecuteAsync();
-        Dispatch(new ToggleRestEvent(commandId.Value), BridgeJsonContext.Default.EventMessageDummyEventPayload);
+        await mediator.Send(new ToggleRest());
+        if (commandId != null)
+            Dispatch(new ToggleRestResultEvent(commandId.Value), BridgeJsonContext.Default.EventMessageDummyEventPayload);
     }
 }

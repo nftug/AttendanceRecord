@@ -8,5 +8,6 @@ namespace AttendanceRecord.Constants;
 [JsonSerializable(typeof(HomePageCommandType))]
 [JsonSerializable(typeof(EventMessage<CurrentWorkRecordStateDto>))]
 [JsonSerializable(typeof(EventMessage<WorkRecordTallyResponseDto>))]
+[JsonSerializable(typeof(EventMessage<WorkRecordResponseDto>))]
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 public partial class AppJsonContext : JsonSerializerContext;

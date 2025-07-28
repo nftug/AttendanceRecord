@@ -20,12 +20,18 @@
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AssemblyName>AttendanceRecord</AssemblyName>
     <AssemblyTitle>Attendance Record</AssemblyTitle>
-    <DebugSymbols>none</DebugSymbols>
+
+    <!-- Disable specific warnings for Mediator.Switch.SourceGenerator -->
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <OutputType>Exe</OutputType>
-    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
@@ -38,5 +44,4 @@
     <ProjectReference Include="../AttendanceRecord.Infrastructure/AttendanceRecord.Infrastructure.csproj" />
     <ProjectReference Include="../BrowserBridge.Photino/BrowserBridge.Photino.csproj" />
   </ItemGroup>
-
 </Project>

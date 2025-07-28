@@ -5,7 +5,7 @@ namespace BrowserBridge;
 public interface IContainerInstance
 {
     void Inject(object container);
-    IOwnedService<T> Resolve<T>() where T : class;
+    IOwnedService<T> Resolve<T>() where T : notnull;
 }
 
 public class StrongInjectContainerInstance : IContainerInstance
@@ -14,7 +14,7 @@ public class StrongInjectContainerInstance : IContainerInstance
 
     public void Inject(object container) => _container = container;
 
-    public IOwnedService<T> Resolve<T>() where T : class
+    public IOwnedService<T> Resolve<T>() where T : notnull
     {
         if (_container == null)
             throw new InvalidOperationException("AppContainer is not injected");
@@ -31,7 +31,7 @@ public class MsDependencyInjectionContainerInstance : IContainerInstance
 
     public void Inject(object container) => _serviceProvider = (IServiceProvider)container;
 
-    public IOwnedService<T> Resolve<T>() where T : class
+    public IOwnedService<T> Resolve<T>() where T : notnull
     {
         if (_serviceProvider == null)
             throw new InvalidOperationException("AppContainer is not injected");

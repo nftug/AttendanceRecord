@@ -9,12 +9,12 @@ public record CurrentWorkRecordStateEvent(CurrentWorkRecordStateDto State)
 public record WorkRecordTallyStateEvent(WorkRecordTallyResponseDto State)
     : EventMessage<WorkRecordTallyResponseDto>("workRecordTallyState", State);
 
-public record ToggleWorkEvent : EventMessage<DummyEventPayload>
+public record ToggleWorkResultEvent : EventMessage<DummyEventPayload>
 {
-    public ToggleWorkEvent(Guid commandId) : base(new(), commandId, "toggleWork") { }
+    public ToggleWorkResultEvent(Guid commandId) : base(new(), commandId, "toggleWork") { }
 }
 
-public record ToggleRestEvent : EventMessage<DummyEventPayload>
+public record ToggleRestResultEvent : EventMessage<DummyEventPayload>
 {
-    public ToggleRestEvent(Guid commandId) : base(new(), commandId, "toggleRest") { }
+    public ToggleRestResultEvent(Guid commandId) : base(new(), commandId, "toggleRest") { }
 }
