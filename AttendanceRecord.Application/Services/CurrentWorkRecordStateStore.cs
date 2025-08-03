@@ -12,10 +12,11 @@ public class CurrentWorkRecordStateStore : IDisposable
     private readonly WorkRecordFactory _workRecordFactory;
     private readonly CompositeDisposable _disposables = [];
 
-    private readonly ReactiveProperty<WorkRecord> _workRecordToday = new();
-    private readonly ReactiveProperty<WorkRecordTally> _workRecordTallyThisMonth = new();
+    private readonly ReactiveProperty<WorkRecord> _workRecordToday = new(WorkRecord.Empty);
+    private readonly ReactiveProperty<WorkRecordTally> _workRecordTallyThisMonth = new(WorkRecordTally.Empty);
 
     public ReadOnlyReactiveProperty<CurrentWorkRecordStateDto> CurrentWorkRecordState { get; }
+    internal ReadOnlyReactiveProperty<WorkRecord> WorkRecordToday => _workRecordToday;
 
     public CurrentWorkRecordStateStore(IntervalService interval, WorkRecordFactory workRecordFactory)
     {
@@ -44,15 +45,14 @@ public class CurrentWorkRecordStateStore : IDisposable
 
     private async ValueTask LoadAsync(bool forceReload = false)
     {
-        if (forceReload || _workRecordToday.Value?.RecordedDate != DateTime.Today)
-        {
-            _workRecordToday.Value =
-                await _workRecordFactory.FindByDateAsync(DateTime.Today)
-                ?? WorkRecord.Empty;
-        }
+        _workRecordToday.Value =
+            forceReload || _workRecordToday.Value.RecordedDate != DateTime.Today
+                ? await _workRecordFactory.FindByDateAsync(DateTime.Today)
+                ?? WorkRecord.Empty
+            : _workRecordToday.Value.Recreate();
 
         _workRecordTallyThisMonth.Value =
-           forceReload || _workRecordTallyThisMonth.Value?.RecordedMonth != DateTime.Today.Month
+           forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != DateTime.Today.Month
                ? await _workRecordFactory.GetMonthlyTallyAsync(DateTime.Today)
                : _workRecordTallyThisMonth.Value.Recreate(_workRecordToday.Value);
     }

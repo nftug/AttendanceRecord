@@ -34,6 +34,8 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
 
     public static WorkRecord Empty => new(Guid.Empty, TimeDuration.Empty, []);
 
+    public WorkRecord Recreate() => new(Id, Duration, RestRecords);
+
     public WorkRecord Update(TimeDuration duration, IEnumerable<RestRecord> restRecords)
     {
         Duration = duration;

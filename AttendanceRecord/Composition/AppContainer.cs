@@ -20,6 +20,7 @@ public class AppBaseModule;
 [Register(typeof(WorkRecordService), Scope.SingleInstance)]
 [Register(typeof(WorkRecordFactory), Scope.SingleInstance)]
 [Register(typeof(CurrentWorkRecordStateStore), Scope.SingleInstance)]
+[Register(typeof(WorkRecordAlarmService), Scope.SingleInstance)]
 [Register(typeof(WorkRecordRepository), Scope.SingleInstance, typeof(IWorkRecordRepository))]
 public class WorkRecordModule;
 

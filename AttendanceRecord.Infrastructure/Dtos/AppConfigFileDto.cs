@@ -5,8 +5,8 @@ namespace AttendanceRecord.Infrastructure.Dtos;
 public record AppConfigFileDto(
     int StandardWorkMinutes,
     bool ResidentNotificationEnabled,
-    AppConfigFileDto.WorkRecordAlarmConfigFileDto WorkRecordAlarm,
-    AppConfigFileDto.RestRecordAlarmConfigFileDto RestRecordAlarm,
+    AppConfigFileDto.WorkTimeAlarmConfigFileDto WorkTimeAlarm,
+    AppConfigFileDto.RestTimeAlarmConfigFileDto RestTimeAlarm,
     AppConfigFileDto.StatusFormatConfigFileDto StatusFormat
 )
 {
@@ -15,14 +15,14 @@ public record AppConfigFileDto(
             config.StandardWorkMinutes,
             config.ResidentNotificationEnabled,
             new(
-                config.WorkRecordAlarm.IsEnabled,
-                config.WorkRecordAlarm.RemainingMinutes,
-                config.WorkRecordAlarm.SnoozeMinutes
+                config.WorkTimeAlarm.IsEnabled,
+                config.WorkTimeAlarm.RemainingMinutes,
+                config.WorkTimeAlarm.SnoozeMinutes
             ),
             new(
-                config.RestRecordAlarm.IsEnabled,
-                config.RestRecordAlarm.ElapsedMinutes,
-                config.RestRecordAlarm.SnoozeMinutes
+                config.RestTimeAlarm.IsEnabled,
+                config.RestTimeAlarm.ElapsedMinutes,
+                config.RestTimeAlarm.SnoozeMinutes
             ),
             new(
                 config.StatusFormat.StatusFormat,
@@ -35,25 +35,25 @@ public record AppConfigFileDto(
             StandardWorkMinutes,
             ResidentNotificationEnabled,
             new(
-                WorkRecordAlarm.IsEnabled,
-                WorkRecordAlarm.RemainingMinutes,
-                WorkRecordAlarm.SnoozeMinutes
+                WorkTimeAlarm.IsEnabled,
+                WorkTimeAlarm.RemainingMinutes,
+                WorkTimeAlarm.SnoozeMinutes
             ),
             new(
-                RestRecordAlarm.IsEnabled,
-                RestRecordAlarm.ElapsedMinutes,
-                RestRecordAlarm.SnoozeMinutes
+                RestTimeAlarm.IsEnabled,
+                RestTimeAlarm.ElapsedMinutes,
+                RestTimeAlarm.SnoozeMinutes
             ),
             new(StatusFormat.StatusFormat, StatusFormat.TimeSpanFormat)
         );
 
-    public record WorkRecordAlarmConfigFileDto(
+    public record WorkTimeAlarmConfigFileDto(
         bool IsEnabled,
         int RemainingMinutes,
         int SnoozeMinutes
     );
 
-    public record RestRecordAlarmConfigFileDto(
+    public record RestTimeAlarmConfigFileDto(
         bool IsEnabled,
         int ElapsedMinutes,
         int SnoozeMinutes
