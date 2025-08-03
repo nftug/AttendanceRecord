@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace BrowserBridge;
 
-public class WindowViewModel(IEventDispatcher eventDispatcher, IDialogService dialogService)
+public sealed class WindowViewModel(IEventDispatcher eventDispatcher, IDialogService dialogService)
     : ViewModelBase<WindowCommandType>(eventDispatcher)
 {
     protected override void OnFirstRender() { }

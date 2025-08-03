@@ -1,12 +1,7 @@
 namespace BrowserBridge;
 
-public class ViewModelException : Exception
+public class ViewModelException(Guid viewId, string? message, Exception? innerException = null)
+    : Exception(message, innerException)
 {
-    public Guid ViewId { get; }
-
-    public ViewModelException(Guid viewId, string? message, Exception? innerException = null)
-        : base(message, innerException)
-    {
-        ViewId = viewId;
-    }
+    public Guid ViewId { get; } = viewId;
 }

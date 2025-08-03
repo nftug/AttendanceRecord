@@ -15,14 +15,6 @@ public sealed class HomePageViewModel(
     ISender mediator
 ) : ViewModelBase<HomePageCommandType>(eventDispatcher)
 {
-    protected override ValueTask HandleActionAsync(HomePageCommandType action, JsonElement? payload, Guid? commandId)
-        => action switch
-        {
-            HomePageCommandType.ToggleWork => ToggleWorkAsync(commandId),
-            HomePageCommandType.ToggleRest => ToggleRestAsync(commandId),
-            _ => throw new NotSupportedException($"Action '{action}' is not supported.")
-        };
-
     protected override void OnFirstRender()
     {
         workRecordStore.CurrentWorkRecordState
@@ -30,6 +22,14 @@ public sealed class HomePageViewModel(
             .Subscribe(stateEvent => Dispatch(stateEvent, AppJsonContext.Default.EventMessageCurrentWorkRecordStateDto))
             .AddTo(Disposable);
     }
+
+    protected override ValueTask HandleActionAsync(HomePageCommandType action, JsonElement? payload, Guid? commandId)
+        => action switch
+        {
+            HomePageCommandType.ToggleWork => ToggleWorkAsync(commandId),
+            HomePageCommandType.ToggleRest => ToggleRestAsync(commandId),
+            _ => throw new NotSupportedException($"Action '{action}' is not supported.")
+        };
 
     private async ValueTask ToggleWorkAsync(Guid? commandId)
     {

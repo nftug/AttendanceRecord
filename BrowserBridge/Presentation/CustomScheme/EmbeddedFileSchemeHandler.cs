@@ -18,7 +18,7 @@ public static class EmbeddedFileSchemeHandler
             ?? throw new FileNotFoundException($"Resource segment '{segment}' not found in assembly '{_assembly.FullName}'.");
 
         var index = match.IndexOf(segment, StringComparison.OrdinalIgnoreCase);
-        var prefix = match.Substring(0, index).TrimEnd('.');
+        var prefix = match[..index].TrimEnd('.');
         return prefix;
     }
 
