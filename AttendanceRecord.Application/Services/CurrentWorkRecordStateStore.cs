@@ -49,7 +49,7 @@ public class CurrentWorkRecordStateStore : IDisposable
             forceReload || _workRecordToday.Value.RecordedDate != DateTime.Today
                 ? await _workRecordFactory.FindByDateAsync(DateTime.Today)
                 ?? WorkRecord.Empty
-            : _workRecordToday.Value.Recreate();
+            : _workRecordToday.Value;
 
         _workRecordTallyThisMonth.Value =
            forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != DateTime.Today.Month

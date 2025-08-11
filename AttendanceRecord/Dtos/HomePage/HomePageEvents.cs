@@ -3,11 +3,8 @@ using BrowserBridge;
 
 namespace AttendanceRecord.Dtos.HomePage;
 
-public record CurrentWorkRecordStateEvent(CurrentWorkRecordStateDto State)
-    : EventMessage<CurrentWorkRecordStateDto>("workRecordState", State);
-
-public record WorkRecordTallyStateEvent(WorkRecordTallyResponseDto State)
-    : EventMessage<WorkRecordTallyResponseDto>("workRecordTallyState", State);
+public record HomePageStateEvent(CurrentWorkRecordStateDto State)
+    : EventMessage<CurrentWorkRecordStateDto>("state", State);
 
 public record ToggleWorkResultEvent : EventMessage<DummyEventPayload>
 {

@@ -18,7 +18,7 @@ public sealed class HomePageViewModel(
     protected override void OnFirstRender()
     {
         workRecordStore.CurrentWorkRecordState
-            .Select(state => new CurrentWorkRecordStateEvent(state))
+            .Select(state => new HomePageStateEvent(state))
             .Subscribe(stateEvent => Dispatch(stateEvent, AppJsonContext.Default.EventMessageCurrentWorkRecordStateDto))
             .AddTo(Disposable);
     }

@@ -1,23 +1,28 @@
 using AttendanceRecord.Domain.Entities;
+using AttendanceRecord.Domain.Extensions;
 using AttendanceRecord.Domain.ValueObjects;
 
 namespace AttendanceRecord.Application.Dtos.Responses;
 
 public record CurrentWorkRecordStateDto(
+    DateTime CurrentDateTime,
     TimeSpan WorkTime,
     TimeSpan RestTime,
     TimeSpan Overtime,
-    TimeSpan OverTimeMonthly,
+    TimeSpan OvertimeMonthly,
+    bool IsActive,
     bool IsWorking,
     bool IsResting
 )
 {
     public static CurrentWorkRecordStateDto FromDomain(WorkRecord workRecord, WorkRecordTally monthlyTally)
         => new(
+                CurrentDateTime: DateTime.Now.TruncateMs(),
                 WorkTime: workRecord.TotalWorkTime,
                 RestTime: workRecord.TotalRestTime,
                 Overtime: workRecord.Overtime,
-                OverTimeMonthly: monthlyTally.OvertimeTotal,
+                OvertimeMonthly: monthlyTally.OvertimeTotal,
+                IsActive: workRecord.IsTodaysOngoing,
                 IsWorking: workRecord.IsWorking,
                 IsResting: workRecord.IsResting
             );

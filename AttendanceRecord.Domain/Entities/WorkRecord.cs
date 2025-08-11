@@ -29,12 +29,11 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
         if (standardWorkMinutes <= 0)
             throw new DomainException("標準勤務時間は正の整数でなければなりません。");
         _standardWorkMinutes = standardWorkMinutes;
+
         return this;
     }
 
     public static WorkRecord Empty => new(Guid.Empty, TimeDuration.Empty, []);
-
-    public WorkRecord Recreate() => new(Id, Duration, RestRecords);
 
     public WorkRecord Update(TimeDuration duration, IEnumerable<RestRecord> restRecords)
     {
