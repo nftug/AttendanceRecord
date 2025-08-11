@@ -34,6 +34,13 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
     }
   })
 
+  const timeTrackingInfo = [
+    { label: '勤務時間', value: state.workTime },
+    { label: '休憩時間', value: state.restTime },
+    { label: '本日の残業時間', value: state.overtime },
+    { label: '今月の残業時間', value: state.overtimeMonthly }
+  ]
+
   return (
     <Stack sx={{ ...flexCenterStyle, height: 1, p: 4 }} spacing={3}>
       {/* 時計表示 */}
@@ -73,30 +80,14 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
         {/* 勤務・休憩・残業情報 */}
         <Paper variant="outlined" sx={{ px: 3, display: 'flex', alignItems: 'center', height: 1 }}>
           <Stack spacing={1} sx={{ width: 1 }}>
-            <Stack direction="row" alignItems="center">
-              <Typography fontWeight="bold" sx={{ width: 200 }}>
-                勤務時間
-              </Typography>
-              <Typography sx={{ flex: 1 }}>{state.workTime}</Typography>
-            </Stack>
-            <Stack direction="row" alignItems="center">
-              <Typography fontWeight="bold" sx={{ width: 200 }}>
-                休憩時間
-              </Typography>
-              <Typography sx={{ flex: 1 }}>{state.restTime}</Typography>
-            </Stack>
-            <Stack direction="row" alignItems="center">
-              <Typography fontWeight="bold" sx={{ width: 200 }}>
-                本日の残業時間
-              </Typography>
-              <Typography sx={{ flex: 1 }}>{state.overtime}</Typography>
-            </Stack>
-            <Stack direction="row" alignItems="center">
-              <Typography fontWeight="bold" sx={{ width: 200 }}>
-                今月の残業時間
-              </Typography>
-              <Typography sx={{ flex: 1 }}>{state.overtimeMonthly}</Typography>
-            </Stack>
+            {timeTrackingInfo.map((item) => (
+              <Stack direction="row" alignItems="center" key={item.label}>
+                <Typography fontWeight="bold" sx={{ width: 200 }}>
+                  {item.label}
+                </Typography>
+                <Typography>{item.value}</Typography>
+              </Stack>
+            ))}
           </Stack>
         </Paper>
       </Stack>
