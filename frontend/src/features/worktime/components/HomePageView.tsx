@@ -3,7 +3,9 @@ import CoffeeIcon from '@mui/icons-material/Coffee'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 import StopCircleIcon from '@mui/icons-material/StopCircle'
 import { Box, Button, Paper, Stack, Typography } from '@mui/material'
+import { useMutation } from '@tanstack/react-query'
 import dayjs from 'dayjs'
+import { useSnackbar } from 'notistack'
 import { HomePageViewModel, useHomePageViewModel } from '../atoms/homePageViewModel'
 
 const HomePageView = () => {
@@ -12,10 +14,25 @@ const HomePageView = () => {
 }
 
 const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
+  const { enqueueSnackbar } = useSnackbar()
+
   const workIcon = state.isActive ? <StopCircleIcon /> : <PlayCircleIcon />
   const workLabel = state.isActive ? '退勤' : '出勤'
   const restLabel = state.isResting ? '休憩終了' : '休憩開始'
   const formattedCurrentDateTime = dayjs(state.currentDateTime).format('HH:mm:ss')
+
+  const { mutate: toggleWork, isPending: isTogglingWork } = useMutation({
+    mutationFn: async () => await invoke('toggleWork'),
+    onSuccess: (result) => {
+      enqueueSnackbar(result.isActive ? '勤務を開始しました' : '勤務を終了しました')
+    }
+  })
+  const { mutate: toggleRest, isPending: isTogglingRest } = useMutation({
+    mutationFn: async () => await invoke('toggleRest'),
+    onSuccess: (result) => {
+      enqueueSnackbar(result.isResting ? '休憩を開始しました' : '休憩を終了しました')
+    }
+  })
 
   return (
     <Stack sx={{ ...flexCenterStyle, height: 1, p: 4 }} spacing={3}>
@@ -33,7 +50,8 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
             variant="contained"
             color="primary"
             startIcon={workIcon}
-            onClick={() => invoke('toggleWork')}
+            onClick={() => toggleWork()}
+            disabled={isTogglingWork}
             fullWidth
             size="large"
           >
@@ -43,9 +61,9 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
             variant="contained"
             color="success"
             startIcon={<CoffeeIcon />}
-            onClick={() => invoke('toggleRest')}
+            onClick={() => toggleRest()}
             fullWidth
-            disabled={!state.isActive}
+            disabled={!state.isActive || isTogglingRest}
             size="large"
           >
             {restLabel}

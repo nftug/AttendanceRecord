@@ -6,12 +6,14 @@ namespace AttendanceRecord.Dtos.HomePage;
 public record HomePageStateEvent(CurrentWorkRecordStateDto State)
     : EventMessage<CurrentWorkRecordStateDto>("state", State);
 
-public record ToggleWorkResultEvent : EventMessage<DummyEventPayload>
+public record ToggleWorkResultEvent : EventMessage<CurrentWorkRecordStateDto>
 {
-    public ToggleWorkResultEvent(Guid commandId) : base(new(), commandId, "toggleWork") { }
+    public ToggleWorkResultEvent(Guid commandId, CurrentWorkRecordStateDto result)
+        : base(result, commandId, "toggleWork") { }
 }
 
-public record ToggleRestResultEvent : EventMessage<DummyEventPayload>
+public record ToggleRestResultEvent : EventMessage<CurrentWorkRecordStateDto>
 {
-    public ToggleRestResultEvent(Guid commandId) : base(new(), commandId, "toggleRest") { }
+    public ToggleRestResultEvent(Guid commandId, CurrentWorkRecordStateDto result)
+        : base(result, commandId, "toggleRest") { }
 }

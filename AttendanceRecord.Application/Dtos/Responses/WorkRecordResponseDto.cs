@@ -10,7 +10,9 @@ public record WorkRecordResponseDto(
     TimeSpan TotalWorkTime,
     TimeSpan TotalRestTime,
     TimeSpan Overtime,
-    bool IsTodaysOngoing
+    bool IsTodaysOngoing,
+    bool IsWorking,
+    bool IsResting
 )
 {
     public static WorkRecordResponseDto FromDomain(Domain.Entities.WorkRecord workRecord)
@@ -22,7 +24,9 @@ public record WorkRecordResponseDto(
             workRecord.TotalWorkTime,
             workRecord.TotalRestTime,
             workRecord.Overtime,
-            workRecord.IsTodaysOngoing
+            workRecord.IsTodaysOngoing,
+            workRecord.IsWorking,
+            workRecord.IsResting
         );
 
     public static WorkRecordResponseDto Empty => FromDomain(Domain.Entities.WorkRecord.Empty);

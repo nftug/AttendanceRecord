@@ -8,11 +8,6 @@ export type EmitterKeyOptions =
 
 export type Event<T extends EventEnvelope, TName extends T['event']> = Extract<T, { event: TName }>
 
-export type Command<T extends CommandEnvelope, TName extends T['command']> = Extract<
-  T,
-  { command: TName }
->
-
 export type CommandResult<T extends EventEnvelope, TName extends T['commandName']> = Extract<
   T,
   { commandName: TName }

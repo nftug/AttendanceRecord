@@ -5,10 +5,12 @@ export type HomePageCommands = { command: 'toggleWork' } | { command: 'toggleRes
 export type HomePageEvents =
   | {
       event: 'receive:toggleWork'
+      payload: CurrentWorkRecordStateDto
       commandName: 'toggleWork'
     }
   | {
       event: 'receive:toggleRest'
+      payload: CurrentWorkRecordStateDto
       commandName: 'toggleRest'
     }
   | {

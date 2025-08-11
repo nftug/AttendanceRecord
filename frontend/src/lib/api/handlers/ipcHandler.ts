@@ -12,7 +12,6 @@ import {
 } from '../types/apiTypes'
 import { AppCommandEnvelope, AppEventEnvelope } from '../types/appTypes'
 import {
-  Command,
   CommandArguments,
   CommandResult,
   EmitterKey,
@@ -73,7 +72,7 @@ export const createInvoker = <TEvent extends EventEnvelope, TCommand extends Com
   return <TName extends TCommand['command'] & CommandResult<TEvent, string>['commandName']>(
     commandName: TName,
     ...args: CommandArguments<TCommand, TName>
-  ): Promise<Command<TCommand, TName>['payload']> => {
+  ): Promise<CommandResult<TEvent, TName>['payload']> => {
     const commandId = crypto.randomUUID() as CommandId
     const message: CommandMessage = {
       viewId,
