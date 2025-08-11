@@ -31,11 +31,16 @@ public class AppConfigModule;
 
 [Register(typeof(HomePageViewModel))]
 [Register(typeof(ViewModelResolver<HomePageViewModel>), typeof(IViewModelResolver))]
+[Register(typeof(WorkRecordListViewModel))]
+[Register(typeof(ViewModelResolver<WorkRecordListViewModel>), typeof(IViewModelResolver))]
 public class ViewModelModule;
 #endregion
 
 #region ViewModel Container
-public interface IViewModelContainer : IViewModelContainerBase, IContainer<HomePageViewModel>;
+public interface IViewModelContainer :
+    IViewModelContainerBase,
+    IContainer<HomePageViewModel>,
+    IContainer<WorkRecordListViewModel>;
 #endregion
 
 #region Container

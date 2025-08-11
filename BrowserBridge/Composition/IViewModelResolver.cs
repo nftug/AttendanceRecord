@@ -11,6 +11,5 @@ public class ViewModelResolver<TViewModel>(IContainerInstance container) : IView
 {
     public string Type => typeof(TViewModel).Name.Replace("ViewModel", string.Empty);
 
-    public IOwnedService<IViewModel> Resolve()
-        => container.Resolve<TViewModel>();
+    public IOwnedService<IViewModel> Resolve() => container.Resolve<TViewModel>();
 }

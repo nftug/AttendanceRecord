@@ -18,9 +18,9 @@ public class WorkRecordFactory(AppConfigStore configStore, IWorkRecordRepository
         return workRecord?.SetStandardWorkMinutes(configStore.Config.StandardWorkMinutes);
     }
 
-    public async Task<WorkRecordTally> GetMonthlyTallyAsync(DateTime month)
+    public async Task<WorkRecordTally> GetMonthlyTallyAsync(int year, int month)
     {
-        var workRecords = (await workRecordRepository.FindByMonthAsync(month))
+        var workRecords = (await workRecordRepository.FindByMonthAsync(year, month))
             .Select(x => x.SetStandardWorkMinutes(configStore.Config.StandardWorkMinutes));
         return new(workRecords);
     }

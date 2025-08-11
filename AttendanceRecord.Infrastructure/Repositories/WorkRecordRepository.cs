@@ -38,9 +38,9 @@ public class WorkRecordRepository : IWorkRecordRepository, IDisposable
     public ValueTask<WorkRecord?> FindByIdAsync(Guid id)
         => new(_workRecords.FirstOrDefault(x => x.Id == id));
 
-    public ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(DateTime month)
+    public ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(int year, int month)
     {
-        var firstDay = new DateTime(month.Year, month.Month, 1);
+        var firstDay = new DateTime(year, month, 1);
         var nextMonth = firstDay.AddMonths(1);
         var result = _workRecords
             .Where(x => x.Duration.StartedOn >= firstDay && x.Duration.StartedOn < nextMonth)

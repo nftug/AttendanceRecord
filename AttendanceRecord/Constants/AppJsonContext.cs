@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using AttendanceRecord.Application.Dtos.Requests;
 using AttendanceRecord.Application.Dtos.Responses;
 using AttendanceRecord.Dtos.HomePage;
 using BrowserBridge;
@@ -9,5 +10,6 @@ namespace AttendanceRecord.Constants;
 [JsonSerializable(typeof(EventMessage<CurrentWorkRecordStateDto>))]
 [JsonSerializable(typeof(EventMessage<WorkRecordTallyResponseDto>))]
 [JsonSerializable(typeof(EventMessage<WorkRecordResponseDto>))]
+[JsonSerializable(typeof(WorkRecordTallyGetRequestDto))]
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 public partial class AppJsonContext : JsonSerializerContext;

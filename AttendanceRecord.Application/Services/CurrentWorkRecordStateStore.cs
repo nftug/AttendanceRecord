@@ -53,7 +53,7 @@ public class CurrentWorkRecordStateStore : IDisposable
 
         _workRecordTallyThisMonth.Value =
            forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != DateTime.Today.Month
-               ? await _workRecordFactory.GetMonthlyTallyAsync(DateTime.Today)
+               ? await _workRecordFactory.GetMonthlyTallyAsync(DateTime.Today.Year, DateTime.Today.Month)
                : _workRecordTallyThisMonth.Value.Recreate(_workRecordToday.Value);
     }
 

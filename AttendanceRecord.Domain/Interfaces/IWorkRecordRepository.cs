@@ -8,5 +8,5 @@ public interface IWorkRecordRepository
     ValueTask DeleteAsync(Guid id);
     ValueTask<WorkRecord?> FindByIdAsync(Guid id);
     ValueTask<WorkRecord?> FindByDateAsync(DateTime date);
-    ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(DateTime month);
+    ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(int year, int month);
 }
