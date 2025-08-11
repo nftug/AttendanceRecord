@@ -4,7 +4,6 @@ using Mediator.Switch;
 
 namespace AttendanceRecord.Application.UseCases.WorkRecord;
 
-[RequestHandler(typeof(DeleteWorkRecordHandler))]
 public sealed record DeleteWorkRecordUseCase(Guid Id) : IRequest<Unit>;
 
 public sealed class DeleteWorkRecordHandler(

@@ -4,7 +4,6 @@ using Mediator.Switch;
 
 namespace AttendanceRecord.Application.UseCases.WorkRecord;
 
-[RequestHandler(typeof(GetWorkRecordTallyHandler))]
 public sealed record GetWorkRecordTally(DateTime MonthDate) : IRequest<WorkRecordTallyResponseDto>;
 
 public sealed class GetWorkRecordTallyHandler(WorkRecordFactory workRecordFactory)

@@ -4,7 +4,6 @@ using Mediator.Switch;
 
 namespace AttendanceRecord.Application.UseCases.WorkRecord;
 
-[RequestHandler(typeof(ToggleWorkHandler))]
 public sealed record ToggleWork : IRequest<Unit>;
 
 public sealed class ToggleWorkHandler(

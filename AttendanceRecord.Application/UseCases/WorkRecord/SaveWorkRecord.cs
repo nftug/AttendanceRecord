@@ -5,7 +5,6 @@ using Mediator.Switch;
 
 namespace AttendanceRecord.Application.UseCases.WorkRecord;
 
-[RequestHandler(typeof(SaveWorkRecordHandler))]
 public sealed record SaveWorkRecord(WorkRecordSaveRequestDto Body) : IRequest<Unit>;
 
 public sealed class SaveWorkRecordHandler(
