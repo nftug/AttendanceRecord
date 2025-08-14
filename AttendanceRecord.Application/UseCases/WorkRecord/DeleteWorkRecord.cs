@@ -4,13 +4,13 @@ using Mediator.Switch;
 
 namespace AttendanceRecord.Application.UseCases.WorkRecord;
 
-public sealed record DeleteWorkRecordUseCase(Guid Id) : IRequest<Unit>;
+public sealed record DeleteWorkRecord(Guid Id) : IRequest<Unit>;
 
 public sealed class DeleteWorkRecordHandler(
     CurrentWorkRecordStateStore workRecordStore, WorkRecordService workRecordService)
-    : IRequestHandler<DeleteWorkRecordUseCase, Unit>
+    : IRequestHandler<DeleteWorkRecord, Unit>
 {
-    public async Task<Unit> Handle(DeleteWorkRecordUseCase request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteWorkRecord request, CancellationToken cancellationToken)
     {
         await workRecordService.DeleteAsync(request.Id);
         await workRecordStore.ReloadAsync();

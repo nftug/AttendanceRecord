@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using R3;
 
@@ -27,7 +26,7 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
 
     public ValueTask HandleAsync(CommandMessage message)
         => Enum.TryParse<TCommandType>(message.Command, true, out var action)
-            ? HandleActionAsync(action, message.Payload, message.CommandId)
+            ? HandleActionAsync(action, message)
             : ValueTask.CompletedTask;
 
     protected void Dispatch<TEventMessage>(TEventMessage message)
@@ -38,7 +37,7 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
         where TEventMessage : EventMessageBase
         => _dispatcher.Dispatch(message with { ViewId = _viewId.Value }, jsonTypeInfo);
 
-    protected abstract ValueTask HandleActionAsync(TCommandType action, JsonElement? payload, Guid? commandId);
+    protected abstract ValueTask HandleActionAsync(TCommandType action, CommandMessage message);
 
     public void SetViewId(Guid viewId)
     {

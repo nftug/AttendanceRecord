@@ -36,22 +36,23 @@ public class CommandDispatcher(
     {
         if (action == AppActionType.Init)
         {
-            var type = message.Payload?.ParsePayload(BridgeJsonContext.Default.InitCommandPayload)?.Type
-                ?? throw new InvalidOperationException("Type is required for Init action.");
+            message.Payload.TryParse(BridgeJsonContext.Default.InitCommandPayload, out var initPayload);
+            if (initPayload == null)
+                throw new InvalidOperationException("Init command payload is required.");
 
             if (_viewModelMap.ContainsKey(message.ViewId))
                 throw new InvalidOperationException($"ViewId {message.ViewId} is already registered.");
 
             var resolver = viewModelResolvers
-                .SingleOrDefault(r => r.Type.Equals(type, StringComparison.OrdinalIgnoreCase))
-                ?? throw new InvalidOperationException($"No resolver found for type: {type}");
+                .SingleOrDefault(r => r.Type.Equals(initPayload.Type, StringComparison.OrdinalIgnoreCase))
+                ?? throw new InvalidOperationException($"No resolver found for type: {initPayload.Type}");
 
             var viewModelOwned = resolver.Resolve();
 
             viewModelOwned.Value.SetViewId(message.ViewId);
             _viewModelMap[message.ViewId] = viewModelOwned;
 
-            logger.LogInformation("Registered a view for {Type}: ViewId {ViewId}", type, message.ViewId);
+            logger.LogInformation("Registered a view for {Type}: ViewId {ViewId}", initPayload.Type, message.ViewId);
         }
         else if (action == AppActionType.Leave)
         {

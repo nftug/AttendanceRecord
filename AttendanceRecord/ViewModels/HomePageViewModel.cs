@@ -1,4 +1,3 @@
-using System.Text.Json;
 using AttendanceRecord.Application.Services;
 using AttendanceRecord.Application.UseCases.WorkRecord;
 using AttendanceRecord.Constants;
@@ -10,10 +9,8 @@ using R3;
 namespace AttendanceRecord.ViewModels;
 
 public sealed class HomePageViewModel(
-    IEventDispatcher eventDispatcher,
-    CurrentWorkRecordStateStore workRecordStore,
-    ISender mediator
-) : ViewModelBase<HomePageCommandType>(eventDispatcher)
+    IEventDispatcher eventDispatcher, CurrentWorkRecordStateStore workRecordStore, ISender mediator)
+    : ViewModelBase<HomePageCommandType>(eventDispatcher)
 {
     protected override void OnFirstRender()
     {
@@ -22,11 +19,11 @@ public sealed class HomePageViewModel(
             .AddTo(Disposable);
     }
 
-    protected override ValueTask HandleActionAsync(HomePageCommandType action, JsonElement? payload, Guid? commandId)
+    protected override ValueTask HandleActionAsync(HomePageCommandType action, CommandMessage message)
         => action switch
         {
-            HomePageCommandType.ToggleWork => ToggleWorkAsync(commandId),
-            HomePageCommandType.ToggleRest => ToggleRestAsync(commandId),
+            HomePageCommandType.ToggleWork => ToggleWorkAsync(message.CommandId),
+            HomePageCommandType.ToggleRest => ToggleRestAsync(message.CommandId),
             _ => throw new NotImplementedException($"Action {action} is not implemented.")
         };
 

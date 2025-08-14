@@ -31,8 +31,8 @@ public class AppConfigModule;
 
 [Register(typeof(HomePageViewModel))]
 [Register(typeof(ViewModelResolver<HomePageViewModel>), typeof(IViewModelResolver))]
-[Register(typeof(WorkRecordListViewModel))]
-[Register(typeof(ViewModelResolver<WorkRecordListViewModel>), typeof(IViewModelResolver))]
+[Register(typeof(HistoryPageViewModel))]
+[Register(typeof(ViewModelResolver<HistoryPageViewModel>), typeof(IViewModelResolver))]
 public class ViewModelModule;
 #endregion
 
@@ -40,7 +40,7 @@ public class ViewModelModule;
 public interface IViewModelContainer :
     IViewModelContainerBase,
     IContainer<HomePageViewModel>,
-    IContainer<WorkRecordListViewModel>;
+    IContainer<HistoryPageViewModel>;
 #endregion
 
 #region Container

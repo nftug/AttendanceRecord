@@ -5,53 +5,43 @@ namespace BrowserBridge;
 
 public static class JsonElementExtensions
 {
-    public static T? ParsePayload<T>(this JsonElement element)
+    public static bool TryParse<T>(this JsonElement element, out T value)
     {
         if (element.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined)
-            return default;
+        {
+            value = default!;
+            return false;
+        }
 
-        return element.Deserialize<T>();
+        try
+        {
+            value = element.Deserialize<T>()!;
+            return value != null;
+        }
+        catch
+        {
+            value = default!;
+            return false;
+        }
     }
 
-    public static T? ParsePayload<T>(this JsonElement element, JsonTypeInfo<T> jsonTypeInfo)
+    public static bool TryParse<T>(this JsonElement element, JsonTypeInfo<T> jsonTypeInfo, out T value)
     {
         if (element.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined)
-            return default;
-
-        return element.Deserialize(jsonTypeInfo);
-    }
-
-    public static ValueTask HandlePayloadAsync<T>(
-        this JsonElement payload, Func<T, ValueTask> callback)
-    {
-        var parsed = payload.ParsePayload<T>();
-        return parsed != null ? callback(parsed) : ValueTask.CompletedTask;
-    }
-
-    public static ValueTask HandlePayloadSync<T>(
-        this JsonElement payload, Action<T> callback)
-    {
-        return payload.HandlePayloadAsync<T>((parsed) =>
         {
-            callback(parsed);
-            return ValueTask.CompletedTask;
-        });
-    }
+            value = default!;
+            return false;
+        }
 
-    public static ValueTask HandlePayloadAsync<T>(
-        this JsonElement payload, JsonTypeInfo<T> jsonTypeInfo, Func<T, ValueTask> callback)
-    {
-        var parsed = payload.ParsePayload(jsonTypeInfo);
-        return parsed != null ? callback(parsed) : ValueTask.CompletedTask;
-    }
-
-    public static ValueTask HandlePayloadSync<T>(
-        this JsonElement payload, JsonTypeInfo<T> jsonTypeInfo, Action<T> callback)
-    {
-        return payload.HandlePayloadAsync(jsonTypeInfo, (parsed) =>
+        try
         {
-            callback(parsed);
-            return ValueTask.CompletedTask;
-        });
+            value = element.Deserialize(jsonTypeInfo)!;
+            return value != null;
+        }
+        catch
+        {
+            value = default!;
+            return false;
+        }
     }
 }
