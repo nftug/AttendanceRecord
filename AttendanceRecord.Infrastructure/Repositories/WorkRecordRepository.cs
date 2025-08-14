@@ -7,79 +7,59 @@ using AttendanceRecord.Infrastructure.Services;
 
 namespace AttendanceRecord.Infrastructure.Repositories;
 
-public class WorkRecordRepository : IWorkRecordRepository, IDisposable
+public class WorkRecordRepository(AppDataDirectoryService appDataDirectory) : IWorkRecordRepository
 {
-    private readonly string _filePath;
-    private readonly List<WorkRecord> _workRecords;
-    private readonly FileStream _lockStream;
-    private readonly Lock _syncRoot = new();
+    private readonly string _filePath = appDataDirectory.GetFilePath("work_records.json");
 
-    public WorkRecordRepository(AppDataDirectoryService appDataDirectory)
-    {
-        _filePath = appDataDirectory.GetFilePath("work_records.json");
-        // プロセス生存期間中、ファイルを排他ロックで開きっぱなしにする
-        _lockStream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-        _workRecords = LoadFile(_lockStream);
-    }
+    public async ValueTask<WorkRecord?> FindByDateAsync(DateTime date)
+        => (await LoadAsync()).FirstOrDefault(x => x.Duration.StartedOn.Date == date.Date);
 
-    private static List<WorkRecord> LoadFile(FileStream stream)
-    {
-        if (stream.Length == 0) return [];
-        stream.Position = 0;
-        var dtos = JsonSerializer.Deserialize(stream, InfrastructureJsonContext.Default.WorkRecordFileDtoArray);
-        return dtos?.Select(x => x.ToDomain()).ToList() ?? [];
-    }
+    public async ValueTask<WorkRecord?> FindByIdAsync(Guid id)
+        => (await LoadAsync()).FirstOrDefault(x => x.Id == id);
 
-    public void Dispose() => _lockStream?.Dispose();
-
-    public ValueTask<WorkRecord?> FindByDateAsync(DateTime date)
-        => new(_workRecords.FirstOrDefault(x => x.Duration.StartedOn.Date == date.Date));
-
-    public ValueTask<WorkRecord?> FindByIdAsync(Guid id)
-        => new(_workRecords.FirstOrDefault(x => x.Id == id));
-
-    public ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(int year, int month)
+    public async ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(int year, int month)
     {
         var firstDay = new DateTime(year, month, 1);
         var nextMonth = firstDay.AddMonths(1);
-        var result = _workRecords
-            .Where(x => x.Duration.StartedOn >= firstDay && x.Duration.StartedOn < nextMonth)
-            .ToList();
-        return new(result);
+        return [.. (await LoadAsync())
+            .Where(x => x.Duration.StartedOn >= firstDay && x.Duration.StartedOn < nextMonth)];
     }
 
-    public ValueTask SaveAsync(WorkRecord workRecord)
+    public async ValueTask SaveAsync(WorkRecord workRecord)
     {
-        lock (_syncRoot)
+        var items = await LoadAsync();
+        items.RemoveAll(x => x.Id == workRecord.Id);
+        items.Add(workRecord);
+        await SaveAsync(items);
+    }
+
+    public async ValueTask DeleteAsync(Guid id)
+    {
+        var items = await LoadAsync();
+        items.RemoveAll(x => x.Id == id);
+        await SaveAsync(items);
+    }
+
+    private async ValueTask<List<WorkRecord>> LoadAsync()
+    {
+        try
         {
-            var idx = _workRecords.FindIndex(x => x.Id == workRecord.Id);
-            if (idx >= 0)
-                _workRecords[idx] = workRecord;
-            else
-                _workRecords.Add(workRecord);
-            SaveAll();
+            using var stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (stream.Length == 0) return [];
+            var content = await JsonSerializer.DeserializeAsync(stream, InfrastructureJsonContext.Default.WorkRecordFileDtoArray);
+            return content?.Select(x => x.ToDomain()).ToList() ?? [];
         }
-
-        return ValueTask.CompletedTask;
-    }
-
-    public ValueTask DeleteAsync(Guid id)
-    {
-        lock (_syncRoot)
+        catch (FileNotFoundException)
         {
-            _workRecords.RemoveAll(x => x.Id == id);
-            SaveAll();
+            return [];
         }
-
-        return ValueTask.CompletedTask;
     }
 
-    private void SaveAll()
+    private async ValueTask SaveAsync(IEnumerable<WorkRecord> workRecords)
     {
-        _lockStream.SetLength(0);
-        _lockStream.Position = 0;
-        var dtos = _workRecords.Select(WorkRecordFileDto.FromDomain).ToArray();
-        JsonSerializer.Serialize(_lockStream, dtos, InfrastructureJsonContext.Default.WorkRecordFileDtoArray);
-        _lockStream.Flush();
+        var dtoArray = workRecords.Select(WorkRecordFileDto.FromDomain).ToArray();
+        using var stream = new FileStream(_filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+        await JsonSerializer.SerializeAsync(stream, dtoArray, InfrastructureJsonContext.Default.WorkRecordFileDtoArray);
+        await stream.FlushAsync();
     }
 }

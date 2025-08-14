@@ -7,43 +7,30 @@ using AttendanceRecord.Infrastructure.Services;
 
 namespace AttendanceRecord.Infrastructure.Repositories;
 
-public class AppConfigRepository : IAppConfigRepository, IDisposable
+public class AppConfigRepository(AppDataDirectoryService appDataDirectory) : IAppConfigRepository
 {
-    private readonly string _filePath;
-    private AppConfig _appConfig;
-    private readonly FileStream _lockStream;
-    private readonly Lock _syncRoot = new();
+    private readonly string _filePath = appDataDirectory.GetFilePath("config.json");
 
-    public AppConfigRepository(AppDataDirectoryService appDataDirectory)
+    public async ValueTask<AppConfig> LoadAsync()
     {
-        _filePath = appDataDirectory.GetFilePath("config.json");
-        _lockStream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-        _appConfig = LoadFile(_lockStream);
-    }
-
-    private static AppConfig LoadFile(FileStream stream)
-    {
-        if (stream.Length == 0) return AppConfig.Default;
-        stream.Position = 0;
-        var dto = JsonSerializer.Deserialize(stream, InfrastructureJsonContext.Default.AppConfigFileDto);
-        return dto?.ToDomain() ?? AppConfig.Default;
-    }
-
-    public void Dispose() => _lockStream?.Dispose();
-
-    public ValueTask<AppConfig> LoadAsync() => new(_appConfig);
-
-    public ValueTask SaveAsync(AppConfig appConfig)
-    {
-        lock (_syncRoot)
+        try
         {
-            _appConfig = appConfig;
-            _lockStream.SetLength(0);
-            _lockStream.Position = 0;
-            var dto = AppConfigFileDto.FromDomain(appConfig);
-            JsonSerializer.Serialize(_lockStream, dto, InfrastructureJsonContext.Default.AppConfigFileDto);
-            _lockStream.Flush();
+            using var stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (stream.Length == 0) return AppConfig.Default;
+            var content = await JsonSerializer.DeserializeAsync(stream, InfrastructureJsonContext.Default.AppConfigFileDto);
+            return content?.ToDomain() ?? AppConfig.Default;
         }
-        return ValueTask.CompletedTask;
+        catch (FileNotFoundException)
+        {
+            return AppConfig.Default;
+        }
+    }
+
+    public async ValueTask SaveAsync(AppConfig appConfig)
+    {
+        using var stream = new FileStream(_filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+        var dto = AppConfigFileDto.FromDomain(appConfig);
+        await JsonSerializer.SerializeAsync(stream, dto, InfrastructureJsonContext.Default.AppConfigFileDto);
+        await stream.FlushAsync();
     }
 }
