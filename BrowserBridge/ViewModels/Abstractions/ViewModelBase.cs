@@ -30,10 +30,12 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
             ? HandleActionAsync(action, message.Payload, message.CommandId)
             : ValueTask.CompletedTask;
 
-    protected void Dispatch<T>(EventMessage<T> message)
+    protected void Dispatch<TEventMessage>(TEventMessage message)
+        where TEventMessage : EventMessageBase
         => _dispatcher.Dispatch(message with { ViewId = _viewId.Value });
 
-    protected void Dispatch<T>(EventMessage<T> message, JsonTypeInfo<EventMessage<T>> jsonTypeInfo)
+    protected void Dispatch<TEventMessage>(TEventMessage message, JsonTypeInfo<TEventMessage> jsonTypeInfo)
+        where TEventMessage : EventMessageBase
         => _dispatcher.Dispatch(message with { ViewId = _viewId.Value }, jsonTypeInfo);
 
     protected abstract ValueTask HandleActionAsync(TCommandType action, JsonElement? payload, Guid? commandId);

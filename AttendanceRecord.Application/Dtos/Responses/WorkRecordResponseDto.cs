@@ -30,8 +30,6 @@ public record WorkRecordResponseDto(
         );
 
     public static WorkRecordResponseDto Empty => FromDomain(Domain.Entities.WorkRecord.Empty);
-
-    public bool IsEmpty => Id == Guid.Empty;
 }
 
 public record RestRecordResponseDto(

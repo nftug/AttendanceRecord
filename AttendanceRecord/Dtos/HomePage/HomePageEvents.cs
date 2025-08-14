@@ -3,17 +3,20 @@ using BrowserBridge;
 
 namespace AttendanceRecord.Dtos.HomePage;
 
-public record HomePageStateEvent(CurrentWorkRecordStateDto State)
-    : EventMessage<CurrentWorkRecordStateDto>("state", State);
-
-public record ToggleWorkResultEvent : EventMessage<CurrentWorkRecordStateDto>
+public record HomePageStateEvent(CurrentWorkRecordStateDto Payload)
+    : EventMessage<CurrentWorkRecordStateDto>(Payload)
 {
-    public ToggleWorkResultEvent(Guid commandId, CurrentWorkRecordStateDto result)
-        : base(result, commandId, "toggleWork") { }
+    public override string Event => "State";
 }
 
-public record ToggleRestResultEvent : EventMessage<CurrentWorkRecordStateDto>
+public record ToggleWorkResultEvent(CurrentWorkRecordStateDto Payload, Guid CommandId)
+    : CommandResultEventMessage<CurrentWorkRecordStateDto>(Payload, CommandId)
 {
-    public ToggleRestResultEvent(Guid commandId, CurrentWorkRecordStateDto result)
-        : base(result, commandId, "toggleRest") { }
+    public override string CommandName => nameof(HomePageCommandType.ToggleWork);
+}
+
+public record ToggleRestResultEvent(CurrentWorkRecordStateDto Payload, Guid CommandId)
+    : CommandResultEventMessage<CurrentWorkRecordStateDto>(Payload, CommandId)
+{
+    public override string CommandName => nameof(HomePageCommandType.ToggleRest);
 }

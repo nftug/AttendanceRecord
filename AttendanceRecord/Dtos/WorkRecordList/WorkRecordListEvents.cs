@@ -3,8 +3,8 @@ using BrowserBridge;
 
 namespace AttendanceRecord.Dtos.WorkRecordList;
 
-public record GetWorkRecordListResultEvent : EventMessage<WorkRecordTallyResponseDto>
+public record GetWorkRecordListResultEvent(WorkRecordTallyResponseDto Payload, Guid CommandId)
+    : CommandResultEventMessage<WorkRecordTallyResponseDto>(Payload, CommandId)
 {
-    public GetWorkRecordListResultEvent(Guid commandId, WorkRecordTallyResponseDto result)
-        : base(result, commandId, "getWorkRecordList") { }
+    public override string CommandName => nameof(WorkRecordListCommandType.GetWorkRecordList);
 }

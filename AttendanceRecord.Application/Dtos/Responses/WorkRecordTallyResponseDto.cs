@@ -16,6 +16,4 @@ public record WorkRecordTallyResponseDto(
         );
 
     public static WorkRecordTallyResponseDto Empty => FromDomain(new([]));
-
-    public bool IsEmpty => WorkRecords.Length == 0;
 }

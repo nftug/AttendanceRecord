@@ -4,10 +4,9 @@ namespace BrowserBridge;
 
 public interface IEventDispatcher
 {
-    void Dispatch<TPayload>(
-        EventMessage<TPayload> message,
-        JsonTypeInfo<EventMessage<TPayload>> jsonTypeInfo
-    );
+    void Dispatch<TEventMessage>(TEventMessage message, JsonTypeInfo<TEventMessage> jsonTypeInfo)
+        where TEventMessage : EventMessageBase;
 
-    void Dispatch<TPayload>(EventMessage<TPayload> message);
+    void Dispatch<TEventMessage>(TEventMessage message)
+        where TEventMessage : EventMessageBase;
 }

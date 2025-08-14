@@ -20,12 +20,12 @@ public sealed class WorkRecordListViewModel(IEventDispatcher eventDispatcher, IS
                 payload.Value.HandlePayloadAsync(
                     AppJsonContext.Default.WorkRecordTallyGetRequestDto,
                     request => HandleGetWorkRecordListAsync(request, commandId.Value)),
-            _ => throw new NotImplementedException()
+            _ => throw new NotImplementedException($"Action {action} is not implemented or payload is missing.")
         };
 
     private async ValueTask HandleGetWorkRecordListAsync(WorkRecordTallyGetRequestDto request, Guid commandId)
     {
         var result = await mediator.Send(new GetWorkRecordTally(request));
-        Dispatch(new GetWorkRecordListResultEvent(commandId, result), AppJsonContext.Default.EventMessageWorkRecordTallyResponseDto);
+        Dispatch(new(result, commandId), AppJsonContext.Default.GetWorkRecordListResultEvent);
     }
 }

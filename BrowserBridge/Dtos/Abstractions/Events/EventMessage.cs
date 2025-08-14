@@ -1,17 +1,24 @@
 namespace BrowserBridge;
 
-public record EventMessage<TPayload>(string Event, TPayload? Payload)
+public abstract record EventMessageBase
 {
     public Guid ViewId { get; init; }
-    public Guid? CommandId { get; init; }
-    public string? CommandName { get; init; }
-
-    public EventMessage(TPayload? payload, Guid commandId, string commandName)
-        : this($"receive:{commandName}", payload)
-    {
-        CommandId = commandId;
-        CommandName = commandName;
-    }
+    public abstract string Event { get; }
 }
 
-public record DummyEventPayload;
+public abstract record EventMessage<TPayload>(TPayload? Payload) : EventMessageBase;
+
+public abstract record CommandResultEventMessage<TPayload>(TPayload? Payload, Guid CommandId)
+    : EventMessage<TPayload>(Payload)
+{
+    public abstract string CommandName { get; }
+    public override string Event => $"Receive:{CommandName}";
+}
+
+public abstract record DummyEventMessage : EventMessageBase;
+
+public abstract record CommandResultDummyEventMessage(Guid CommandId) : EventMessageBase
+{
+    public abstract string CommandName { get; }
+    public override string Event => $"Receive:{CommandName}";
+}

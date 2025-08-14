@@ -10,8 +10,9 @@ public sealed class WindowViewModel(IEventDispatcher eventDispatcher, IDialogSer
     protected override ValueTask HandleActionAsync(WindowCommandType action, JsonElement? payload, Guid? commandId)
         => (action, payload) switch
         {
-            (WindowCommandType.MessageBox, { } p) =>
-                p.HandlePayloadSync(BridgeJsonContext.Default.MessageBoxCommandPayload, p => ShowMessageBox(p, commandId)),
+            (WindowCommandType.MessageBox, { }) =>
+                payload.Value.HandlePayloadSync(
+                    BridgeJsonContext.Default.MessageBoxCommandPayload, v => ShowMessageBox(v, commandId)),
             _ => ValueTask.CompletedTask
         };
 
@@ -21,9 +22,6 @@ public sealed class WindowViewModel(IEventDispatcher eventDispatcher, IDialogSer
         var dialogResult = dialogService.ShowMessageBox(command.Message, title, command.Buttons, command.Icon);
 
         if (commandId != null)
-        {
-            var eventPayload = new MessageBoxResultEvent(dialogResult, commandId.Value);
-            Dispatch(eventPayload, BridgeJsonContext.Default.EventMessageMessageBoxResultType);
-        }
+            Dispatch(new(dialogResult, commandId.Value), BridgeJsonContext.Default.MessageBoxResultEvent);
     }
 }

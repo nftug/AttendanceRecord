@@ -3,14 +3,13 @@ using System.Text.Json.Serialization;
 namespace BrowserBridge;
 
 #region Message
-[JsonSerializable(typeof(EventMessage<DummyEventPayload>))]
-[JsonSerializable(typeof(EventMessage<ViewModelErrorEvent.ViewModelError>))]
+[JsonSerializable(typeof(ViewModelErrorEvent))]
 [JsonSerializable(typeof(CommandMessage))]
 [JsonSerializable(typeof(InitCommandPayload))]
 #endregion
 
 #region
-[JsonSerializable(typeof(EventMessage<MessageBoxResultType>))]
+[JsonSerializable(typeof(MessageBoxResultEvent))]
 [JsonSerializable(typeof(MessageBoxCommandPayload))]
 #endregion
 

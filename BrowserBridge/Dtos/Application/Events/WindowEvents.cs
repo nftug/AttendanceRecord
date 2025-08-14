@@ -1,7 +1,7 @@
 namespace BrowserBridge;
 
-public record MessageBoxResultEvent : EventMessage<MessageBoxResultType>
+public record MessageBoxResultEvent(MessageBoxResultType Payload, Guid CommandId)
+    : CommandResultEventMessage<MessageBoxResultType>(Payload, CommandId)
 {
-    public MessageBoxResultEvent(MessageBoxResultType payload, Guid commandId)
-        : base(payload, commandId, "messageBox") { }
+    public override string CommandName => nameof(WindowCommandType.MessageBox);
 }

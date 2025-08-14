@@ -18,8 +18,7 @@ public sealed class HomePageViewModel(
     protected override void OnFirstRender()
     {
         workRecordStore.CurrentWorkRecordState
-            .Select(state => new HomePageStateEvent(state))
-            .Subscribe(stateEvent => Dispatch(stateEvent, AppJsonContext.Default.EventMessageCurrentWorkRecordStateDto))
+            .Subscribe(state => Dispatch(new(state), AppJsonContext.Default.HomePageStateEvent))
             .AddTo(Disposable);
     }
 
@@ -28,20 +27,20 @@ public sealed class HomePageViewModel(
         {
             HomePageCommandType.ToggleWork => ToggleWorkAsync(commandId),
             HomePageCommandType.ToggleRest => ToggleRestAsync(commandId),
-            _ => throw new NotSupportedException($"Action '{action}' is not supported.")
+            _ => throw new NotImplementedException($"Action {action} is not implemented.")
         };
 
     private async ValueTask ToggleWorkAsync(Guid? commandId)
     {
         var result = await mediator.Send(new ToggleWork());
         if (commandId != null)
-            Dispatch(new ToggleWorkResultEvent(commandId.Value, result), AppJsonContext.Default.EventMessageCurrentWorkRecordStateDto);
+            Dispatch(new(result, commandId.Value), AppJsonContext.Default.ToggleWorkResultEvent);
     }
 
     private async ValueTask ToggleRestAsync(Guid? commandId)
     {
         var result = await mediator.Send(new ToggleRest());
         if (commandId != null)
-            Dispatch(new ToggleRestResultEvent(commandId.Value, result), AppJsonContext.Default.EventMessageCurrentWorkRecordStateDto);
+            Dispatch(new(result, commandId.Value), AppJsonContext.Default.ToggleRestResultEvent);
     }
 }

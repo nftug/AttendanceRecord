@@ -21,7 +21,7 @@ public class ErrorHandler(
             {
                 ViewId = vmException.ViewId
             };
-            eventDispatcher.Dispatch(errorEvent, BridgeJsonContext.Default.EventMessageViewModelError);
+            eventDispatcher.Dispatch(errorEvent, BridgeJsonContext.Default.ViewModelErrorEvent);
         }
 
         dialogService.ShowMessageBox(exception.Message, EnvironmentConstants.AppName, icon: IconType.Error);
