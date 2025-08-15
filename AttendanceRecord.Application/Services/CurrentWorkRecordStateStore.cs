@@ -54,10 +54,12 @@ public class CurrentWorkRecordStateStore : IDisposable
                 ?? WorkRecord.Empty
             : _workRecordToday.Value.Recreate();
 
-        _workRecordTallyThisMonth.Value =
-           forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != DateTime.Today.Month
-               ? new(await _repository.FindByMonthAsync(DateTime.Today.Year, DateTime.Today.Month))
-               : _workRecordTallyThisMonth.Value.Recreate(_workRecordToday.Value);
+        // 月次の集計はWorkRecordの状態が変わるか、月が変わるまで更新しない
+        if (forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != DateTime.Today.Month)
+        {
+            var monthRecords = await _repository.FindByMonthAsync(DateTime.Today.Year, DateTime.Today.Month);
+            _workRecordTallyThisMonth.Value = new(monthRecords);
+        }
     }
 
     public async Task ReloadAsync() => await LoadAsync(forceReload: true);
