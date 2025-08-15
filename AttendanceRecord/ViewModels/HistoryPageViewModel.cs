@@ -10,8 +10,6 @@ namespace AttendanceRecord.ViewModels;
 public sealed class HistoryPageViewModel(IEventDispatcher eventDispatcher, ISender mediator)
     : ViewModelBase<HistoryPageCommandType>(eventDispatcher)
 {
-    protected override void OnFirstRender() { }
-
     protected override ValueTask HandleActionAsync(HistoryPageCommandType action, CommandMessage message)
         => (action, message.Payload, message.CommandId) switch
         {

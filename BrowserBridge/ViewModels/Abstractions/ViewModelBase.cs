@@ -22,7 +22,7 @@ public abstract class ViewModelBase<TCommandType> : DisposableBase, IViewModel
             .AddTo(Disposable);
     }
 
-    protected abstract void OnFirstRender();
+    protected virtual void OnFirstRender() { }
 
     public ValueTask HandleAsync(CommandMessage message)
         => Enum.TryParse<TCommandType>(message.Command, true, out var action)
