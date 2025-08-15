@@ -2,7 +2,8 @@ namespace BrowserBridge;
 
 public enum WindowCommandType
 {
-    MessageBox
+    MessageBox,
+    SetMinimized
 }
 
 public record MessageBoxCommandPayload(

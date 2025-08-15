@@ -2,7 +2,7 @@ using Photino.NET;
 
 namespace BrowserBridge.Photino;
 
-public class PhotinoDialogService(PhotinoWindowInstance windowInstance) : IDialogService
+public class PhotinoWindowService(PhotinoWindowInstance windowInstance) : IWindowService
 {
     public MessageBoxResultType ShowMessageBox(string message, string title, ButtonsType buttons, IconType icon)
     {
@@ -37,5 +37,13 @@ public class PhotinoDialogService(PhotinoWindowInstance windowInstance) : IDialo
             PhotinoDialogResult.No => MessageBoxResultType.No,
             _ => MessageBoxResultType.Ok
         };
+    }
+
+    public void SetMinimized(bool minimized)
+    {
+        if (windowInstance.Value is not { } window)
+            throw new InvalidOperationException("Window instance is not ready");
+
+        window.SetMinimized(minimized);
     }
 }

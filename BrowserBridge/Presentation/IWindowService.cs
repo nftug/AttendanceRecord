@@ -1,6 +1,6 @@
 namespace BrowserBridge;
 
-public interface IDialogService
+public interface IWindowService
 {
     MessageBoxResultType ShowMessageBox(
         string message,
@@ -8,4 +8,6 @@ public interface IDialogService
         ButtonsType buttons = ButtonsType.Ok,
         IconType icon = IconType.Info
     );
+
+    void SetMinimized(bool minimized);
 }

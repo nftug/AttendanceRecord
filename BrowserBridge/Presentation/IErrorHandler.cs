@@ -8,7 +8,7 @@ public interface IErrorHandler
 }
 
 public class ErrorHandler(
-    IDialogService dialogService, IEventDispatcher eventDispatcher, ILogger<ErrorHandler> logger)
+    IWindowService dialogService, IEventDispatcher eventDispatcher, ILogger<ErrorHandler> logger)
     : IErrorHandler
 {
     public void HandleError(Exception exception)

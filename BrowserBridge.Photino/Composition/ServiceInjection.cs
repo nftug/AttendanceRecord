@@ -6,7 +6,7 @@ namespace BrowserBridge.Photino;
 #region StrongInject Modules
 [RegisterModule(typeof(BridgeContainerModule))]
 [Register(typeof(PhotinoWindowInstance), Scope.SingleInstance)]
-[Register(typeof(PhotinoDialogService), Scope.SingleInstance, typeof(IDialogService))]
+[Register(typeof(PhotinoWindowService), Scope.SingleInstance, typeof(IWindowService))]
 [Register(typeof(EventDispatcher), Scope.SingleInstance, typeof(IEventDispatcher))]
 public class PhotinoContainerModule;
 #endregion
@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddBrowserBridge();
         services.AddSingleton<PhotinoWindowInstance>();
-        services.AddSingleton<IDialogService, PhotinoDialogService>();
+        services.AddSingleton<IWindowService, PhotinoWindowService>();
         services.AddSingleton<IEventDispatcher, EventDispatcher>();
         return services;
     }
