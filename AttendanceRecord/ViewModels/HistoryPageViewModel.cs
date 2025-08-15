@@ -1,5 +1,5 @@
 using AttendanceRecord.Application.Dtos.Requests;
-using AttendanceRecord.Application.UseCases.WorkRecord;
+using AttendanceRecord.Application.UseCases.WorkRecords;
 using AttendanceRecord.Constants;
 using AttendanceRecord.Dtos.HistoryPage;
 using BrowserBridge;

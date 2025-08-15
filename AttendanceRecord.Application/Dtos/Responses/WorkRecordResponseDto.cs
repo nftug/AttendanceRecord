@@ -1,3 +1,5 @@
+using AttendanceRecord.Domain.Config;
+using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.ValueObjects;
 
 namespace AttendanceRecord.Application.Dtos.Responses;
@@ -15,7 +17,7 @@ public record WorkRecordResponseDto(
     bool IsResting
 )
 {
-    public static WorkRecordResponseDto FromDomain(Domain.Entities.WorkRecord workRecord)
+    public static WorkRecordResponseDto FromDomain(WorkRecord workRecord, AppConfig appConfig)
         => new(
             workRecord.Id,
             workRecord.RecordedDate,
@@ -23,13 +25,13 @@ public record WorkRecordResponseDto(
             [.. workRecord.RestRecords.Select(RestRecordResponseDto.FromDomain)],
             workRecord.TotalWorkTime,
             workRecord.TotalRestTime,
-            workRecord.Overtime,
+            workRecord.GetOvertime(appConfig),
             workRecord.IsTodaysOngoing,
             workRecord.IsWorking,
             workRecord.IsResting
         );
 
-    public static WorkRecordResponseDto Empty => FromDomain(Domain.Entities.WorkRecord.Empty);
+    public static WorkRecordResponseDto Empty => FromDomain(WorkRecord.Empty, AppConfig.Default);
 }
 
 public record RestRecordResponseDto(

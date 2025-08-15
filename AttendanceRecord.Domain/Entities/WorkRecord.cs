@@ -1,3 +1,4 @@
+using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Exceptions;
 using AttendanceRecord.Domain.Extensions;
 using AttendanceRecord.Domain.ValueObjects;
@@ -11,29 +12,21 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
     public IReadOnlyList<RestRecord> RestRecords => [.. _restRecords];
 
     private readonly List<RestRecord> _restRecords = [.. restRecords.OrderBy(x => x.Duration.StartedOn)];
-    private int _standardWorkMinutes;
 
     public DateTime RecordedDate => Duration.RecordedDate;
     public TimeSpan TotalWorkTime => Duration.TotalTime - TotalRestTime;
     public TimeSpan TotalRestTime => new(RestRecords.Sum(x => x.TotalTime.Ticks));
-    public TimeSpan Overtime =>
-        TotalWorkTime - new TimeSpan(_standardWorkMinutes / 60, _standardWorkMinutes % 60, 0);
+    public TimeSpan GetOvertime(AppConfig appConfig) =>
+        TotalWorkTime - TimeSpan.FromMinutes(appConfig.StandardWorkMinutes);
 
     public bool IsTodays => RecordedDate == DateTime.Today;
     public bool IsTodaysOngoing => Duration.IsActive && IsTodays;
     public bool IsResting => IsTodaysOngoing && RestRecords.LastOrDefault()?.IsActive == true;
     public bool IsWorking => IsTodaysOngoing && !IsResting;
 
-    internal WorkRecord SetStandardWorkMinutes(int standardWorkMinutes)
-    {
-        if (standardWorkMinutes <= 0)
-            throw new DomainException("標準勤務時間は正の整数でなければなりません。");
-        _standardWorkMinutes = standardWorkMinutes;
-
-        return this;
-    }
-
     public static WorkRecord Empty => new(Guid.Empty, TimeDuration.Empty, []);
+
+    public WorkRecord Recreate() => new(Id, Duration, RestRecords);
 
     public WorkRecord Update(TimeDuration duration, IEnumerable<RestRecord> restRecords)
     {
@@ -44,7 +37,10 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
         return this;
     }
 
-    internal static WorkRecord Start(Guid id) => new(id, TimeDuration.GetStart(), []);
+    public static WorkRecord Start() => new(Guid.NewGuid(), TimeDuration.GetStart(), []);
+
+    public static WorkRecord Create(TimeDuration duration, IEnumerable<RestRecord> restRecords) =>
+        new(Guid.NewGuid(), duration, restRecords);
 
     internal WorkRecord ToggleRest()
     {
@@ -77,6 +73,17 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
 
         return this;
     }
+
+    public bool ShouldTriggerEndWorkAlarm(AppConfig appConfig) =>
+        appConfig.WorkEndAlarm.IsEnabled
+            && IsTodaysOngoing
+            && GetOvertime(appConfig) >= appConfig.WorkEndAlarm.RemainingTime;
+
+    public bool ShouldTriggerRestStartAlarm(AppConfig appConfig) =>
+        appConfig.RestStartAlarm.IsEnabled
+            && IsTodaysOngoing
+            && TotalRestTime == TimeSpan.Zero
+            && TotalWorkTime >= appConfig.RestStartAlarm.ElapsedTime;
 
     private void StartRest() => _restRecords.Add(RestRecord.Start());
 

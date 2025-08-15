@@ -1,4 +1,4 @@
-using AttendanceRecord.Application.UseCases.WorkRecord;
+using AttendanceRecord.Application.UseCases.WorkRecords;
 using Mediator.Switch;
 using StrongInject;
 

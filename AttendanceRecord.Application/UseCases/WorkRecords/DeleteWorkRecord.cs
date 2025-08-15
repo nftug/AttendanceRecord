@@ -2,7 +2,7 @@ using AttendanceRecord.Application.Services;
 using AttendanceRecord.Domain.Services;
 using Mediator.Switch;
 
-namespace AttendanceRecord.Application.UseCases.WorkRecord;
+namespace AttendanceRecord.Application.UseCases.WorkRecords;
 
 public sealed record DeleteWorkRecord(Guid Id) : IRequest<Unit>;
 

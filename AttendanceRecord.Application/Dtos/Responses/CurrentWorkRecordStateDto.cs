@@ -1,3 +1,4 @@
+using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Extensions;
 using AttendanceRecord.Domain.ValueObjects;
@@ -15,17 +16,19 @@ public record CurrentWorkRecordStateDto(
     bool IsResting
 )
 {
-    public static CurrentWorkRecordStateDto FromDomain(WorkRecord workRecord, WorkRecordTally monthlyTally)
-        => new(
+    public static CurrentWorkRecordStateDto FromDomain(
+        WorkRecord workRecord, WorkRecordTally monthlyTally, AppConfig appConfig) =>
+            new(
                 CurrentDateTime: DateTime.Now.TruncateMs(),
                 WorkTime: workRecord.TotalWorkTime,
                 RestTime: workRecord.TotalRestTime,
-                Overtime: workRecord.Overtime,
-                OvertimeMonthly: monthlyTally.OvertimeTotal,
+                Overtime: workRecord.GetOvertime(appConfig),
+                OvertimeMonthly: monthlyTally.GetOvertimeTotal(appConfig),
                 IsActive: workRecord.IsTodaysOngoing,
                 IsWorking: workRecord.IsWorking,
                 IsResting: workRecord.IsResting
             );
 
-    public static CurrentWorkRecordStateDto Empty => FromDomain(WorkRecord.Empty, WorkRecordTally.Empty);
+    public static CurrentWorkRecordStateDto Empty =>
+        FromDomain(WorkRecord.Empty, WorkRecordTally.Empty, AppConfig.Default);
 }

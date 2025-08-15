@@ -1,3 +1,6 @@
+using AttendanceRecord.Domain.Config;
+using AttendanceRecord.Domain.ValueObjects;
+
 namespace AttendanceRecord.Application.Dtos.Responses;
 
 public record WorkRecordTallyResponseDto(
@@ -7,13 +10,13 @@ public record WorkRecordTallyResponseDto(
     TimeSpan OvertimeTotal
 )
 {
-    public static WorkRecordTallyResponseDto FromDomain(Domain.ValueObjects.WorkRecordTally tally)
+    public static WorkRecordTallyResponseDto FromDomain(WorkRecordTally tally, AppConfig appConfig)
         => new(
             [.. tally.WorkRecords.Select(WorkRecordItemResponseDto.FromDomain)],
             tally.WorkTimeTotal,
             tally.RestTimeTotal,
-            tally.OvertimeTotal
+            tally.GetOvertimeTotal(appConfig)
         );
 
-    public static WorkRecordTallyResponseDto Empty => FromDomain(new([]));
+    public static WorkRecordTallyResponseDto Empty => FromDomain(new([]), AppConfig.Default);
 }

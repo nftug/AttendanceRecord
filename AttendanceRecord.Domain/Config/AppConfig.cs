@@ -3,12 +3,12 @@ namespace AttendanceRecord.Domain.Config;
 public record AppConfig(
     int StandardWorkMinutes,
     bool ResidentNotificationEnabled,
-    AppConfig.WorkTimeAlarmConfig WorkTimeAlarm,
-    AppConfig.RestTimeAlarmConfig RestTimeAlarm,
+    AppConfig.WorkEndAlarmConfig WorkEndAlarm,
+    AppConfig.RestStartAlarmConfig RestStartAlarm,
     AppConfig.StatusFormatConfig StatusFormat
 )
 {
-    public record WorkTimeAlarmConfig(
+    public record WorkEndAlarmConfig(
         bool IsEnabled,
         int RemainingMinutes,
         int SnoozeMinutes
@@ -16,17 +16,9 @@ public record AppConfig(
     {
         public TimeSpan RemainingTime => TimeSpan.FromMinutes(RemainingMinutes);
         public TimeSpan SnoozeTime => TimeSpan.FromMinutes(SnoozeMinutes);
-
-        /// <summary>
-        /// 退勤前アラームを鳴らすべきか判定
-        /// </summary>
-        public bool ShouldTrigger(Entities.WorkRecord workRecord)
-            => IsEnabled
-                && workRecord.IsTodaysOngoing
-                && workRecord.Overtime >= -RemainingTime;
     }
 
-    public record RestTimeAlarmConfig(
+    public record RestStartAlarmConfig(
         bool IsEnabled,
         int ElapsedMinutes,
         int SnoozeMinutes
@@ -34,15 +26,6 @@ public record AppConfig(
     {
         public TimeSpan ElapsedTime => TimeSpan.FromMinutes(ElapsedMinutes);
         public TimeSpan SnoozeTime => TimeSpan.FromMinutes(SnoozeMinutes);
-
-        /// <summary>
-        /// 休憩前アラームを鳴らすべきか判定
-        /// </summary>
-        public bool ShouldTrigger(Entities.WorkRecord workRecord)
-            => IsEnabled
-                && workRecord.IsTodaysOngoing
-                && workRecord.TotalRestTime == TimeSpan.Zero
-                && workRecord.TotalWorkTime >= ElapsedTime;
     }
 
     public record StatusFormatConfig(string StatusFormat, string TimeSpanFormat);
@@ -50,12 +33,12 @@ public record AppConfig(
     public static readonly AppConfig Default = new(
         StandardWorkMinutes: 480,
         ResidentNotificationEnabled: true,
-        WorkTimeAlarm: new(
+        WorkEndAlarm: new(
             IsEnabled: true,
             RemainingMinutes: 15,
             SnoozeMinutes: 5
         ),
-        RestTimeAlarm: new(
+        RestStartAlarm: new(
             IsEnabled: true,
             ElapsedMinutes: 240,
             SnoozeMinutes: 5

@@ -1,3 +1,4 @@
+using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Entities;
 
 namespace AttendanceRecord.Domain.ValueObjects;
@@ -9,7 +10,8 @@ public class WorkRecordTally(IEnumerable<WorkRecord> workRecords)
 
     public TimeSpan WorkTimeTotal => new(workRecords.Sum(wr => wr.TotalWorkTime.Ticks));
     public TimeSpan RestTimeTotal => new(workRecords.Sum(wr => wr.TotalRestTime.Ticks));
-    public TimeSpan OvertimeTotal => new(workRecords.Sum(wr => wr.Overtime.Ticks));
+    public TimeSpan GetOvertimeTotal(AppConfig appConfig) =>
+        new(_workRecords.Sum(wr => wr.GetOvertime(appConfig).Ticks));
 
     public (Guid Id, DateTime Date)[] WorkRecords => [.. workRecords.Select(wr => (wr.Id, wr.RecordedDate))];
 

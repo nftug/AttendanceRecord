@@ -4,13 +4,13 @@ using AttendanceRecord.Domain.Interfaces;
 
 namespace AttendanceRecord.Domain.Services;
 
-public class WorkRecordService(WorkRecordFactory workRecordFactory, IWorkRecordRepository workRecordRepository)
+public class WorkRecordService(IWorkRecordRepository workRecordRepository)
 {
     public async Task<WorkRecord> ToggleWorkAsync()
     {
-        var workToday = await workRecordFactory.FindByDateAsync(DateTime.Today);
+        var workToday = await workRecordRepository.FindByDateAsync(DateTime.Today);
 
-        workToday = workToday?.ToggleWork() ?? workRecordFactory.CreateAndStart();
+        workToday = workToday?.ToggleWork() ?? WorkRecord.Start();
         await workRecordRepository.SaveAsync(workToday);
 
         return workToday;
@@ -18,7 +18,7 @@ public class WorkRecordService(WorkRecordFactory workRecordFactory, IWorkRecordR
 
     public async Task<WorkRecord> ToggleRestAsync()
     {
-        var workToday = await workRecordFactory.FindByDateAsync(DateTime.Today)
+        var workToday = await workRecordRepository.FindByDateAsync(DateTime.Today)
             ?? throw new DomainException("本日の勤務記録が存在しません。");
 
         workToday = workToday.ToggleRest();
@@ -29,7 +29,7 @@ public class WorkRecordService(WorkRecordFactory workRecordFactory, IWorkRecordR
 
     public async Task<WorkRecord> SaveAsync(WorkRecord workRecord)
     {
-        var existingRecord = await workRecordFactory.FindByDateAsync(workRecord.RecordedDate);
+        var existingRecord = await workRecordRepository.FindByDateAsync(workRecord.RecordedDate);
         if (existingRecord != null && existingRecord.Id != workRecord.Id)
             throw new DomainException("同じ日に複数の勤務記録を保存することはできません。");
 

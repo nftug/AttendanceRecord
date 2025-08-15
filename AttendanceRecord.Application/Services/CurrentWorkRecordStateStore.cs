@@ -1,5 +1,6 @@
 using AttendanceRecord.Application.Dtos.Responses;
 using AttendanceRecord.Domain.Entities;
+using AttendanceRecord.Domain.Interfaces;
 using AttendanceRecord.Domain.Services;
 using AttendanceRecord.Domain.ValueObjects;
 using R3;
@@ -9,7 +10,7 @@ namespace AttendanceRecord.Application.Services;
 public class CurrentWorkRecordStateStore : IDisposable
 {
     private readonly IntervalService _interval;
-    private readonly WorkRecordFactory _workRecordFactory;
+    private readonly IWorkRecordRepository _repository;
     private readonly CompositeDisposable _disposables = [];
 
     private readonly ReactiveProperty<WorkRecord> _workRecordToday = new(WorkRecord.Empty);
@@ -18,16 +19,18 @@ public class CurrentWorkRecordStateStore : IDisposable
     public ReadOnlyReactiveProperty<CurrentWorkRecordStateDto> CurrentWorkRecordState { get; }
     internal ReadOnlyReactiveProperty<WorkRecord> WorkRecordToday => _workRecordToday;
 
-    public CurrentWorkRecordStateStore(IntervalService interval, WorkRecordFactory workRecordFactory)
+    public CurrentWorkRecordStateStore(
+        IntervalService interval, IWorkRecordRepository repository, AppConfigStore appConfigStore)
     {
         _interval = interval;
-        _workRecordFactory = workRecordFactory;
+        _repository = repository;
 
         _workRecordToday.AddTo(_disposables);
         _workRecordTallyThisMonth.AddTo(_disposables);
 
         CurrentWorkRecordState = _workRecordToday
-            .CombineLatest(_workRecordTallyThisMonth, CurrentWorkRecordStateDto.FromDomain)
+            .CombineLatest(_workRecordTallyThisMonth,
+                (wr, t) => CurrentWorkRecordStateDto.FromDomain(wr, t, appConfigStore.Config))
             .ToReadOnlyReactiveProperty(CurrentWorkRecordStateDto.Empty)
             .AddTo(_disposables);
 
@@ -47,13 +50,13 @@ public class CurrentWorkRecordStateStore : IDisposable
     {
         _workRecordToday.Value =
             forceReload || _workRecordToday.Value.RecordedDate != DateTime.Today
-                ? await _workRecordFactory.FindByDateAsync(DateTime.Today)
+                ? await _repository.FindByDateAsync(DateTime.Today)
                 ?? WorkRecord.Empty
-            : _workRecordToday.Value;
+            : _workRecordToday.Value.Recreate();
 
         _workRecordTallyThisMonth.Value =
            forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != DateTime.Today.Month
-               ? await _workRecordFactory.GetMonthlyTallyAsync(DateTime.Today.Year, DateTime.Today.Month)
+               ? new(await _repository.FindByMonthAsync(DateTime.Today.Year, DateTime.Today.Month))
                : _workRecordTallyThisMonth.Value.Recreate(_workRecordToday.Value);
     }
 

@@ -15,14 +15,14 @@ public record AppConfigFileDto(
             config.StandardWorkMinutes,
             config.ResidentNotificationEnabled,
             new(
-                config.WorkTimeAlarm.IsEnabled,
-                config.WorkTimeAlarm.RemainingMinutes,
-                config.WorkTimeAlarm.SnoozeMinutes
+                config.WorkEndAlarm.IsEnabled,
+                config.WorkEndAlarm.RemainingMinutes,
+                config.WorkEndAlarm.SnoozeMinutes
             ),
             new(
-                config.RestTimeAlarm.IsEnabled,
-                config.RestTimeAlarm.ElapsedMinutes,
-                config.RestTimeAlarm.SnoozeMinutes
+                config.RestStartAlarm.IsEnabled,
+                config.RestStartAlarm.ElapsedMinutes,
+                config.RestStartAlarm.SnoozeMinutes
             ),
             new(
                 config.StatusFormat.StatusFormat,

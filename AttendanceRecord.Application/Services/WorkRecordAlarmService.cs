@@ -23,7 +23,7 @@ public class WorkRecordAlarmService : IDisposable
 
         // 退勤前アラーム
         _currentWorkRecordStateStore.WorkRecordToday
-            .Select(_appConfigStore.Config.WorkTimeAlarm.ShouldTrigger)
+            .Select(wr => wr.ShouldTriggerEndWorkAlarm(_appConfigStore.Config))
             .DistinctUntilChanged()
             .Where(triggered => triggered)
             .Subscribe(_ => _alarmCommand.Execute(AlarmType.WorkTimeAlarm))
@@ -31,7 +31,7 @@ public class WorkRecordAlarmService : IDisposable
 
         // 休憩前アラーム
         _currentWorkRecordStateStore.WorkRecordToday
-            .Select(_appConfigStore.Config.RestTimeAlarm.ShouldTrigger)
+            .Select(wr => wr.ShouldTriggerRestStartAlarm(_appConfigStore.Config))
             .DistinctUntilChanged()
             .Where(triggered => triggered)
             .Subscribe(_ => _alarmCommand.Execute(AlarmType.RestTimeAlarm))

@@ -1,5 +1,5 @@
 using AttendanceRecord.Application.Services;
-using AttendanceRecord.Application.UseCases.WorkRecord;
+using AttendanceRecord.Application.UseCases.WorkRecords;
 using AttendanceRecord.Constants;
 using AttendanceRecord.Dtos.HomePage;
 using BrowserBridge;
