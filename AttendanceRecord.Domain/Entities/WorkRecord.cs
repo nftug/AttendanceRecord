@@ -74,17 +74,6 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
         return this;
     }
 
-    public bool ShouldTriggerEndWorkAlarm(AppConfig appConfig) =>
-        appConfig.WorkEndAlarm.IsEnabled
-            && IsTodaysOngoing
-            && GetOvertime(appConfig) >= appConfig.WorkEndAlarm.RemainingTime;
-
-    public bool ShouldTriggerRestStartAlarm(AppConfig appConfig) =>
-        appConfig.RestStartAlarm.IsEnabled
-            && IsTodaysOngoing
-            && TotalRestTime == TimeSpan.Zero
-            && TotalWorkTime >= appConfig.RestStartAlarm.ElapsedTime;
-
     private void StartRest() => _restRecords.Add(RestRecord.Start());
 
     private void FinishRest() => _restRecords[^1].Finish();
