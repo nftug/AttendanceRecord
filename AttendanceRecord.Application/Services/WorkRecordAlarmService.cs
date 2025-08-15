@@ -1,3 +1,5 @@
+using AttendanceRecord.Application.Dtos.Responses;
+using AttendanceRecord.Domain.Enums;
 using AttendanceRecord.Domain.Services;
 using AttendanceRecord.Domain.ValueObjects;
 using R3;
@@ -11,11 +13,9 @@ public class WorkRecordAlarmService : IDisposable
 
     private readonly ReactiveProperty<WorkEndAlarm> _workEndAlarm = new();
     private readonly ReactiveProperty<RestStartAlarm> _restStartAlarm = new();
-    private readonly ReactiveCommand _workEndAlarmTriggerCommand = new();
-    private readonly ReactiveCommand _restStartAlarmTriggerCommand = new();
+    private readonly ReactiveCommand<AlarmResponseDto> _alarmTriggeredCommand = new();
 
-    public Observable<Unit> WorkEndAlarmTriggeredCommand => _workEndAlarmTriggerCommand;
-    public Observable<Unit> RestStartAlarmTriggeredCommand => _restStartAlarmTriggerCommand;
+    public Observable<AlarmResponseDto> AlarmTriggeredCommand => _alarmTriggeredCommand;
 
     public WorkRecordAlarmService(
         CurrentWorkRecordStateStore currentWorkRecordStateStore, AppConfigStore appConfigStore)
@@ -24,8 +24,7 @@ public class WorkRecordAlarmService : IDisposable
 
         _workEndAlarm.AddTo(_disposables);
         _restStartAlarm.AddTo(_disposables);
-        _workEndAlarmTriggerCommand.AddTo(_disposables);
-        _restStartAlarmTriggerCommand.AddTo(_disposables);
+        _alarmTriggeredCommand.AddTo(_disposables);
 
         currentWorkRecordStateStore.WorkRecordToday
             .Subscribe(wr =>
@@ -35,31 +34,30 @@ public class WorkRecordAlarmService : IDisposable
             })
             .AddTo(_disposables);
 
-        // 退勤前アラーム
-        _workEndAlarm
-            .Select(a => a.IsTriggered)
+        Observable
+            .Merge(
+                _workEndAlarm.Select(a => new AlarmTriggered(AlarmType.WorkEnd, a.IsTriggered)),
+                _restStartAlarm.Select(a => new AlarmTriggered(AlarmType.RestStart, a.IsTriggered))
+            )
             .DistinctUntilChanged()
-            .Where(triggered => triggered)
-            .Subscribe(_ => _workEndAlarmTriggerCommand.Execute(Unit.Default))
-            .AddTo(_disposables);
-
-        // 休憩前アラーム
-        _restStartAlarm
-            .Select(a => a.IsTriggered)
-            .DistinctUntilChanged()
-            .Where(triggered => triggered)
-            .Subscribe(_ => _restStartAlarmTriggerCommand.Execute(Unit.Default))
+            .Where(x => x.Triggered)
+            .Subscribe(x => _alarmTriggeredCommand.Execute(new AlarmResponseDto(x.Type)))
             .AddTo(_disposables);
     }
 
-    public void SnoozeWorkEndAlarm()
+    public void Snooze(AlarmType alarmType)
     {
-        _workEndAlarm.Value = _workEndAlarm.Value.MarkSnooze(_appConfigStore.Config);
-    }
-
-    public void SnoozeRestStartAlarm()
-    {
-        _restStartAlarm.Value = _restStartAlarm.Value.MarkSnooze(_appConfigStore.Config);
+        switch (alarmType)
+        {
+            case AlarmType.WorkEnd:
+                _workEndAlarm.Value = _workEndAlarm.Value.MarkSnooze(_appConfigStore.Config);
+                break;
+            case AlarmType.RestStart:
+                _restStartAlarm.Value = _restStartAlarm.Value.MarkSnooze(_appConfigStore.Config);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(alarmType), alarmType, null);
+        }
     }
 
     public void Dispose()
@@ -68,3 +66,5 @@ public class WorkRecordAlarmService : IDisposable
         _disposables.Dispose();
     }
 }
+
+file record AlarmTriggered(AlarmType Type, bool Triggered);

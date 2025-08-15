@@ -32,14 +32,16 @@ public class AppConfigModule;
 [Register(typeof(ViewModelResolver<HomePageViewModel>), typeof(IViewModelResolver))]
 [Register(typeof(HistoryPageViewModel))]
 [Register(typeof(ViewModelResolver<HistoryPageViewModel>), typeof(IViewModelResolver))]
+[Register(typeof(AlarmViewModel))]
+[Register(typeof(ViewModelResolver<AlarmViewModel>), typeof(IViewModelResolver))]
 public class ViewModelModule;
 #endregion
 
 #region ViewModel Container
-public interface IViewModelContainer :
-    IViewModelContainerBase,
-    IContainer<HomePageViewModel>,
-    IContainer<HistoryPageViewModel>;
+public interface IViewModelContainer : IViewModelContainerBase,
+                                       IContainer<HomePageViewModel>,
+                                       IContainer<HistoryPageViewModel>,
+                                       IContainer<AlarmViewModel>;
 #endregion
 
 #region Container

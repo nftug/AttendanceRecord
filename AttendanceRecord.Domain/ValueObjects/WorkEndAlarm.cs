@@ -1,10 +1,13 @@
 using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Entities;
+using AttendanceRecord.Domain.Enums;
 
 namespace AttendanceRecord.Domain.ValueObjects;
 
 public record WorkEndAlarm : AlarmBase<WorkEndAlarm>
 {
+    public override AlarmType Type => AlarmType.WorkEnd;
+
     protected override TimeSpan GetSnoozeDuration(AppConfig appConfig) =>
         appConfig.WorkEndAlarm.SnoozeTime;
 

@@ -1,10 +1,13 @@
 using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Entities;
+using AttendanceRecord.Domain.Enums;
 
 namespace AttendanceRecord.Domain.ValueObjects;
 
 public record RestStartAlarm : AlarmBase<RestStartAlarm>
 {
+    public override AlarmType Type => AlarmType.RestStart;
+
     protected override TimeSpan GetSnoozeDuration(AppConfig appConfig) =>
         appConfig.RestStartAlarm.SnoozeTime;
 
