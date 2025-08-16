@@ -1,4 +1,4 @@
-namespace AttendanceRecord.Dtos.HistoryPage;
+namespace AttendanceRecord.Presentation.Dtos.HistoryPage;
 
 public enum HistoryPageCommandType
 {

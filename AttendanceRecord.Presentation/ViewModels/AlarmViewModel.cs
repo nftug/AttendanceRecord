@@ -1,10 +1,10 @@
 using AttendanceRecord.Application.Services;
-using AttendanceRecord.Constants;
-using AttendanceRecord.Dtos.Alarm;
+using AttendanceRecord.Presentation.Constants;
+using AttendanceRecord.Presentation.Dtos.Alarm;
 using BrowserBridge;
 using R3;
 
-namespace AttendanceRecord.ViewModels;
+namespace AttendanceRecord.Presentation.ViewModels;
 
 public sealed class AlarmViewModel(IEventDispatcher dispatcher, WorkRecordAlarmService alarmService)
     : ViewModelBase<AlarmCommandType>(dispatcher)

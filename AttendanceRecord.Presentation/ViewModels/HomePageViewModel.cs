@@ -1,12 +1,12 @@
 using AttendanceRecord.Application.Services;
 using AttendanceRecord.Application.UseCases.WorkRecords;
-using AttendanceRecord.Constants;
-using AttendanceRecord.Dtos.HomePage;
+using AttendanceRecord.Presentation.Constants;
+using AttendanceRecord.Presentation.Dtos.HomePage;
 using BrowserBridge;
 using Mediator.Switch;
 using R3;
 
-namespace AttendanceRecord.ViewModels;
+namespace AttendanceRecord.Presentation.ViewModels;
 
 public sealed class HomePageViewModel(
     IEventDispatcher eventDispatcher, CurrentWorkRecordStateStore workRecordStore, ISender mediator)

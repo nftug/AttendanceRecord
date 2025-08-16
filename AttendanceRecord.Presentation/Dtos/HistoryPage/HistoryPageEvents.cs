@@ -1,7 +1,7 @@
 using AttendanceRecord.Application.Dtos.Responses;
 using BrowserBridge;
 
-namespace AttendanceRecord.Dtos.HistoryPage;
+namespace AttendanceRecord.Presentation.Dtos.HistoryPage;
 
 public record GetWorkRecordListResultEvent(WorkRecordTallyResponseDto Payload, Guid CommandId)
     : CommandResultEventMessage<WorkRecordTallyResponseDto>(Payload, CommandId)

@@ -2,7 +2,7 @@
 set -e
 
 APP_NAME="AttendanceRecord"
-PROJECT_NAME="AttendanceRecord"
+PROJECT_NAME="AttendanceRecord.Presentation"
 
 case "$1" in
   run)

@@ -1,4 +1,4 @@
-namespace AttendanceRecord.Dtos.HomePage;
+namespace AttendanceRecord.Presentation.Dtos.HomePage;
 
 public enum HomePageCommandType
 {

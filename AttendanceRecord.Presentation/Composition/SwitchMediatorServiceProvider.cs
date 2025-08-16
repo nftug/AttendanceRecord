@@ -1,7 +1,7 @@
 using BrowserBridge;
 using Mediator.Switch;
 
-namespace AttendanceRecord.Composition;
+namespace AttendanceRecord.Presentation.Composition;
 
 public class SwitchMediatorServiceProvider(IContainerInstance containerInstance) : ISwitchMediatorServiceProvider
 {

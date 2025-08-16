@@ -3,12 +3,12 @@ using AttendanceRecord.Domain.Interfaces;
 using AttendanceRecord.Domain.Services;
 using AttendanceRecord.Infrastructure.Repositories;
 using AttendanceRecord.Infrastructure.Services;
-using AttendanceRecord.ViewModels;
+using AttendanceRecord.Presentation.ViewModels;
 using BrowserBridge;
 using BrowserBridge.Photino;
 using StrongInject;
 
-namespace AttendanceRecord.Composition;
+namespace AttendanceRecord.Presentation.Composition;
 
 #region Modules
 [RegisterModule(typeof(PhotinoContainerModule))]

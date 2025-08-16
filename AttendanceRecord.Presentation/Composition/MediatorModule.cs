@@ -2,7 +2,7 @@ using AttendanceRecord.Application.UseCases.WorkRecords;
 using Mediator.Switch;
 using StrongInject;
 
-namespace AttendanceRecord.Composition;
+namespace AttendanceRecord.Presentation.Composition;
 
 [Register(typeof(ToggleWorkHandler), Scope.SingleInstance)]
 [Register(typeof(ToggleRestHandler), Scope.SingleInstance)]

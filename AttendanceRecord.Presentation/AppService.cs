@@ -2,7 +2,7 @@ using BrowserBridge;
 using BrowserBridge.Photino;
 using Photino.NET;
 
-namespace AttendanceRecord;
+namespace AttendanceRecord.Presentation;
 
 public sealed class AppService(
     IContainerInstance containerInstance,

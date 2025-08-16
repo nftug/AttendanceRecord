@@ -1,6 +1,6 @@
 using AttendanceRecord.Domain.Enums;
 
-namespace AttendanceRecord.Dtos.Alarm;
+namespace AttendanceRecord.Presentation.Dtos.Alarm;
 
 public enum AlarmCommandType
 {

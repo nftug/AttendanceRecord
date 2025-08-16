@@ -1,7 +1,7 @@
 using AttendanceRecord.Application.Dtos.Responses;
 using BrowserBridge;
 
-namespace AttendanceRecord.Dtos.HomePage;
+namespace AttendanceRecord.Presentation.Dtos.HomePage;
 
 public record HomePageStateEvent(CurrentWorkRecordStateDto Payload)
     : EventMessage<CurrentWorkRecordStateDto>(Payload)

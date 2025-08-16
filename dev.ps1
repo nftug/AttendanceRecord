@@ -3,7 +3,7 @@ param (
 )
 
 $APP_NAME = "AttendanceRecord"
-$PROJECT_NAME = "AttendanceRecord"
+$PROJECT_NAME = "AttendanceRecord.Presentation"
 
 switch ($mode) {
     "run" {

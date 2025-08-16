@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 using AttendanceRecord.Application.Dtos.Requests;
-using AttendanceRecord.Dtos.Alarm;
-using AttendanceRecord.Dtos.HistoryPage;
-using AttendanceRecord.Dtos.HomePage;
+using AttendanceRecord.Presentation.Dtos.Alarm;
+using AttendanceRecord.Presentation.Dtos.HistoryPage;
+using AttendanceRecord.Presentation.Dtos.HomePage;
 
-namespace AttendanceRecord.Constants;
+namespace AttendanceRecord.Presentation.Constants;
 
 [JsonSerializable(typeof(HomePageStateEvent))]
 [JsonSerializable(typeof(ToggleWorkResultEvent))]

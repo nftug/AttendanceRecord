@@ -1,7 +1,7 @@
 using AttendanceRecord.Application.Dtos.Responses;
 using BrowserBridge;
 
-namespace AttendanceRecord.Dtos.Alarm;
+namespace AttendanceRecord.Presentation.Dtos.Alarm;
 
 public record TriggeredEvent(AlarmResponseDto Payload)
     : EventMessage<AlarmResponseDto>(Payload)

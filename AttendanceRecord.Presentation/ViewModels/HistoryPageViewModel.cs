@@ -1,11 +1,11 @@
 using AttendanceRecord.Application.Dtos.Requests;
 using AttendanceRecord.Application.UseCases.WorkRecords;
-using AttendanceRecord.Constants;
-using AttendanceRecord.Dtos.HistoryPage;
+using AttendanceRecord.Presentation.Constants;
+using AttendanceRecord.Presentation.Dtos.HistoryPage;
 using BrowserBridge;
 using Mediator.Switch;
 
-namespace AttendanceRecord.ViewModels;
+namespace AttendanceRecord.Presentation.ViewModels;
 
 public sealed class HistoryPageViewModel(IEventDispatcher eventDispatcher, ISender mediator)
     : ViewModelBase<HistoryPageCommandType>(eventDispatcher)

@@ -1,6 +1,6 @@
-﻿using AttendanceRecord.Composition;
+﻿using AttendanceRecord.Presentation.Composition;
 
-namespace AttendanceRecord;
+namespace AttendanceRecord.Presentation;
 
 public class Program
 {
