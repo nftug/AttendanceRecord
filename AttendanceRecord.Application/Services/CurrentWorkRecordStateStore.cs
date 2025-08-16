@@ -2,6 +2,7 @@ using AttendanceRecord.Application.Dtos.Responses;
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Interfaces;
 using AttendanceRecord.Domain.Services;
+using AttendanceRecord.Domain.Utils;
 using AttendanceRecord.Domain.ValueObjects;
 using R3;
 
@@ -53,7 +54,7 @@ public class CurrentWorkRecordStateStore : IDisposable
 
     private async ValueTask LoadAsync(bool forceReload = false)
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = DateTimeProvider.Today;
 
         _workRecordToday.Value =
             forceReload || _workRecordToday.Value.RecordedDate != today

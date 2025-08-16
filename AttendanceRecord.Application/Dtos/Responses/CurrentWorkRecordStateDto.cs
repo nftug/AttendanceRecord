@@ -1,6 +1,7 @@
 using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Extensions;
+using AttendanceRecord.Domain.Utils;
 using AttendanceRecord.Domain.ValueObjects;
 
 namespace AttendanceRecord.Application.Dtos.Responses;
@@ -19,7 +20,7 @@ public record CurrentWorkRecordStateDto(
     public static CurrentWorkRecordStateDto FromDomain(
         WorkRecord workRecord, WorkRecordTally monthlyTally, AppConfig appConfig) =>
             new(
-                CurrentDateTime: DateTime.Now.TruncateMs(),
+                CurrentDateTime: DateTimeProvider.Now.TruncateMs(),
                 WorkTime: workRecord.TotalWorkTime,
                 RestTime: workRecord.TotalRestTime,
                 Overtime: workRecord.GetOvertime(appConfig),

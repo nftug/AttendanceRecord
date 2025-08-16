@@ -1,4 +1,5 @@
 using AttendanceRecord.Domain.Exceptions;
+using AttendanceRecord.Domain.Utils;
 using AttendanceRecord.Domain.ValueObjects;
 
 namespace AttendanceRecord.Domain.Entities;
@@ -10,7 +11,7 @@ public class RestRecord(Guid id, TimeDuration duration)
 
     public DateOnly RecordedDate => Duration.RecordedDate;
     public TimeSpan TotalTime => Duration.TotalTime;
-    public bool IsActive => Duration.IsActive && RecordedDate == DateOnly.FromDateTime(DateTime.Today);
+    public bool IsActive => Duration.IsActive && RecordedDate == DateTimeProvider.Today;
 
     public static RestRecord Create(DateTime startedOn, DateTime? finishedOn)
         => new(Guid.NewGuid(), TimeDuration.Create(startedOn, finishedOn));

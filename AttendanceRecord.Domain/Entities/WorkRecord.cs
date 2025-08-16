@@ -1,6 +1,7 @@
 using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Exceptions;
 using AttendanceRecord.Domain.Extensions;
+using AttendanceRecord.Domain.Utils;
 using AttendanceRecord.Domain.ValueObjects;
 
 namespace AttendanceRecord.Domain.Entities;
@@ -19,7 +20,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
     public TimeSpan GetOvertime(AppConfig appConfig) =>
         TotalWorkTime - TimeSpan.FromMinutes(appConfig.StandardWorkMinutes);
 
-    public bool IsTodays => RecordedDate == DateOnly.FromDateTime(DateTime.Today);
+    public bool IsTodays => RecordedDate == DateTimeProvider.Today;
     public bool IsTodaysOngoing => Duration.IsActive && IsTodays;
     public bool IsResting => IsTodaysOngoing && RestRecords.LastOrDefault()?.IsActive == true;
     public bool IsWorking => IsTodaysOngoing && !IsResting;
@@ -67,7 +68,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
         else
         {
             // 再開操作
-            _restRecords.Add(RestRecord.Create(Duration.FinishedOn!.Value, DateTime.Now.TruncateMs()));
+            _restRecords.Add(RestRecord.Create(Duration.FinishedOn!.Value, DateTimeProvider.Now.TruncateMs()));
             Duration = Duration.GetRestart();
         }
 

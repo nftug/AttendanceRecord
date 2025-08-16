@@ -1,6 +1,7 @@
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Exceptions;
 using AttendanceRecord.Domain.Interfaces;
+using AttendanceRecord.Domain.Utils;
 
 namespace AttendanceRecord.Domain.Services;
 
@@ -8,7 +9,7 @@ public class WorkRecordService(IWorkRecordRepository workRecordRepository)
 {
     public async Task<WorkRecord> ToggleWorkAsync()
     {
-        var workToday = await workRecordRepository.FindByDateAsync(DateOnly.FromDateTime(DateTime.Today));
+        var workToday = await workRecordRepository.FindByDateAsync(DateTimeProvider.Today);
         workToday = workToday?.ToggleWork() ?? WorkRecord.Start();
         await workRecordRepository.SaveAsync(workToday);
 
@@ -17,7 +18,7 @@ public class WorkRecordService(IWorkRecordRepository workRecordRepository)
 
     public async Task<WorkRecord> ToggleRestAsync()
     {
-        var workToday = await workRecordRepository.FindByDateAsync(DateOnly.FromDateTime(DateTime.Today))
+        var workToday = await workRecordRepository.FindByDateAsync(DateTimeProvider.Today)
             ?? throw new DomainException("本日の勤務記録が存在しません。");
 
         workToday = workToday.ToggleRest();

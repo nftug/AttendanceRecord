@@ -1,5 +1,6 @@
 using AttendanceRecord.Domain.Exceptions;
 using AttendanceRecord.Domain.Extensions;
+using AttendanceRecord.Domain.Utils;
 
 namespace AttendanceRecord.Domain.ValueObjects;
 
@@ -17,8 +18,8 @@ public record TimeDuration
         {
             { IsEmpty: true } => TimeSpan.Zero,
             { IsActive: true } =>
-                StartedOn.Date == DateTime.Now.TruncateMs().Date
-                    ? DateTime.Now.TruncateMs() - StartedOn
+                StartedOn.Date == DateTimeProvider.Now.TruncateMs().Date
+                    ? DateTimeProvider.Now.TruncateMs() - StartedOn
                     : StartedOn.Date.AddDays(1) - StartedOn,
             { FinishedOn: { } } => FinishedOn.Value - StartedOn,
             _ => throw new DomainException("無効な時間の状態です。")
@@ -37,9 +38,9 @@ public record TimeDuration
 
     internal static TimeDuration Empty => new();
 
-    internal static TimeDuration GetStart() => Create(DateTime.Now.TruncateMs());
+    internal static TimeDuration GetStart() => Create(DateTimeProvider.Now.TruncateMs());
 
-    internal TimeDuration GetFinished() => Create(StartedOn, DateTime.Now.TruncateMs());
+    internal TimeDuration GetFinished() => Create(StartedOn, DateTimeProvider.Now.TruncateMs());
 
     internal TimeDuration GetRestart() => Create(StartedOn);
 }

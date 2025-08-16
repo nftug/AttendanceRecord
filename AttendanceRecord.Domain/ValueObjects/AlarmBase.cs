@@ -1,6 +1,7 @@
 using AttendanceRecord.Domain.Config;
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Enums;
+using AttendanceRecord.Domain.Utils;
 
 namespace AttendanceRecord.Domain.ValueObjects;
 
@@ -8,7 +9,7 @@ public abstract record AlarmBase<TSelf>
     where TSelf : AlarmBase<TSelf>
 {
     public bool IsTriggered { get; private set; }
-    public bool IsSnoozed => SnoozedUntil != null && SnoozedUntil > DateTime.Now;
+    public bool IsSnoozed => SnoozedUntil != null && SnoozedUntil > DateTimeProvider.Now;
     public DateTime? SnoozedUntil { get; private set; }
     public abstract AlarmType Type { get; }
 
@@ -20,7 +21,7 @@ public abstract record AlarmBase<TSelf>
     public TSelf MarkSnooze(AppConfig appConfig) =>
         IsSnoozed
             ? (TSelf)this
-            : (TSelf)this with { SnoozedUntil = DateTime.Now.Add(GetSnoozeDuration(appConfig)) };
+            : (TSelf)this with { SnoozedUntil = DateTimeProvider.Now.Add(GetSnoozeDuration(appConfig)) };
 
     protected abstract bool ShouldTrigger(WorkRecord workRecord, AppConfig appConfig);
 
