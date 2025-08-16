@@ -22,8 +22,7 @@ public sealed class WindowViewModel(IEventDispatcher eventDispatcher, IWindowSer
         string title = command.Title ?? EnvironmentConstants.AppName;
         var dialogResult = windowService.ShowMessageBox(command.Message, title, command.Buttons, command.Icon);
 
-        if (commandId != null)
-            Dispatch(new(dialogResult, commandId.Value), BridgeJsonContext.Default.MessageBoxResultEvent);
+        Dispatch(new(dialogResult, commandId), BridgeJsonContext.Default.MessageBoxResultEvent);
 
         return ValueTask.CompletedTask;
     }

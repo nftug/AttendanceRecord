@@ -30,14 +30,12 @@ public sealed class HomePageViewModel(
     private async ValueTask ToggleWorkAsync(Guid? commandId)
     {
         var result = await mediator.Send(new ToggleWork());
-        if (commandId != null)
-            Dispatch(new(result, commandId.Value), AppJsonContext.Default.ToggleWorkResultEvent);
+        Dispatch(new(result, commandId), AppJsonContext.Default.ToggleWorkResultEvent);
     }
 
     private async ValueTask ToggleRestAsync(Guid? commandId)
     {
         var result = await mediator.Send(new ToggleRest());
-        if (commandId != null)
-            Dispatch(new(result, commandId.Value), AppJsonContext.Default.ToggleRestResultEvent);
+        Dispatch(new(result, commandId), AppJsonContext.Default.ToggleRestResultEvent);
     }
 }

@@ -8,7 +8,7 @@ public abstract record EventMessageBase
 
 public abstract record EventMessage<TPayload>(TPayload Payload) : EventMessageBase;
 
-public abstract record CommandResultEventMessage<TPayload>(TPayload Payload, Guid CommandId)
+public abstract record CommandResultEventMessage<TPayload>(TPayload Payload, Guid? CommandId)
     : EventMessage<TPayload>(Payload)
 {
     public abstract string CommandName { get; }

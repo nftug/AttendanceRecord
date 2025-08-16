@@ -9,13 +9,13 @@ public record HomePageStateEvent(CurrentWorkRecordStateDto Payload)
     public override string Event => "State";
 }
 
-public record ToggleWorkResultEvent(CurrentWorkRecordStateDto Payload, Guid CommandId)
+public record ToggleWorkResultEvent(CurrentWorkRecordStateDto Payload, Guid? CommandId)
     : CommandResultEventMessage<CurrentWorkRecordStateDto>(Payload, CommandId)
 {
     public override string CommandName => nameof(HomePageCommandType.ToggleWork);
 }
 
-public record ToggleRestResultEvent(CurrentWorkRecordStateDto Payload, Guid CommandId)
+public record ToggleRestResultEvent(CurrentWorkRecordStateDto Payload, Guid? CommandId)
     : CommandResultEventMessage<CurrentWorkRecordStateDto>(Payload, CommandId)
 {
     public override string CommandName => nameof(HomePageCommandType.ToggleRest);

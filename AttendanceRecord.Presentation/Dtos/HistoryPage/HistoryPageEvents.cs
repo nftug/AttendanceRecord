@@ -3,13 +3,13 @@ using BrowserBridge;
 
 namespace AttendanceRecord.Presentation.Dtos.HistoryPage;
 
-public record GetWorkRecordListResultEvent(WorkRecordTallyResponseDto Payload, Guid CommandId)
+public record GetWorkRecordListResultEvent(WorkRecordTallyResponseDto Payload, Guid? CommandId)
     : CommandResultEventMessage<WorkRecordTallyResponseDto>(Payload, CommandId)
 {
     public override string CommandName => nameof(HistoryPageCommandType.GetWorkRecordList);
 }
 
-public record GetWorkRecordResultEvent(WorkRecordResponseDto Payload, Guid CommandId)
+public record GetWorkRecordResultEvent(WorkRecordResponseDto Payload, Guid? CommandId)
     : CommandResultEventMessage<WorkRecordResponseDto>(Payload, CommandId)
 {
     public override string CommandName => nameof(HistoryPageCommandType.GetWorkRecord);
