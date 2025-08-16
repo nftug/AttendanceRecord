@@ -11,8 +11,8 @@ public class WorkRecordAlarmService : IDisposable
     private readonly AppConfigStore _appConfigStore;
     private readonly CompositeDisposable _disposables = [];
 
-    private readonly ReactiveProperty<WorkEndAlarm> _workEndAlarm = new();
-    private readonly ReactiveProperty<RestStartAlarm> _restStartAlarm = new();
+    private readonly ReactiveProperty<WorkEndAlarm> _workEndAlarm = new(new());
+    private readonly ReactiveProperty<RestStartAlarm> _restStartAlarm = new(new());
     private readonly ReactiveCommand<AlarmResponseDto> _alarmTriggeredCommand = new();
 
     public Observable<AlarmResponseDto> AlarmTriggeredCommand => _alarmTriggeredCommand;
@@ -41,6 +41,7 @@ public class WorkRecordAlarmService : IDisposable
             )
             .DistinctUntilChanged()
             .Where(x => x.Triggered)
+            .Delay(TimeSpan.FromMilliseconds(100)) // 初期化後にトリガーされるのを防ぐ
             .Subscribe(x => _alarmTriggeredCommand.Execute(new AlarmResponseDto(x.Type)))
             .AddTo(_disposables);
     }

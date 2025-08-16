@@ -19,7 +19,7 @@ public sealed class AlarmViewModel(IEventDispatcher dispatcher, WorkRecordAlarmS
     protected override ValueTask HandleActionAsync(AlarmCommandType action, CommandMessage message) =>
         (action, message.Payload, message.CommandId) switch
         {
-            (AlarmCommandType.Snooze, var payload, { } commandId)
+            (AlarmCommandType.Snooze, var payload, var commandId)
                 when payload.TryParse(AppJsonContext.Default.SnoozeCommandPayload, out var req) =>
                     SnoozeAlarmAsync(req, commandId),
             _ => throw new NotImplementedException($"Action {action} is not implemented or payload is missing.")

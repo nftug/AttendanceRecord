@@ -11,10 +11,10 @@ public sealed class WindowViewModel(IEventDispatcher eventDispatcher, IWindowSer
             (WindowCommandType.MessageBox, var payload, { } commandId)
                 when payload.TryParse(BridgeJsonContext.Default.MessageBoxCommandPayload, out var msgBoxPayload) =>
                     ShowMessageBox(msgBoxPayload, commandId),
-            (WindowCommandType.SetMinimized, var payload, _)
+            (WindowCommandType.SetMinimized, var payload, var commandId)
                 when bool.TryParse(payload.ToString(), out var minimized) =>
-                    SetMinimized(minimized),
-            _ => ValueTask.CompletedTask
+                    SetMinimizedAsync(minimized, commandId),
+            _ => throw new NotImplementedException($"Action {action} is not implemented or payload is missing.")
         };
 
     private ValueTask ShowMessageBox(MessageBoxCommandPayload command, Guid? commandId)
@@ -28,9 +28,11 @@ public sealed class WindowViewModel(IEventDispatcher eventDispatcher, IWindowSer
         return ValueTask.CompletedTask;
     }
 
-    private ValueTask SetMinimized(bool minimized)
+    private async ValueTask SetMinimizedAsync(bool minimized, Guid? commandId)
     {
         windowService.SetMinimized(minimized);
-        return ValueTask.CompletedTask;
+
+        await Task.Delay(100); // Allow time for the window state to change
+        Dispatch(new(commandId), BridgeJsonContext.Default.SetMinimizedResultEvent);
     }
 }

@@ -21,7 +21,11 @@ public abstract record AlarmBase<TSelf>
     public TSelf MarkSnooze(AppConfig appConfig) =>
         IsSnoozed
             ? (TSelf)this
-            : (TSelf)this with { SnoozedUntil = DateTimeProvider.Now.Add(GetSnoozeDuration(appConfig)) };
+            : (TSelf)this with
+            {
+                SnoozedUntil = DateTimeProvider.Now.Add(GetSnoozeDuration(appConfig)),
+                IsTriggered = false
+            };
 
     protected abstract bool ShouldTrigger(WorkRecord workRecord, AppConfig appConfig);
 

@@ -5,3 +5,9 @@ public record MessageBoxResultEvent(MessageBoxResultType Payload, Guid CommandId
 {
     public override string CommandName => nameof(WindowCommandType.MessageBox);
 }
+
+public record SetMinimizedResultEvent(Guid? CommandId)
+    : CommandResultEventVoidMessage(CommandId)
+{
+    public override string CommandName => nameof(WindowCommandType.SetMinimized);
+}
