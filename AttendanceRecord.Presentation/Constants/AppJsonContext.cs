@@ -3,9 +3,11 @@ using AttendanceRecord.Application.Dtos.Requests;
 using AttendanceRecord.Presentation.Dtos.Alarm;
 using AttendanceRecord.Presentation.Dtos.HistoryPage;
 using AttendanceRecord.Presentation.Dtos.HomePage;
+using AttendanceRecord.Presentation.Utils;
 
 namespace AttendanceRecord.Presentation.Constants;
 
+[JsonSerializable(typeof(NamedPipeMessage))]
 [JsonSerializable(typeof(HomePageStateEvent))]
 [JsonSerializable(typeof(ToggleWorkResultEvent))]
 [JsonSerializable(typeof(ToggleRestResultEvent))]

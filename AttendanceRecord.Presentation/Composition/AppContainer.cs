@@ -23,6 +23,7 @@ public class AppBaseModule;
 [Register(typeof(WorkRecordRepository), Scope.SingleInstance, typeof(IWorkRecordRepository))]
 public class WorkRecordModule;
 
+[Register(typeof(FileLockSingleInstanceGuard), Scope.SingleInstance, typeof(ISingleInstanceGuard))]
 [Register(typeof(AppDataDirectoryService), Scope.SingleInstance)]
 [Register(typeof(AppConfigStore), Scope.SingleInstance)]
 [Register(typeof(AppConfigRepository), Scope.SingleInstance, typeof(IAppConfigRepository))]
