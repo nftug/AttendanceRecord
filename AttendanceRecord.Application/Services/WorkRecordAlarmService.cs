@@ -15,7 +15,7 @@ public class WorkRecordAlarmService : IDisposable
     private readonly ReactiveProperty<RestStartAlarm> _restStartAlarm = new(new());
     private readonly ReactiveCommand<AlarmResponseDto> _alarmTriggeredCommand = new();
 
-    public Observable<AlarmResponseDto> AlarmTriggeredCommand => _alarmTriggeredCommand;
+    public Observable<AlarmResponseDto> AlarmTriggered => _alarmTriggeredCommand;
 
     public WorkRecordAlarmService(
         CurrentWorkRecordStateStore currentWorkRecordStateStore, AppConfigStore appConfigStore)

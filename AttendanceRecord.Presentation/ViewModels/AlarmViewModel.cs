@@ -11,7 +11,7 @@ public sealed class AlarmViewModel(IEventDispatcher dispatcher, WorkRecordAlarmS
 {
     protected override void OnFirstRender()
     {
-        alarmService.AlarmTriggeredCommand
+        alarmService.AlarmTriggered
             .Subscribe(v => Dispatch(new(v), AppJsonContext.Default.TriggeredEvent))
             .AddTo(Disposable);
     }
