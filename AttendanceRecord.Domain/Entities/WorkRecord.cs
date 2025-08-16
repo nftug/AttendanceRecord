@@ -18,7 +18,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
     public TimeSpan GetTotalWorkTime() => Duration.GetTotalTime() - GetTotalRestTime();
     public TimeSpan GetTotalRestTime() => new(RestRecords.Sum(x => x.GetTotalTime().Ticks));
     public TimeSpan GetOvertime(AppConfig appConfig) =>
-        GetTotalWorkTime() - TimeSpan.FromMinutes(appConfig.StandardWorkMinutes);
+        GetTotalWorkTime() - appConfig.StandardWorkTimeSpan;
 
     public bool IsTodays => RecordedDate == DateTimeProvider.Today;
     public bool IsTodaysOngoing => Duration.IsActive && IsTodays;

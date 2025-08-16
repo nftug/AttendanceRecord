@@ -8,6 +8,8 @@ public record AppConfig(
     AppConfig.StatusFormatConfig StatusFormat
 )
 {
+    public TimeSpan StandardWorkTimeSpan => TimeSpan.FromMinutes(StandardWorkMinutes);
+
     public record WorkEndAlarmConfig(
         bool IsEnabled,
         int RemainingMinutes,

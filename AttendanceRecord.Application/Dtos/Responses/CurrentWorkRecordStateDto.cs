@@ -24,7 +24,7 @@ public record CurrentWorkRecordStateDto(
                 WorkTime: workRecord.GetTotalWorkTime(),
                 RestTime: workRecord.GetTotalRestTime(),
                 Overtime: workRecord.GetOvertime(appConfig),
-                OvertimeMonthly: monthlyTally.OvertimeTotal,
+                OvertimeMonthly: monthlyTally.GetOvertimeTotal(appConfig),
                 IsActive: workRecord.IsTodaysOngoing,
                 IsWorking: workRecord.IsWorking,
                 IsResting: workRecord.IsResting

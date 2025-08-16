@@ -12,7 +12,6 @@ public class CurrentWorkRecordStateStore : IDisposable
 {
     private readonly IntervalService _interval;
     private readonly IWorkRecordRepository _repository;
-    private readonly WorkRecordTallyFactory _workRecordTallyFactory;
     private readonly CompositeDisposable _disposables = [];
 
     private readonly ReactiveProperty<WorkRecord> _workRecordToday = new(WorkRecord.Empty);
@@ -24,12 +23,10 @@ public class CurrentWorkRecordStateStore : IDisposable
     public CurrentWorkRecordStateStore(
         IntervalService interval,
         IWorkRecordRepository repository,
-        AppConfigStore appConfigStore,
-        WorkRecordTallyFactory workRecordTallyFactory)
+        AppConfigStore appConfigStore)
     {
         _interval = interval;
         _repository = repository;
-        _workRecordTallyFactory = workRecordTallyFactory;
 
         _workRecordToday.AddTo(_disposables);
         _workRecordTallyThisMonth.AddTo(_disposables);
@@ -65,7 +62,11 @@ public class CurrentWorkRecordStateStore : IDisposable
         // 月次の集計はWorkRecordの状態が変わるか、月が変わるまで更新しない
         if (forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != today.Month)
         {
-            _workRecordTallyThisMonth.Value = await _workRecordTallyFactory.GetMonthlyAsync(today.Year, today.Month);
+            var records = await _repository.FindByMonthAsync(today.Year, today.Month);
+
+            // 今日のレコードを追加
+            var recordsWithToday = records.Append(_workRecordToday.Value).DistinctBy(x => x.RecordedDate);
+            _workRecordTallyThisMonth.Value = new(recordsWithToday);
         }
     }
 
