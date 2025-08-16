@@ -7,10 +7,10 @@ public class WorkRecordTally(IEnumerable<WorkRecord> workRecords, TimeSpan month
     private readonly IReadOnlyList<WorkRecord> _workRecords
         = [.. workRecords.OrderBy(wr => wr.RecordedDate)];
 
-    public TimeSpan WorkTimeTotal => new(workRecords.Sum(wr => wr.TotalWorkTime.Ticks));
-    public TimeSpan RestTimeTotal => new(workRecords.Sum(wr => wr.TotalRestTime.Ticks));
+    public TimeSpan WorkTimeTotal => new(workRecords.Sum(wr => wr.GetTotalWorkTime().Ticks));
+    public TimeSpan RestTimeTotal => new(workRecords.Sum(wr => wr.GetTotalRestTime().Ticks));
     public TimeSpan OvertimeTotal =>
-        new(_workRecords.Sum(wr => wr.TotalWorkTime.Ticks) - monthlyTotalBusinessTime.Ticks);
+        new(_workRecords.Sum(wr => wr.GetTotalWorkTime().Ticks) - monthlyTotalBusinessTime.Ticks);
 
     public (Guid Id, DateOnly Date)[] WorkRecords => [.. _workRecords.Select(wr => (wr.Id, wr.RecordedDate))];
 

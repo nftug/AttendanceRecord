@@ -21,8 +21,8 @@ public record CurrentWorkRecordStateDto(
         WorkRecord workRecord, WorkRecordTally monthlyTally, AppConfig appConfig) =>
             new(
                 CurrentDateTime: DateTimeProvider.Now.TruncateMs(),
-                WorkTime: workRecord.TotalWorkTime,
-                RestTime: workRecord.TotalRestTime,
+                WorkTime: workRecord.GetTotalWorkTime(),
+                RestTime: workRecord.GetTotalRestTime(),
                 Overtime: workRecord.GetOvertime(appConfig),
                 OvertimeMonthly: monthlyTally.OvertimeTotal,
                 IsActive: workRecord.IsTodaysOngoing,

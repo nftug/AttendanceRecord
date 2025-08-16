@@ -13,7 +13,7 @@ public record TimeDuration
     public bool IsActive => !IsEmpty && FinishedOn == null;
     public bool IsEmpty => StartedOn == default;
 
-    public TimeSpan TotalTime
+    public TimeSpan GetTotalTime()
         => this switch
         {
             { IsEmpty: true } => TimeSpan.Zero,

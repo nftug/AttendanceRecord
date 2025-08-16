@@ -10,7 +10,7 @@ public class RestRecord(Guid id, TimeDuration duration)
     public TimeDuration Duration { get; private set; } = duration;
 
     public DateOnly RecordedDate => Duration.RecordedDate;
-    public TimeSpan TotalTime => Duration.TotalTime;
+    public TimeSpan GetTotalTime() => Duration.GetTotalTime();
     public bool IsActive => Duration.IsActive && RecordedDate == DateTimeProvider.Today;
 
     public static RestRecord Create(DateTime startedOn, DateTime? finishedOn)
