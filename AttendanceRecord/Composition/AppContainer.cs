@@ -21,6 +21,7 @@ public class AppBaseModule;
 [Register(typeof(CurrentWorkRecordStateStore), Scope.SingleInstance)]
 [Register(typeof(WorkRecordAlarmService), Scope.SingleInstance)]
 [Register(typeof(WorkRecordRepository), Scope.SingleInstance, typeof(IWorkRecordRepository))]
+[Register(typeof(WorkRecordTallyFactory), Scope.SingleInstance)]
 public class WorkRecordModule;
 
 [Register(typeof(AppDataDirectoryService), Scope.SingleInstance)]

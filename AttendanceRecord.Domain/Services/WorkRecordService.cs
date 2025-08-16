@@ -8,8 +8,7 @@ public class WorkRecordService(IWorkRecordRepository workRecordRepository)
 {
     public async Task<WorkRecord> ToggleWorkAsync()
     {
-        var workToday = await workRecordRepository.FindByDateAsync(DateTime.Today);
-
+        var workToday = await workRecordRepository.FindByDateAsync(DateOnly.FromDateTime(DateTime.Today));
         workToday = workToday?.ToggleWork() ?? WorkRecord.Start();
         await workRecordRepository.SaveAsync(workToday);
 
@@ -18,7 +17,7 @@ public class WorkRecordService(IWorkRecordRepository workRecordRepository)
 
     public async Task<WorkRecord> ToggleRestAsync()
     {
-        var workToday = await workRecordRepository.FindByDateAsync(DateTime.Today)
+        var workToday = await workRecordRepository.FindByDateAsync(DateOnly.FromDateTime(DateTime.Today))
             ?? throw new DomainException("本日の勤務記録が存在しません。");
 
         workToday = workToday.ToggleRest();

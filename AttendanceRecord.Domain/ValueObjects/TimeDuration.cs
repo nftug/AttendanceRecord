@@ -8,7 +8,7 @@ public record TimeDuration
     public DateTime StartedOn { get; private init; }
     public DateTime? FinishedOn { get; private init; }
 
-    public DateTime RecordedDate => StartedOn.Date;
+    public DateOnly RecordedDate => DateOnly.FromDateTime(StartedOn);
     public bool IsActive => !IsEmpty && FinishedOn == null;
     public bool IsEmpty => StartedOn == default;
 

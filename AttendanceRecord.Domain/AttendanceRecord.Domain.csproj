@@ -11,4 +11,8 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Ragger.Date" Version="2.4.1-build1" />
+  </ItemGroup>
+
 </Project>

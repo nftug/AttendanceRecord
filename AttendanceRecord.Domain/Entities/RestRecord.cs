@@ -8,9 +8,9 @@ public class RestRecord(Guid id, TimeDuration duration)
     public Guid Id { get; } = id;
     public TimeDuration Duration { get; private set; } = duration;
 
-    public DateTime RecordedDate => Duration.RecordedDate;
+    public DateOnly RecordedDate => Duration.RecordedDate;
     public TimeSpan TotalTime => Duration.TotalTime;
-    public bool IsActive => Duration.IsActive && RecordedDate == DateTime.Today;
+    public bool IsActive => Duration.IsActive && RecordedDate == DateOnly.FromDateTime(DateTime.Today);
 
     public static RestRecord Create(DateTime startedOn, DateTime? finishedOn)
         => new(Guid.NewGuid(), TimeDuration.Create(startedOn, finishedOn));

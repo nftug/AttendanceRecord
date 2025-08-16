@@ -13,13 +13,13 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
 
     private readonly List<RestRecord> _restRecords = [.. restRecords.OrderBy(x => x.Duration.StartedOn)];
 
-    public DateTime RecordedDate => Duration.RecordedDate;
+    public DateOnly RecordedDate => Duration.RecordedDate;
     public TimeSpan TotalWorkTime => Duration.TotalTime - TotalRestTime;
     public TimeSpan TotalRestTime => new(RestRecords.Sum(x => x.TotalTime.Ticks));
     public TimeSpan GetOvertime(AppConfig appConfig) =>
         TotalWorkTime - TimeSpan.FromMinutes(appConfig.StandardWorkMinutes);
 
-    public bool IsTodays => RecordedDate == DateTime.Today;
+    public bool IsTodays => RecordedDate == DateOnly.FromDateTime(DateTime.Today);
     public bool IsTodaysOngoing => Duration.IsActive && IsTodays;
     public bool IsResting => IsTodaysOngoing && RestRecords.LastOrDefault()?.IsActive == true;
     public bool IsWorking => IsTodaysOngoing && !IsResting;

@@ -11,8 +11,8 @@ public class WorkRecordRepository(AppDataDirectoryService appDataDirectory) : IW
 {
     private readonly string _filePath = appDataDirectory.GetFilePath("work_records.json");
 
-    public async ValueTask<WorkRecord?> FindByDateAsync(DateTime date)
-        => (await LoadAsync()).FirstOrDefault(x => x.Duration.StartedOn.Date == date.Date);
+    public async ValueTask<WorkRecord?> FindByDateAsync(DateOnly date)
+        => (await LoadAsync()).FirstOrDefault(x => x.RecordedDate == date);
 
     public async ValueTask<WorkRecord?> FindByIdAsync(Guid id)
         => (await LoadAsync()).FirstOrDefault(x => x.Id == id);

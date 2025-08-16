@@ -6,7 +6,7 @@ namespace AttendanceRecord.Application.Dtos.Responses;
 
 public record WorkRecordResponseDto(
     Guid Id,
-    DateTime RecordedDate,
+    DateOnly RecordedDate,
     TimeDurationResponseDto Duration,
     RestRecordResponseDto[] RestRecords,
     TimeSpan TotalWorkTime,
@@ -36,7 +36,7 @@ public record WorkRecordResponseDto(
 
 public record RestRecordResponseDto(
     Guid Id,
-    DateTime RecordedDate,
+    DateOnly RecordedDate,
     TimeDurationResponseDto Duration,
     bool IsActive
 )

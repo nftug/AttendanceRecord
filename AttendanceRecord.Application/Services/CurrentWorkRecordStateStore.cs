@@ -11,6 +11,7 @@ public class CurrentWorkRecordStateStore : IDisposable
 {
     private readonly IntervalService _interval;
     private readonly IWorkRecordRepository _repository;
+    private readonly WorkRecordTallyFactory _workRecordTallyFactory;
     private readonly CompositeDisposable _disposables = [];
 
     private readonly ReactiveProperty<WorkRecord> _workRecordToday = new(WorkRecord.Empty);
@@ -20,10 +21,14 @@ public class CurrentWorkRecordStateStore : IDisposable
     internal ReadOnlyReactiveProperty<WorkRecord> WorkRecordToday => _workRecordToday;
 
     public CurrentWorkRecordStateStore(
-        IntervalService interval, IWorkRecordRepository repository, AppConfigStore appConfigStore)
+        IntervalService interval,
+        IWorkRecordRepository repository,
+        AppConfigStore appConfigStore,
+        WorkRecordTallyFactory workRecordTallyFactory)
     {
         _interval = interval;
         _repository = repository;
+        _workRecordTallyFactory = workRecordTallyFactory;
 
         _workRecordToday.AddTo(_disposables);
         _workRecordTallyThisMonth.AddTo(_disposables);
@@ -48,17 +53,18 @@ public class CurrentWorkRecordStateStore : IDisposable
 
     private async ValueTask LoadAsync(bool forceReload = false)
     {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+
         _workRecordToday.Value =
-            forceReload || _workRecordToday.Value.RecordedDate != DateTime.Today
-                ? await _repository.FindByDateAsync(DateTime.Today)
+            forceReload || _workRecordToday.Value.RecordedDate != today
+                ? await _repository.FindByDateAsync(today)
                 ?? WorkRecord.Empty
             : _workRecordToday.Value.Recreate();
 
         // 月次の集計はWorkRecordの状態が変わるか、月が変わるまで更新しない
-        if (forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != DateTime.Today.Month)
+        if (forceReload || _workRecordTallyThisMonth.Value.RecordedMonth != today.Month)
         {
-            var monthRecords = await _repository.FindByMonthAsync(DateTime.Today.Year, DateTime.Today.Month);
-            _workRecordTallyThisMonth.Value = new(monthRecords);
+            _workRecordTallyThisMonth.Value = await _workRecordTallyFactory.GetMonthlyAsync(today.Year, today.Month);
         }
     }
 
