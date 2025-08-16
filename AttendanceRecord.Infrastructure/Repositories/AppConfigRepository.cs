@@ -17,7 +17,7 @@ public class AppConfigRepository(AppDataDirectoryService appDataDirectory) : IAp
         {
             using var stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             if (stream.Length == 0) return AppConfig.Default;
-            var content = await JsonSerializer.DeserializeAsync(stream, InfrastructureJsonContext.Default.AppConfigFileDto);
+            var content = await JsonSerializer.DeserializeAsync(stream, InfrastructureJsonContext.Indented.AppConfigFileDto);
             return content?.ToDomain() ?? AppConfig.Default;
         }
         catch (FileNotFoundException)
@@ -30,7 +30,7 @@ public class AppConfigRepository(AppDataDirectoryService appDataDirectory) : IAp
     {
         using var stream = new FileStream(_filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         var dto = AppConfigFileDto.FromDomain(appConfig);
-        await JsonSerializer.SerializeAsync(stream, dto, InfrastructureJsonContext.Default.AppConfigFileDto);
+        await JsonSerializer.SerializeAsync(stream, dto, InfrastructureJsonContext.Indented.AppConfigFileDto);
         await stream.FlushAsync();
     }
 }

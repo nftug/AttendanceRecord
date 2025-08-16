@@ -46,7 +46,7 @@ public class WorkRecordRepository(AppDataDirectoryService appDataDirectory) : IW
         {
             using var stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             if (stream.Length == 0) return [];
-            var content = await JsonSerializer.DeserializeAsync(stream, InfrastructureJsonContext.Default.WorkRecordFileDtoArray);
+            var content = await JsonSerializer.DeserializeAsync(stream, InfrastructureJsonContext.Indented.WorkRecordFileDtoArray);
             return content?.Select(x => x.ToDomain()).ToList() ?? [];
         }
         catch (FileNotFoundException)
@@ -59,7 +59,7 @@ public class WorkRecordRepository(AppDataDirectoryService appDataDirectory) : IW
     {
         var dtoArray = workRecords.Select(WorkRecordFileDto.FromDomain).ToArray();
         using var stream = new FileStream(_filePath, FileMode.Create, FileAccess.Write, FileShare.None);
-        await JsonSerializer.SerializeAsync(stream, dtoArray, InfrastructureJsonContext.Default.WorkRecordFileDtoArray);
+        await JsonSerializer.SerializeAsync(stream, dtoArray, InfrastructureJsonContext.Indented.WorkRecordFileDtoArray);
         await stream.FlushAsync();
     }
 }
