@@ -1,6 +1,7 @@
 using System.Text.Json;
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Interfaces;
+using AttendanceRecord.Domain.ValueObjects;
 using AttendanceRecord.Infrastructure.Constants;
 using AttendanceRecord.Infrastructure.Dtos;
 using AttendanceRecord.Infrastructure.Services;
@@ -17,9 +18,9 @@ public class WorkRecordRepository(AppDataDirectoryService appDataDirectory) : IW
     public async ValueTask<WorkRecord?> FindByIdAsync(Guid id)
         => (await LoadAsync()).FirstOrDefault(x => x.Id == id);
 
-    public async ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(int year, int month)
+    public async ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(YearAndMonth yearAndMonth)
     {
-        var firstDay = new DateTime(year, month, 1);
+        var firstDay = new DateTime(yearAndMonth.Year, yearAndMonth.Month, 1);
         var nextMonth = firstDay.AddMonths(1);
         return [.. (await LoadAsync())
             .Where(x => x.Duration.StartedOn >= firstDay && x.Duration.StartedOn < nextMonth)];

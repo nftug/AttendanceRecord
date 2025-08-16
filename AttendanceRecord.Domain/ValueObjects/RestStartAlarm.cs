@@ -14,6 +14,6 @@ public record RestStartAlarm : AlarmBase<RestStartAlarm>
     protected override bool ShouldTrigger(WorkRecord workRecord, AppConfig appConfig) =>
         appConfig.RestStartAlarm.IsEnabled
             && workRecord.IsTodaysOngoing
-            && workRecord.GetTotalRestTime() == TimeSpan.Zero
-            && workRecord.GetTotalWorkTime() >= appConfig.RestStartAlarm.ElapsedTime;
+            && workRecord.GetRestTime() == TimeSpan.Zero
+            && workRecord.GetWorkTime() >= appConfig.RestStartAlarm.ElapsedTime;
 }

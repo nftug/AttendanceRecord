@@ -15,10 +15,10 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
     private readonly List<RestRecord> _restRecords = [.. restRecords.OrderBy(x => x.Duration.StartedOn)];
 
     public DateOnly RecordedDate => Duration.RecordedDate;
-    public TimeSpan GetTotalWorkTime() => Duration.GetTotalTime() - GetTotalRestTime();
-    public TimeSpan GetTotalRestTime() => new(RestRecords.Sum(x => x.GetTotalTime().Ticks));
+    public TimeSpan GetWorkTime() => Duration.GetTotalTime() - GetRestTime();
+    public TimeSpan GetRestTime() => new(RestRecords.Sum(x => x.GetTotalTime().Ticks));
     public TimeSpan GetOvertime(AppConfig appConfig) =>
-        GetTotalWorkTime() - appConfig.StandardWorkTimeSpan;
+        GetWorkTime() - appConfig.StandardWorkTimeSpan;
 
     public bool IsTodays => RecordedDate == DateTimeProvider.Today;
     public bool IsTodaysOngoing => Duration.IsActive && IsTodays;
