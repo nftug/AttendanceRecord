@@ -60,19 +60,14 @@ public class CurrentWorkRecordStateStore : IDisposable
             : _workRecordToday.Value.Recreate();
 
         // 月次の集計はWorkRecordの状態が変わるか、月が変わるまで更新しない
-        if (forceReload ||
-            _workRecordTallyThisMonth.Value.RecordedDate != today)
-        {
-            // 月次の集計を更新
-            _workRecordTallyThisMonth.Value = new WorkRecordTally(
-                await _repository.FindByMonthAsync(today));
-        }
+        if (forceReload || _workRecordTallyThisMonth.Value.RecordedDate != today)
         {
             // 今日のレコードを追加して、月次の集計を更新
-            var records = await _repository.FindByMonthAsync(today);
-            var recordsWithToday = records.Append(_workRecordToday.Value).DistinctBy(x => x.RecordedDate);
+            var records = (await _repository.FindByMonthAsync(today))
+                .Append(_workRecordToday.Value)
+                .DistinctBy(x => x.RecordedDate);
 
-            _workRecordTallyThisMonth.Value = new(recordsWithToday);
+            _workRecordTallyThisMonth.Value = new(records);
         }
     }
 
