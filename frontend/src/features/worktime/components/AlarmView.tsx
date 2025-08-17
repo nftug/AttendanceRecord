@@ -14,7 +14,7 @@ const AlarmView = () => {
 
       const messageTitle = type === 'WorkEnd' ? '勤務終了のアラーム' : '休憩開始のアラーム'
       const messageContent =
-        type === 'WorkEnd' ? 'もうすぐ退勤の時間です。' : '休憩時間になりました。'
+        type === 'WorkEnd' ? 'まもなく退勤時間です。' : '休憩時間になりました。'
 
       const result = await invokeWindow('messageBox', {
         title: messageTitle,

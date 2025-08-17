@@ -16,6 +16,7 @@ const App = () => {
           <SnackbarProvider
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             preventDuplicate
+            disableWindowBlurListener
           >
             <AppContent />
           </SnackbarProvider>
