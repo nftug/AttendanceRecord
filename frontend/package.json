@@ -24,6 +24,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.6.0",
+    "react-split": "^2.0.14",
     "ts-pattern": "^5.7.1"
   },
   "devDependencies": {

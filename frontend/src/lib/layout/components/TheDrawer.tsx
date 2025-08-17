@@ -1,4 +1,4 @@
-import { Home, Info, Settings } from '@mui/icons-material'
+import { CalendarMonth, Home, Info, Settings } from '@mui/icons-material'
 import {
   Box,
   Drawer,
@@ -26,6 +26,7 @@ const TheDrawer = () => {
 
   const menuItems: DrawerItem[] = [
     { name: 'Home', href: '/', icon: <Home /> },
+    { name: 'History', href: '/history', icon: <CalendarMonth /> },
     { name: 'Settings', href: '/settings', icon: <Settings /> },
     { name: 'About', href: '/about', icon: <Info /> }
   ]
