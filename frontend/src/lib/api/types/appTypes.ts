@@ -1,3 +1,5 @@
+import { CommandId } from './apiTypes'
+
 // Default events and commands
 export type AppEventEnvelope =
   | { event: 'receive:init'; commandName: 'init'; payload: { type: string } }
@@ -12,6 +14,7 @@ export type AppCommandEnvelope =
 
 // DTO
 export type ViewModelErrorEventResult = {
+  commandId?: CommandId
   message: string
   details?: string
 }

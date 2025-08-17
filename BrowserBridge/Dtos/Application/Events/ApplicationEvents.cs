@@ -6,10 +6,10 @@ public record ViewModelInitResultEvent(InitCommandPayload Payload, Guid? Command
     public override string CommandName => nameof(AppActionType.Init);
 }
 
-public record ViewModelErrorEvent(ViewModelErrorEvent.ViewModelError Payload)
-    : EventMessage<ViewModelErrorEvent.ViewModelError>(Payload)
+public record ViewModelErrorEvent(ViewModelError Payload)
+    : EventMessage<ViewModelError>(Payload)
 {
     public override string Event => "Error";
-
-    public record ViewModelError(string Message, string Details);
 }
+
+public record ViewModelError(Guid? CommandId, string Message, string Details);

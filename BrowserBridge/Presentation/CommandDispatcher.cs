@@ -32,7 +32,8 @@ public class CommandDispatcher(
         }
         catch (Exception e)
         {
-            errorHandler.HandleError(new ViewModelException(message?.ViewId ?? Guid.Empty, e.Message, e));
+            var vmException = new ViewModelException(message?.ViewId ?? Guid.Empty, message?.CommandId, e.Message, e);
+            errorHandler.HandleError(vmException);
         }
     }
 

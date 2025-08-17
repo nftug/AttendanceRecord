@@ -17,7 +17,8 @@ public class ErrorHandler(
 
         if (exception is ViewModelException vmException)
         {
-            var errorEvent = new ViewModelErrorEvent(new(exception.Message, exception.ToString()))
+            var errorContent = new ViewModelError(vmException.CommandId, exception.Message, exception.ToString());
+            var errorEvent = new ViewModelErrorEvent(errorContent)
             {
                 ViewId = vmException.ViewId
             };

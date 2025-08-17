@@ -81,12 +81,27 @@ export const createInvoker = <TEvent extends EventEnvelope, TCommand extends Com
       commandId
     }
 
-    return new Promise<CommandResult<TEvent, TName>['payload']>((resolve) => {
+    return new Promise<CommandResult<TEvent, TName>['payload']>((resolve, reject) => {
       const key = generateEmitterKey({ commandName, commandId })
-      const unsubscribe = eventEmitter.on(key, (payload) => {
-        unsubscribe()
+
+      const removeSubscription = eventEmitter.on(key, (payload) => {
+        removeAllSubscriptions()
         resolve(payload)
       })
+
+      const appSubscribe = createSubscriber<AppEventEnvelope>(viewId)
+      const removeErrorSubscription = appSubscribe('error', (payload) => {
+        if (payload.commandId === commandId) {
+          removeAllSubscriptions()
+          reject(new ViewModelError(viewId, payload))
+        }
+      })
+
+      const removeAllSubscriptions = () => {
+        removeSubscription()
+        removeErrorSubscription()
+      }
+
       ipcMessenger.sendMessage(JSON.stringify(message))
     })
   }
