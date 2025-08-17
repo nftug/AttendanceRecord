@@ -487,3 +487,5 @@ $RECYCLE.BIN/
 .VSCodeCounter/*
 
 wwwroot/
+
+frontend/stats.html
