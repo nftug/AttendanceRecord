@@ -25,7 +25,7 @@ import {
   useTheme
 } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Split from 'react-split'
 import { HistoryPageViewModel, useHistoryPageViewModel } from '../atoms/historyPageViewModel'
 import { useWorkRecordListQuery } from '../hooks/historyPageQueries'
@@ -40,6 +40,7 @@ const HistoryPageView = () => {
 const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel) => {
   const [monthDate, setMonthDate] = useState(dayjs())
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs())
+  const [pendingAutoSelect, setPendingAutoSelect] = useState(false)
 
   const { data: listData, isLoading: isLoadingList } = useWorkRecordListQuery({
     options: { recordedMonthDate: toDateTimeString(monthDate)! },
@@ -53,11 +54,21 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
   const theme = useTheme()
 
   const handleNavigate = async (direction: 'prev' | 'next') => {
-    // ask child if it's ok to discard unsaved changes
+    // 子コンポーネントに未保存の変更を破棄しても良いか確認する
     if (historyItemRef.current && !(await historyItemRef.current.confirmDiscard())) return
+
+    setPendingAutoSelect(true)
     setMonthDate((prev) => prev.add(direction === 'prev' ? -1 : 1, 'month'))
-    setSelectedDate(null)
   }
+
+  // handleNavigate が使われたとき、最後の項目を自動選択する
+  useEffect(() => {
+    if (!listData || !pendingAutoSelect) return
+
+    setPendingAutoSelect(false)
+    const lastRecord = listData.workRecords.at(-1)
+    setSelectedDate(lastRecord ? dayjs(lastRecord.date) : null)
+  }, [listData, pendingAutoSelect])
 
   const handleDateSelect = async (date: Dayjs) => {
     if (historyItemRef.current && !(await historyItemRef.current.confirmDiscard())) return

@@ -9,7 +9,7 @@ type UseGetWorkRecordListQueryOptions = {
 }
 
 export const getWorkRecordListQueryKey = (options?: WorkRecordTallyGetRequestDto) =>
-  options ? ['getWorkRecordList', options] : ['getWorkRecordList']
+  options ? ['getWorkRecordList', JSON.stringify(options)] : ['getWorkRecordList']
 
 export const useWorkRecordListQuery = ({
   viewModel: { invoke, isInitialized },
