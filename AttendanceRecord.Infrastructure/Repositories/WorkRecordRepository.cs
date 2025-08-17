@@ -1,7 +1,6 @@
 using System.Text.Json;
 using AttendanceRecord.Domain.Entities;
 using AttendanceRecord.Domain.Interfaces;
-using AttendanceRecord.Domain.ValueObjects;
 using AttendanceRecord.Infrastructure.Constants;
 using AttendanceRecord.Infrastructure.Dtos;
 using AttendanceRecord.Infrastructure.Services;
@@ -12,15 +11,15 @@ public class WorkRecordRepository(AppDataDirectoryService appDataDirectory) : IW
 {
     private readonly string _filePath = appDataDirectory.GetFilePath("work_records.json");
 
-    public async ValueTask<WorkRecord?> FindByDateAsync(DateOnly date)
-        => (await LoadAsync()).FirstOrDefault(x => x.RecordedDate == date);
+    public async ValueTask<WorkRecord?> FindByDateAsync(DateTime date)
+        => (await LoadAsync()).FirstOrDefault(x => x.RecordedDate.Date == date.Date);
 
     public async ValueTask<WorkRecord?> FindByIdAsync(Guid id)
         => (await LoadAsync()).FirstOrDefault(x => x.Id == id);
 
-    public async ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(YearAndMonth yearAndMonth)
+    public async ValueTask<IReadOnlyList<WorkRecord>> FindByMonthAsync(DateTime date)
     {
-        var firstDay = new DateTime(yearAndMonth.Year, yearAndMonth.Month, 1);
+        var firstDay = new DateTime(date.Year, date.Month, 1);
         var nextMonth = firstDay.AddMonths(1);
         return [.. (await LoadAsync())
             .Where(x => x.Duration.StartedOn >= firstDay && x.Duration.StartedOn < nextMonth)];

@@ -9,7 +9,7 @@ public abstract record AlarmBase<TSelf>
     where TSelf : AlarmBase<TSelf>
 {
     public bool IsTriggered { get; private set; }
-    public bool IsSnoozed => SnoozedUntil != null && SnoozedUntil > DateTimeProvider.UtcNow;
+    public bool IsSnoozed => SnoozedUntil != null && SnoozedUntil > DateTimeProvider.Now;
     public DateTime? SnoozedUntil { get; private set; }
     public abstract AlarmType Type { get; }
 
@@ -23,7 +23,7 @@ public abstract record AlarmBase<TSelf>
             ? (TSelf)this
             : (TSelf)this with
             {
-                SnoozedUntil = DateTimeProvider.UtcNow.Add(GetSnoozeDuration(appConfig)),
+                SnoozedUntil = DateTimeProvider.Now.Add(GetSnoozeDuration(appConfig)),
                 IsTriggered = false
             };
 

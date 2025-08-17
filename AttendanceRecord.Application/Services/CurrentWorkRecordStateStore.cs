@@ -51,8 +51,7 @@ public class CurrentWorkRecordStateStore : IDisposable
 
     private async ValueTask LoadAsync(bool forceReload = false)
     {
-        var today = DateTimeProvider.UtcToday;
-        var todayYearAndMonth = new YearAndMonth(today.Year, today.Month);
+        var today = DateTimeProvider.Today;
 
         _workRecordToday.Value =
             forceReload || _workRecordToday.Value.RecordedDate != today
@@ -61,10 +60,16 @@ public class CurrentWorkRecordStateStore : IDisposable
             : _workRecordToday.Value.Recreate();
 
         // 月次の集計はWorkRecordの状態が変わるか、月が変わるまで更新しない
-        if (forceReload || _workRecordTallyThisMonth.Value.RecordedYearAndMonth != todayYearAndMonth)
+        if (forceReload ||
+            _workRecordTallyThisMonth.Value.RecordedDate != today)
+        {
+            // 月次の集計を更新
+            _workRecordTallyThisMonth.Value = new WorkRecordTally(
+                await _repository.FindByMonthAsync(today));
+        }
         {
             // 今日のレコードを追加して、月次の集計を更新
-            var records = await _repository.FindByMonthAsync(todayYearAndMonth);
+            var records = await _repository.FindByMonthAsync(today);
             var recordsWithToday = records.Append(_workRecordToday.Value).DistinctBy(x => x.RecordedDate);
 
             _workRecordTallyThisMonth.Value = new(recordsWithToday);

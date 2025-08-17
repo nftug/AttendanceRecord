@@ -17,6 +17,8 @@ public class CommandDispatcher(
 
         try
         {
+            logger.LogInformation("Received command: {Json}", json);
+
             message = JsonSerializer.Deserialize(json, BridgeJsonContext.Default.CommandMessage)
                 ?? throw new Exception("CommandMessage cannot be null.");
 

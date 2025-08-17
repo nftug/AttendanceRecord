@@ -113,6 +113,9 @@ export const createInitViewHandler = (viewId: ViewId, viewType: string) => {
   const subscribe = createSubscriber<AppEventEnvelope>(viewId)
 
   const disposeErrorLogger = subscribe('error', (payload) => {
+    // Ignore errors with a commandId
+    if (payload.commandId) return
+
     const error = new ViewModelError(viewId, payload)
     console.error(error)
     console.error(error.details)

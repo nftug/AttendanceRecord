@@ -4,7 +4,7 @@ using AttendanceRecord.Domain.ValueObjects;
 namespace AttendanceRecord.Application.Dtos.Responses;
 
 public record WorkRecordTallyResponseDto(
-    YearAndMonthResponseDto RecordedAt,
+    DateTime? RecordedDate,
     WorkRecordItemResponseDto[] WorkRecords,
     TimeSpan WorkTimeTotal,
     TimeSpan RestTimeTotal,
@@ -13,7 +13,7 @@ public record WorkRecordTallyResponseDto(
 {
     public static WorkRecordTallyResponseDto FromDomain(WorkRecordTally tally, AppConfig appConfig)
         => new(
-            YearAndMonthResponseDto.FromDomain(tally.RecordedYearAndMonth ?? YearAndMonth.Empty),
+            tally.RecordedDate,
             [.. tally.WorkRecords.Select(WorkRecordItemResponseDto.FromDomain)],
             tally.GetWorkTimeTotal(),
             tally.GetRestTimeTotal(),

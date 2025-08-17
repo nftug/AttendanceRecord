@@ -17,10 +17,9 @@ public class WorkRecordTally(IEnumerable<WorkRecord> workRecords)
     public TimeSpan GetOvertimeTotal(AppConfig appConfig) =>
         new(_workRecords.Sum(wr => wr.GetOvertime(appConfig).Ticks));
 
-    public (Guid Id, DateOnly Date)[] WorkRecords => [.. _workRecords.Select(wr => (wr.Id, wr.RecordedDate))];
+    public (Guid Id, DateTime Date)[] WorkRecords => [.. _workRecords.Select(wr => (wr.Id, wr.RecordedDate))];
 
-    public YearAndMonth? RecordedYearAndMonth =>
-        _workRecords.FirstOrDefault()?.RecordedDate is { } date ? YearAndMonth.FromDate(date) : null;
+    public DateTime? RecordedDate => _workRecords.FirstOrDefault()?.RecordedDate;
 
     public static WorkRecordTally Empty => new([]);
 }

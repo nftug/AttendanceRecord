@@ -2,7 +2,6 @@ using AttendanceRecord.Application.Dtos.Requests;
 using AttendanceRecord.Application.Dtos.Responses;
 using AttendanceRecord.Domain.Interfaces;
 using AttendanceRecord.Domain.Services;
-using AttendanceRecord.Domain.ValueObjects;
 using Mediator.Switch;
 
 namespace AttendanceRecord.Application.UseCases.WorkRecords;
@@ -17,8 +16,7 @@ public sealed class GetWorkRecordTallyHandler(
     public async Task<WorkRecordTallyResponseDto> Handle(
         GetWorkRecordTally request, CancellationToken cancellationToken)
     {
-        var yearAndMonth = new YearAndMonth(request.Request.Year, request.Request.Month);
-        var records = await workRecordRepository.FindByMonthAsync(yearAndMonth);
+        var records = await workRecordRepository.FindByMonthAsync(request.Request.RecordedMonthDate);
         return WorkRecordTallyResponseDto.FromDomain(new(records), appConfigStore.Config);
     }
 }

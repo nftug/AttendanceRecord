@@ -1,8 +1,6 @@
-import { DateString, DateTimeString, ItemId, TimeSpanString } from '@/lib/api/types/brandedTypes'
+import { DateTimeString, ItemId, TimeSpanString } from '@/lib/api/types/brandedTypes'
 
 export type TimeDuration = { startedOn: DateTimeString; finishedOn?: DateTimeString }
-
-export type YearAndMonth = { year: number; month: number }
 
 export type CurrentWorkRecordStateDto = {
   currentDateTime: DateTimeString
@@ -16,18 +14,22 @@ export type CurrentWorkRecordStateDto = {
 }
 
 export type WorkRecordTallyResponseDto = {
-  recordedAt: YearAndMonth
+  recordedDate: DateTimeString | null
   totalWorkTime: TimeSpanString
   totalRestTime: TimeSpanString
   totalOvertime: TimeSpanString
-  workRecords: { id: ItemId; date: DateString }[]
+  workRecords: WorkRecordListItem[]
 }
 
-export type WorkRecordTallyGetRequestDto = YearAndMonth
+export type WorkRecordListItem = { id: ItemId; date: DateTimeString }
+
+export type WorkRecordItemEditOption = { id: ItemId | null; date: DateTimeString }
+
+export type WorkRecordTallyGetRequestDto = { recordedMonthDate: DateTimeString }
 
 export type WorkRecordResponseDto = {
   id: ItemId
-  recordedDate: DateString
+  recordedDate: DateTimeString
   duration: TimeDuration
   restRecords: RestRecordResponseDto[]
   workTime: TimeSpanString
@@ -40,7 +42,7 @@ export type WorkRecordResponseDto = {
 
 export type RestRecordResponseDto = {
   id: ItemId
-  recordedDate: DateString
+  recordedDate: DateTimeString
   duration: TimeDuration
   isActive: boolean
 }

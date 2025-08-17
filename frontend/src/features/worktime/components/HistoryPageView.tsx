@@ -1,3 +1,5 @@
+import DateSelectModal from '@/lib/components/DateSelectModal'
+import { formatDate, formatDateTime, toDateTimeString } from '@/lib/utils/dayjsUtils'
 import {
   CalendarMonth,
   CalendarToday,
@@ -22,11 +24,13 @@ import {
   Typography,
   useTheme
 } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
-import dayjs from 'dayjs'
-import { useState } from 'react'
+import dayjs, { Dayjs } from 'dayjs'
+import { useRef, useState } from 'react'
 import Split from 'react-split'
 import { HistoryPageViewModel, useHistoryPageViewModel } from '../atoms/historyPageViewModel'
+import { useWorkRecordListQuery } from '../hooks/historyPageQueries'
+import useAskDeleteWorkRecord from '../hooks/useAskDeleteWorkRecord'
+import HistoryItemView, { HistoryItemViewHandle } from './HistoryItemView'
 
 const HistoryPageView = () => {
   const viewModel = useHistoryPageViewModel()
@@ -34,19 +38,46 @@ const HistoryPageView = () => {
 }
 
 const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel) => {
-  const [yearAndMonth, setYearAndMonth] = useState(dayjs())
+  const [monthDate, setMonthDate] = useState(dayjs())
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs())
 
-  const { data: listData, isLoading: isLoadingList } = useQuery({
-    queryKey: ['history', yearAndMonth],
-    queryFn: async () =>
-      await invoke('getWorkRecordList', {
-        year: yearAndMonth.year(),
-        month: yearAndMonth.month() + 1
-      }),
-    enabled: isInitialized
+  const { data: listData, isLoading: isLoadingList } = useWorkRecordListQuery({
+    options: { recordedMonthDate: toDateTimeString(monthDate)! },
+    viewModel: { invoke, isInitialized }
   })
 
+  const selectedItemId = selectedDate
+    ? (listData?.workRecords.find((x) => dayjs(x.date).isSame(selectedDate, 'day'))?.id ?? null)
+    : null
+
   const theme = useTheme()
+
+  const handleNavigate = async (direction: 'prev' | 'next') => {
+    // ask child if it's ok to discard unsaved changes
+    if (historyItemRef.current && !(await historyItemRef.current.confirmDiscard())) return
+    setMonthDate((prev) => prev.add(direction === 'prev' ? -1 : 1, 'month'))
+    setSelectedDate(null)
+  }
+
+  const handleDateSelect = async (date: Dayjs) => {
+    if (historyItemRef.current && !(await historyItemRef.current.confirmDiscard())) return
+    setSelectedDate(date)
+    setMonthDate(date)
+  }
+
+  const handleDateModalSelect = async (initialDate: Dayjs | null) => {
+    const result = await DateSelectModal.call({ initialDate })
+    if (result) handleDateSelect(result)
+  }
+
+  const handleClickDeleteSelected = useAskDeleteWorkRecord({
+    itemId: selectedItemId,
+    viewModel: { invoke, isInitialized },
+    onSuccess: () => handleDateSelect(dayjs())
+  })
+
+  const historyItemRef = useRef<HistoryItemViewHandle | null>(null)
+  const [canSubmit, setCanSubmit] = useState(false)
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
@@ -59,25 +90,28 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
         }}
       >
         <Toolbar>
-          <IconButton onClick={() => setYearAndMonth((prev) => prev.add(-1, 'month'))}>
+          <IconButton onClick={() => handleNavigate('prev')}>
             <NavigateBefore />
           </IconButton>
-          <IconButton onClick={() => setYearAndMonth((prev) => prev.add(1, 'month'))}>
+          <IconButton onClick={() => handleNavigate('next')}>
             <NavigateNext />
           </IconButton>
-          <IconButton onClick={() => setYearAndMonth(dayjs())}>
+          <IconButton onClick={() => handleDateSelect(dayjs())}>
             <Home />
           </IconButton>
-          <IconButton onClick={() => {}}>
+          <IconButton onClick={() => handleDateModalSelect(selectedDate)}>
             <Today />
           </IconButton>
 
           <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
 
-          <IconButton onClick={() => {}}>
+          <IconButton
+            onClick={() => historyItemRef.current?.submit()}
+            disabled={!canSubmit || !selectedDate}
+          >
             <Save />
           </IconButton>
-          <IconButton onClick={() => {}}>
+          <IconButton onClick={handleClickDeleteSelected} disabled={!selectedItemId}>
             <Delete />
           </IconButton>
 
@@ -86,9 +120,7 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <CalendarMonth />
             <Typography variant="body1">
-              {isLoadingList
-                ? 'Loading...'
-                : `${yearAndMonth.year()}年 ${(yearAndMonth.month() + 1).toString().padStart(2, '0')}月`}
+              {isLoadingList ? 'Loading...' : formatDateTime(monthDate, 'YYYY年 MM月')}
             </Typography>
           </Box>
         </Toolbar>
@@ -110,19 +142,32 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
           <List sx={{ p: 1 }}>
             {listData?.workRecords.map((item) => (
               <ListItem key={item.id} sx={{ p: 0.5 }}>
-                <ListItemButton>
+                <ListItemButton
+                  onClick={() => handleDateSelect(dayjs(item.date))}
+                  selected={selectedDate?.isSame(dayjs(item.date), 'day')}
+                >
                   <ListItemIcon>
                     <CalendarToday />
                   </ListItemIcon>
-                  <ListItemText primary={dayjs(item.date).format('YYYY/MM/DD')} />
+                  <ListItemText primary={formatDate(item.date)} />
                 </ListItemButton>
               </ListItem>
             ))}
           </List>
         </Paper>
 
-        <Box sx={{ overflow: 'auto', height: '100%' }}></Box>
+        <Box sx={{ overflow: 'auto', height: '100%' }}>
+          <HistoryItemView
+            ref={historyItemRef}
+            itemId={selectedItemId}
+            date={selectedDate}
+            onCanSubmitChange={setCanSubmit}
+            {...{ invoke, isInitialized }}
+          />
+        </Box>
       </Split>
+
+      <DateSelectModal.Root />
     </Box>
   )
 }

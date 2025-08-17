@@ -1,9 +1,9 @@
+import { formatTime } from '@/lib/utils/dayjsUtils'
 import CoffeeIcon from '@mui/icons-material/Coffee'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 import StopCircleIcon from '@mui/icons-material/StopCircle'
 import { Box, Button, Paper, Stack, Typography } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
-import dayjs from 'dayjs'
 import { useSnackbar } from 'notistack'
 import { HomePageViewModel, useHomePageViewModel } from '../atoms/homePageViewModel'
 
@@ -18,7 +18,7 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
   const workIcon = state.isActive ? <StopCircleIcon /> : <PlayCircleIcon />
   const workLabel = state.isActive ? '退勤' : '出勤'
   const restLabel = state.isResting ? '休憩終了' : '休憩開始'
-  const formattedCurrentDateTime = dayjs(state.currentDateTime).format('HH:mm:ss')
+  const formattedCurrentDateTime = formatTime(state.currentDateTime)
 
   const timeTrackingInfo = [
     { label: '勤務時間', value: state.workTime },
