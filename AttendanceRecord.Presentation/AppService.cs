@@ -19,7 +19,7 @@ public sealed class AppService(
     protected override PhotinoWindow SetupWindow(PhotinoWindow window)
         => window
             .SetUseOsDefaultSize(false)
-            .SetSize(new(1200, 800))
+            .SetSize(new(1200, 820))
             .Center()
             .SetContextMenuEnabled(EnvironmentConstants.IsDebugMode)
             .SetDevToolsEnabled(EnvironmentConstants.IsDebugMode);

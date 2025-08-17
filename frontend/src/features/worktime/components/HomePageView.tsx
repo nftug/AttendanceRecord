@@ -1,4 +1,3 @@
-import { flexCenterStyle } from '@/lib/layout/constants/styles'
 import CoffeeIcon from '@mui/icons-material/Coffee'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 import StopCircleIcon from '@mui/icons-material/StopCircle'
@@ -21,6 +20,13 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
   const restLabel = state.isResting ? '休憩終了' : '休憩開始'
   const formattedCurrentDateTime = dayjs(state.currentDateTime).format('HH:mm:ss')
 
+  const timeTrackingInfo = [
+    { label: '勤務時間', value: state.workTime },
+    { label: '休憩時間', value: state.restTime },
+    { label: '本日の残業時間', value: state.overtime },
+    { label: '今月の残業時間', value: state.overtimeMonthly }
+  ]
+
   const { mutate: toggleWork, isPending: isTogglingWork } = useMutation({
     mutationFn: async () => await invoke('toggleWork'),
     onSuccess: (result) => {
@@ -34,23 +40,24 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
     }
   })
 
-  const timeTrackingInfo = [
-    { label: '勤務時間', value: state.workTime },
-    { label: '休憩時間', value: state.restTime },
-    { label: '本日の残業時間', value: state.overtime },
-    { label: '今月の残業時間', value: state.overtimeMonthly }
-  ]
-
   return (
-    <Stack sx={{ ...flexCenterStyle, height: 1, p: 4 }} spacing={3}>
+    <Stack sx={{ height: 1, p: 4 }} spacing={3}>
       {/* 時計表示 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', height: 0.4 }}>
-        <Typography align="center" sx={{ fontSize: '4.5rem' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 1,
+          minHeight: 300
+        }}
+      >
+        <Typography sx={{ fontSize: '4.5rem', textAlign: 'center' }}>
           {formattedCurrentDateTime}
         </Typography>
       </Box>
 
-      <Stack sx={{ width: 1, height: 0.4 }} spacing={3}>
+      <Stack sx={{ width: 1 }} spacing={3}>
         {/* トグルボタン */}
         <Stack direction="row" spacing={2} justifyContent="center">
           <Button
@@ -78,7 +85,10 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
         </Stack>
 
         {/* 勤務・休憩・残業情報 */}
-        <Paper variant="outlined" sx={{ px: 3, display: 'flex', alignItems: 'center', height: 1 }}>
+        <Paper
+          variant="outlined"
+          sx={{ px: 3, height: 220, display: 'flex', alignItems: 'center' }}
+        >
           <Stack spacing={1} sx={{ width: 1 }}>
             {timeTrackingInfo.map((item) => (
               <Stack direction="row" alignItems="center" key={item.label}>
