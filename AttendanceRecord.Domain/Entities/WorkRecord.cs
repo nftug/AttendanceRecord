@@ -19,7 +19,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
     public TimeSpan GetRestTime() => new(RestRecords.Sum(x => x.GetTotalTime().Ticks));
     public TimeSpan GetOvertime(AppConfig appConfig) => GetWorkTime() - appConfig.StandardWorkTimeSpan;
 
-    public bool IsTodays => RecordedDate == DateTimeProvider.Today;
+    public bool IsTodays => RecordedDate == DateTimeProvider.UtcToday;
     public bool IsTodaysOngoing => Duration.IsActive && IsTodays;
     public bool IsResting => IsTodaysOngoing && RestRecords.LastOrDefault()?.IsActive == true;
     public bool IsWorking => IsTodaysOngoing && !IsResting;
@@ -67,7 +67,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
         else
         {
             // 再開操作
-            _restRecords.Add(RestRecord.Create(Duration.FinishedOn!.Value, DateTimeProvider.Now.TruncateMs()));
+            _restRecords.Add(RestRecord.Create(Duration.FinishedOn!.Value, DateTimeProvider.UtcNow.TruncateMs()));
             Duration = Duration.GetRestart();
         }
 

@@ -20,7 +20,7 @@ public record CurrentWorkRecordStateDto(
     public static CurrentWorkRecordStateDto FromDomain(
         WorkRecord workRecord, WorkRecordTally monthlyTally, AppConfig appConfig) =>
             new(
-                CurrentDateTime: DateTimeProvider.Now.TruncateMs(),
+                CurrentDateTime: DateTimeProvider.UtcNow.TruncateMs(),
                 WorkTime: workRecord.GetWorkTime(),
                 RestTime: workRecord.GetRestTime(),
                 Overtime: workRecord.GetOvertime(appConfig),

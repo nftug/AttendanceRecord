@@ -11,7 +11,7 @@ public class RestRecord(Guid id, TimeDuration duration)
 
     public DateOnly RecordedDate => Duration.RecordedDate;
     public TimeSpan GetTotalTime() => Duration.GetTotalTime();
-    public bool IsActive => Duration.IsActive && RecordedDate == DateTimeProvider.Today;
+    public bool IsActive => Duration.IsActive && RecordedDate == DateTimeProvider.UtcToday;
 
     public static RestRecord Create(DateTime startedOn, DateTime? finishedOn)
         => new(Guid.NewGuid(), TimeDuration.Create(startedOn, finishedOn));

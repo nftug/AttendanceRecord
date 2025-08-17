@@ -51,7 +51,7 @@ public class CurrentWorkRecordStateStore : IDisposable
 
     private async ValueTask LoadAsync(bool forceReload = false)
     {
-        var today = DateTimeProvider.Today;
+        var today = DateTimeProvider.UtcToday;
         var todayYearAndMonth = new YearAndMonth(today.Year, today.Month);
 
         _workRecordToday.Value =

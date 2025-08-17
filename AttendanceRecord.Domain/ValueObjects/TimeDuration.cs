@@ -18,18 +18,21 @@ public record TimeDuration
         {
             { IsEmpty: true } => TimeSpan.Zero,
             { IsActive: true } =>
-                StartedOn.Date == DateTimeProvider.Now.TruncateMs().Date
-                    ? DateTimeProvider.Now.TruncateMs() - StartedOn
+                StartedOn.Date == DateTimeProvider.UtcNow.TruncateMs().Date
+                    ? DateTimeProvider.UtcNow.TruncateMs() - StartedOn
                     : StartedOn.Date.AddDays(1) - StartedOn,
             { FinishedOn: { } } => FinishedOn.Value - StartedOn,
             _ => throw new DomainException("無効な時間の状態です。")
         };
 
     public static TimeDuration Reconstruct(DateTime startedOn, DateTime? finishedOn = null)
-        => new() { StartedOn = startedOn, FinishedOn = finishedOn };
+        => new() { StartedOn = startedOn.ToUniversalTime(), FinishedOn = finishedOn?.ToUniversalTime() };
 
     public static TimeDuration Create(DateTime startedOn, DateTime? finishedOn = null)
     {
+        startedOn = startedOn.ToUniversalTime();
+        finishedOn = finishedOn?.ToUniversalTime();
+
         if (finishedOn != null && startedOn > finishedOn)
             throw new DomainException("開始日が終了日よりも後に指定されています。");
 
@@ -38,9 +41,9 @@ public record TimeDuration
 
     internal static TimeDuration Empty => new();
 
-    internal static TimeDuration GetStart() => Create(DateTimeProvider.Now.TruncateMs());
+    internal static TimeDuration GetStart() => Create(DateTimeProvider.UtcNow.TruncateMs());
 
-    internal TimeDuration GetFinished() => Create(StartedOn, DateTimeProvider.Now.TruncateMs());
+    internal TimeDuration GetFinished() => Create(StartedOn, DateTimeProvider.UtcNow.TruncateMs());
 
     internal TimeDuration GetRestart() => Create(StartedOn);
 }

@@ -41,7 +41,7 @@ public record RestRecordResponseDto(
     bool IsActive
 )
 {
-    public static RestRecordResponseDto FromDomain(Domain.Entities.RestRecord restRecord)
+    public static RestRecordResponseDto FromDomain(RestRecord restRecord)
         => new(
             restRecord.Id,
             restRecord.RecordedDate,
