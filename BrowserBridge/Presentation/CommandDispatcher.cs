@@ -4,7 +4,10 @@ using Microsoft.Extensions.Logging;
 namespace BrowserBridge;
 
 public class CommandDispatcher(
-    IEnumerable<IViewModelResolver> viewModelResolvers, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
+    IEnumerable<IViewModelResolver> viewModelResolvers,
+    ILogger<CommandDispatcher> logger,
+    IErrorHandler errorHandler,
+    IEventDispatcher eventDispatcher)
 {
     private readonly Dictionary<Guid, IOwnedService<IViewModel>> _viewModelMap = [];
 
@@ -23,8 +26,9 @@ public class CommandDispatcher(
             else if (_viewModelMap.TryGetValue(message.ViewId, out var viewModel))
                 await viewModel.Value.HandleAsync(message);
 
-            else
-                throw new InvalidOperationException($"Invalid command: {json}");
+            // ViewIdが未設定の場合はエラー表示を出さない
+            // else
+            //    throw new InvalidOperationException($"Invalid command: {json}");
         }
         catch (Exception e)
         {
@@ -51,6 +55,13 @@ public class CommandDispatcher(
 
             viewModelOwned.Value.SetViewId(message.ViewId);
             _viewModelMap[message.ViewId] = viewModelOwned;
+
+            // Notify initialization result to frontend
+            var initResult = new ViewModelInitResultEvent(initPayload, message.CommandId)
+            {
+                ViewId = message.ViewId
+            };
+            eventDispatcher.Dispatch(initResult, BridgeJsonContext.Default.ViewModelInitResultEvent);
 
             logger.LogInformation("Registered a view for {Type}: ViewId {ViewId}", initPayload.Type, message.ViewId);
         }

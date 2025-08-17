@@ -1,7 +1,12 @@
 import { PrimitiveAtom, useSetAtom } from 'jotai'
 import type { Unsubscribe } from 'nanoevents'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { createDispatcher, createInvoker, createSubscriber, initView } from '../handlers/ipcHandler'
+import {
+  createDispatcher,
+  createInitViewHandler,
+  createInvoker,
+  createSubscriber
+} from '../handlers/ipcHandler'
 import type { CommandEnvelope, EventEnvelope, ViewId } from '../types/apiTypes'
 
 export type ViewModel<TEvent extends EventEnvelope, TCommand extends CommandEnvelope> = ReturnType<
@@ -17,11 +22,27 @@ const useViewModel = <TEvent extends EventEnvelope, TCommand extends CommandEnve
   const subscribe = useMemo(() => createSubscriber<TEvent>(viewId), [viewId])
   const invoke = useMemo(() => createInvoker<TEvent, TCommand>(viewId), [viewId])
   const useViewState = useMemo(() => createViewStateHook<TEvent>(subscribe), [subscribe])
+  const { init, dispose } = useMemo(
+    () => createInitViewHandler(viewId, viewType),
+    [viewId, viewType]
+  )
+
+  const [isInitialized, setIsInitialized] = useState(false)
 
   // 初期化と破棄のコマンド発行
-  useEffect(() => initView(viewId, viewType), [viewId, viewType])
+  useEffect(() => {
+    init().then(() => setIsInitialized(true))
+    return dispose
+  }, [init, dispose])
 
-  return { dispatch, subscribe, invoke, useViewState, viewId }
+  return {
+    dispatch,
+    subscribe,
+    invoke,
+    useViewState,
+    viewId,
+    isInitialized
+  }
 }
 
 const createViewStateHook = <TEvent extends EventEnvelope>(

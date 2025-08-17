@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 namespace BrowserBridge;
 
 #region Message
+[JsonSerializable(typeof(ViewModelInitResultEvent))]
 [JsonSerializable(typeof(ViewModelErrorEvent))]
 [JsonSerializable(typeof(CommandMessage))]
 [JsonSerializable(typeof(InitCommandPayload))]

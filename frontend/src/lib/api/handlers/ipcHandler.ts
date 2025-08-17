@@ -92,11 +92,10 @@ export const createInvoker = <TEvent extends EventEnvelope, TCommand extends Com
   }
 }
 
-export const initView = (viewId: ViewId, viewType: string) => {
+export const createInitViewHandler = (viewId: ViewId, viewType: string) => {
   const dispatch = createDispatcher<AppCommandEnvelope>(viewId)
+  const invoke = createInvoker<AppEventEnvelope, AppCommandEnvelope>(viewId)
   const subscribe = createSubscriber<AppEventEnvelope>(viewId)
-
-  dispatch('init', { type: viewType })
 
   const disposeErrorLogger = subscribe('error', (payload) => {
     const error = new ViewModelError(viewId, payload)
@@ -105,11 +104,16 @@ export const initView = (viewId: ViewId, viewType: string) => {
   })
 
   const handlePageHide = () => dispatch('leave')
-  window.addEventListener('pagehide', handlePageHide)
 
-  return () => {
-    dispatch('leave')
-    disposeErrorLogger()
-    window.removeEventListener('pagehide', handlePageHide)
+  return {
+    init: async () => {
+      await invoke('init', { type: viewType })
+      window.addEventListener('pagehide', handlePageHide)
+    },
+    dispose: () => {
+      dispatch('leave')
+      disposeErrorLogger()
+      window.removeEventListener('pagehide', handlePageHide)
+    }
   }
 }

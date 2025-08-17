@@ -19,10 +19,12 @@ public class MinimalLoggerModule;
 public interface IViewModelContainerBase : IContainer<WindowViewModel>;
 
 public class CommandDispatcherFactory(
-    IViewModelResolver[] viewModelResolvers, ILogger<CommandDispatcher> logger, IErrorHandler errorHandler)
-    : IFactory<CommandDispatcher>
+    IViewModelResolver[] viewModelResolvers,
+    ILogger<CommandDispatcher> logger,
+    IErrorHandler errorHandler,
+    IEventDispatcher eventDispatcher) : IFactory<CommandDispatcher>
 {
-    public CommandDispatcher Create() => new(viewModelResolvers, logger, errorHandler);
+    public CommandDispatcher Create() => new(viewModelResolvers, logger, errorHandler, eventDispatcher);
 }
 #endregion
 
