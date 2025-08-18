@@ -1,3 +1,4 @@
+import { useWindowViewModel } from '@/features/window/atoms/windowViewModel'
 import DateSelectModal from '@/lib/components/DateSelectModal'
 import { formatDate, formatDateTime, toDateTimeString } from '@/lib/utils/dayjsUtils'
 import {
@@ -41,6 +42,7 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
   const [monthDate, setMonthDate] = useState(dayjs())
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs())
   const [pendingAutoSelect, setPendingAutoSelect] = useState(false)
+  const [isFormDirty, setIsFormDirty] = useState(false)
 
   const { data: listData, isLoading: isLoadingList } = useWorkRecordListQuery({
     options: { recordedMonthDate: toDateTimeString(monthDate)! },
@@ -52,10 +54,22 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
     : null
 
   const theme = useTheme()
+  const { invoke: invokeWindow } = useWindowViewModel()
+
+  const confirmDiscard = async () => {
+    if (!isFormDirty) return true
+    const result = await invokeWindow('messageBox', {
+      title: '確認',
+      message: '保存されていない変更があります。このまま移動しますか？',
+      buttons: 'OkCancel',
+      icon: 'Warning'
+    })
+    return result === 'Ok'
+  }
 
   const handleNavigate = async (direction: 'prev' | 'next') => {
     // 子コンポーネントに未保存の変更を破棄しても良いか確認する
-    if (historyItemRef.current && !(await historyItemRef.current.confirmDiscard())) return
+    if (!(await confirmDiscard())) return
 
     setPendingAutoSelect(true)
     setMonthDate((prev) => prev.add(direction === 'prev' ? -1 : 1, 'month'))
@@ -71,7 +85,7 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
   }, [listData, pendingAutoSelect])
 
   const handleDateSelect = async (date: Dayjs) => {
-    if (historyItemRef.current && !(await historyItemRef.current.confirmDiscard())) return
+    if (!(await confirmDiscard())) return
     setSelectedDate(date)
     setMonthDate(date)
   }
@@ -84,7 +98,7 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
   const handleClickDeleteSelected = useAskDeleteWorkRecord({
     itemId: selectedItemId,
     viewModel: { invoke, isInitialized },
-    onSuccess: () => handleDateSelect(dayjs())
+    onSuccess: () => setSelectedDate(null)
   })
 
   const historyItemRef = useRef<HistoryItemViewHandle | null>(null)
@@ -172,7 +186,8 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
             ref={historyItemRef}
             itemId={selectedItemId}
             date={selectedDate}
-            onCanSubmitChange={setCanSubmit}
+            onChangeCanSubmit={setCanSubmit}
+            onChangeIsDirty={setIsFormDirty}
             {...{ invoke, isInitialized }}
           />
         </Box>

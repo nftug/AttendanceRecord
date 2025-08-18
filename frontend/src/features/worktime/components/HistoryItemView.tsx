@@ -27,13 +27,14 @@ import type { WorkRecordSaveRequestDto } from '../types/workTimeTypes'
 type HistoryItemViewProps = {
   itemId: ItemId | null
   date: Dayjs | null
-  onCanSubmitChange?: (can: boolean) => void
+  onChangeCanSubmit?: (canSubmit: boolean) => void
+  onChangeIsDirty?: (isDirty: boolean) => void
 } & Pick<HistoryPageViewModel, 'invoke' | 'isInitialized'>
 
-export type HistoryItemViewHandle = { submit: () => void; confirmDiscard: () => Promise<boolean> }
+export type HistoryItemViewHandle = { submit: () => void }
 
 const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
-  ({ invoke, isInitialized, itemId, date, onCanSubmitChange }, ref) => {
+  ({ invoke, isInitialized, itemId, date, onChangeCanSubmit, onChangeIsDirty }, ref) => {
     const { enqueueSnackbar } = useSnackbar()
     const { invoke: invokeWindow } = useWindowViewModel()
 
@@ -70,10 +71,13 @@ const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
       [form, mutation, invokeWindow]
     )
 
-    // canSubmit の変化を親に通知（初回マウント時にも実行される）
     useEffect(() => {
-      onCanSubmitChange?.(form.formState.isValid && !mutation.isPending)
-    }, [form.formState.isValid, mutation.isPending, onCanSubmitChange])
+      onChangeCanSubmit?.(form.formState.isValid && !mutation.isPending)
+    }, [form.formState.isValid, mutation.isPending, onChangeCanSubmit])
+
+    useEffect(() => {
+      onChangeIsDirty?.(form.formState.isDirty)
+    }, [form.formState.isDirty, onChangeIsDirty])
 
     const timeTrackingInfo = [
       { label: '勤務時間', value: workRecordData?.workTime || 'N/A' },
