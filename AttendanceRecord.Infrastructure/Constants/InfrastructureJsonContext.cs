@@ -13,6 +13,7 @@ public partial class InfrastructureJsonContext : JsonSerializerContext
         new(new JsonSerializerOptions
         {
             WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
         });
 }
