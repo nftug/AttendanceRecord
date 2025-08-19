@@ -1,3 +1,4 @@
+using System.Drawing;
 using Photino.NET;
 
 namespace BrowserBridge.Photino;
@@ -50,6 +51,15 @@ public abstract class PhotinoAppServiceBase(
     protected virtual void HandleWindowCreated(object? sender, EventArgs e)
     {
         windowInstance.Inject(Window);
+
+        if (OperatingSystem.IsWindows())
+        {
+            float screenScale = Window.ScreenDpi / 96f;
+            var currentSize = Window.Size;
+            var scaledSize = new Size((int)(currentSize.Width * screenScale), (int)(currentSize.Height * screenScale));
+            Window.SetSize(scaledSize);
+            Window.Center();
+        }
 
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {

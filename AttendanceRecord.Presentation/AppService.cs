@@ -17,12 +17,14 @@ public sealed class AppService(
     protected override string LocalDebugUrl => "http://localhost:5173";
 
     protected override PhotinoWindow SetupWindow(PhotinoWindow window)
-        => window
-            .SetUseOsDefaultSize(false)
-            .SetSize(new(1200, 820))
-            .Center()
-            .SetContextMenuEnabled(EnvironmentConstants.IsDebugMode)
-            .SetDevToolsEnabled(EnvironmentConstants.IsDebugMode);
+    {
+        return window
+                .SetUseOsDefaultSize(false)
+                .SetSize(new(1200, 820))
+                .Center()
+                .SetContextMenuEnabled(EnvironmentConstants.IsDebugMode)
+                .SetDevToolsEnabled(EnvironmentConstants.IsDebugMode);
+    }
 
     protected override void HandleWindowCreated(object? sender, EventArgs e)
     {

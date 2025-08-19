@@ -11,7 +11,7 @@ switch ($mode) {
 
         Push-Location ./frontend
         pnpm install
-        $frontend = Start-Process -FilePath "pnpm" -ArgumentList "run", "dev" -PassThru
+        $frontend = Start-Process -FilePath "cmd" -ArgumentList "/c pnpm run dev" -PassThru
         Pop-Location
 
         dotnet watch --project "$PROJECT_NAME" run
