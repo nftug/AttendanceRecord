@@ -2,14 +2,14 @@
 # applyTo: "**/*.cs"
 ---
 
-# C# コーディング方針（要点）
+# C# Coding Guidelines (Key Points)
 
-- C# のコードは **プロジェクトの LangVersion に合わせつつ、可能な限り最新の C# 13 の記法・API を優先**すること。
-  - ただし **ビルドが通らないプレビュー機能は使わない**。必要なら C# 12 相当へ安全にフォールバックする。
-- **file-scoped namespace**、`using` の重複回避／並び順の最適化。
-- **nullable 有効** 前提（`#nullable enable` / プロジェクト設定）。
-- 非同期は `async`/`await`、**`ConfigureAwait(false)` はライブラリ内のみ**。
-- **`required` メンバー／`init` アクセサ**を活用（対応環境のみ）。
-- **`switch` 式／パターンマッチング**で条件分岐を簡潔に。
-- **`Span<T>`/`Memory<T>`** や `ReadOnlySpan<char>` はホットパスでのみ使用、先に可読性を優先。
-- 例外は**ガード節**で早期 return、`try/catch` の粒度は最小限。
+- Write C# code according to the project's LangVersion, while **prioritizing the latest C# 13 syntax and APIs whenever possible**.
+  - However, **do not use preview features that fail to build**. If necessary, safely fall back to C# 12 equivalents.
+- Use **file-scoped namespaces**, and optimize `using` directives (avoid duplicates and order them properly).
+- Assume **nullable is enabled** (`#nullable enable` / project settings).
+- For async operations, use `async`/`await`; **use `ConfigureAwait(false)` only within libraries**.
+- Make use of **`required` members / `init` accessors** (only when supported by the environment).
+- Prefer **`switch` expressions / pattern matching** for concise conditional logic.
+- Use **`Span<T>` / `Memory<T>`** and `ReadOnlySpan<char>` only in hot paths, with readability prioritized first.
+- Handle exceptions with **guard clauses** for early returns, and keep `try/catch` blocks as granular as possible.

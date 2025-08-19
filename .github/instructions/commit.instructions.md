@@ -2,36 +2,33 @@
 # applyTo: "**/*"
 ---
 
-# 生成ポリシー（必読）
+# Commit Message Policy (Required)
 
-- すべての**コメント／説明／ドキュメントは日本語**で記述すること。英語は不要。
-- **コミットメッセージの提案・生成も日本語**で行うこと（短く、命令形で）。
-- C# のコードは **最新の C# 13 に準拠**した記法・API を優先する。
-  - ただしビルドが通らないプレビュー機能は使わない。必要に応じて **C# 12 へ安全にフォールバック**すること。
+- **Commit messages must be written in English** (short, imperative mood).
 
-## コミットルール（Conventional Commits・日本語）
+## Commit Rules (Conventional Commits)
 
-- プレフィックスは次のいずれか：`feat|fix|refactor|chore`
-- 形式: `<type>(<optional scope>): <要約（日本語・命令形・50字以内推奨）>`
-- 本文（任意）は **どうして必要か**／**影響範囲** を箇条書きで。日本語で簡潔に。
-- 破壊的変更はフッターに **`BREAKING CHANGE:`** を付けて説明する。
+- Prefix must be one of: `feat|fix|refactor|chore`
+- Format: `<type>(<optional scope>): <summary (English, imperative)>`
+- Body (optional): describe **why it is needed** / **impact** in bullet points. Keep it concise and in English.
+- Breaking changes must be noted with a footer: **`BREAKING CHANGE:`** followed by an explanation.
 
-### type の定義
+### Type Definitions
 
-- **feat:** 機能の追加
-- **fix:** 既存コードの改修（バグ修正）
-- **refactor:** 挙動（入出力）を変えないリファクタリング
-- **chore:** 本体に影響しないその他作業（`.gitignore` や VSCode 設定 等）
+- **feat:** Add a new feature
+- **fix:** Bug fix or correction
+- **refactor:** Code refactoring without changing external behavior
+- **chore:** Other tasks not affecting main code (e.g. `.gitignore`, VSCode settings)
 
-### 例
+### Examples
 
-- `feat(timer): 手動休憩入力を追加`
-- `fix(api): 休憩時間の丸め処理で日付跨ぎに失敗する問題を修正`
-- `refactor(worktime): TimeSpan計算の重複をユーティリティに集約`
-- `chore: VSCode設定に日本語ロケールを追加`
+- `feat(timer): Add manual break input`
+- `fix(api): Fix issue with date crossing in rounding of break time`
+- `refactor(worktime): Consolidate duplicate TimeSpan calculations into utility`
+- `chore: Add Japanese locale to VSCode settings`
 
-### Copilot への指示（コミット生成時）
+### Instructions for Copilot (when generating commits)
 
-- つねに上記フォーマットに従い、日本語で簡潔に書くこと
-- **本文がある場合**は「動機」「影響範囲」を1–3行で箇条書き
-- **テスト追加**や**ドキュメント**は本文に触れる（必要なら `scope` に `docs|test` 等を使用可）
+- Always follow the above format and write concisely in English
+- **If a body is included**, add 1–3 bullet points for "motivation" and "impact"
+- **Tests** or **documentation** should be noted in the body (you may also use `scope` such as `docs|test` if appropriate)
