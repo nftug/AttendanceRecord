@@ -3,7 +3,8 @@ namespace BrowserBridge;
 public enum WindowCommandType
 {
     MessageBox,
-    SetMinimized
+    SetMinimized,
+    SendNotification
 }
 
 public record MessageBoxCommandPayload(
@@ -12,3 +13,5 @@ public record MessageBoxCommandPayload(
     ButtonsType Buttons = ButtonsType.Ok,
     IconType Icon = IconType.Info
 );
+
+public record SendNotificationCommandPayload(string Title, string Message);

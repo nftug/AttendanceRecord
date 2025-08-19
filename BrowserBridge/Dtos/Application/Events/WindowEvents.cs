@@ -11,3 +11,9 @@ public record SetMinimizedResultEvent(Guid? CommandId)
 {
     public override string CommandName => nameof(WindowCommandType.SetMinimized);
 }
+
+public record SendNotificationResultEvent(Guid? CommandId)
+    : CommandResultEventVoidMessage(CommandId)
+{
+    public override string CommandName => nameof(WindowCommandType.SendNotification);
+}

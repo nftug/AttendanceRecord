@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Photino.NET;
 
 namespace BrowserBridge.Photino;
@@ -45,5 +46,36 @@ public class PhotinoWindowService(PhotinoWindowInstance windowInstance) : IWindo
             throw new InvalidOperationException("Window instance is not ready");
 
         window.SetMinimized(minimized);
+    }
+
+    public void SendNotification(string title, string message)
+    {
+        if (windowInstance.Value is not { } window)
+            throw new InvalidOperationException("Window instance is not ready");
+
+        if (OperatingSystem.IsMacOS())
+        {
+            var script = $"display notification \"{message}\" with title \"{title}\"";
+            var process = new Process()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "osascript",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+            process.StartInfo.ArgumentList.Add("-e");
+            process.StartInfo.ArgumentList.Add(script);
+
+            process.Start();
+            process.WaitForExit();
+        }
+        else
+        {
+            window.SendNotification(title, message);
+        }
     }
 }

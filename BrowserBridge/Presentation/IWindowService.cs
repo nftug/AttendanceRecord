@@ -10,4 +10,6 @@ public interface IWindowService
     );
 
     void SetMinimized(bool minimized);
+
+    void SendNotification(string title, string message);
 }

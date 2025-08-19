@@ -5,16 +5,16 @@ import { useAlarmViewModel } from '../atoms/alarmViewModel'
 
 const AlarmView = () => {
   const { subscribe, dispatch } = useAlarmViewModel()
-  const { invoke: invokeWindow } = useWindowViewModel()
+  const { invoke: invokeWindow, dispatch: dispatchWindow } = useWindowViewModel()
   const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() =>
     subscribe('triggered', async ({ type }) => {
-      await invokeWindow('setMinimized', false)
-
       const messageTitle = type === 'WorkEnd' ? '勤務終了のアラーム' : '休憩開始のアラーム'
       const messageContent =
         type === 'WorkEnd' ? 'まもなく退勤時間です。' : '休憩時間になりました。'
+
+      dispatchWindow('sendNotification', { title: messageTitle, message: messageContent })
 
       const result = await invokeWindow('messageBox', {
         title: messageTitle,

@@ -14,6 +14,10 @@ public sealed class WindowViewModel(IEventDispatcher eventDispatcher, IWindowSer
             (WindowCommandType.SetMinimized, var payload, var commandId)
                 when bool.TryParse(payload.ToString(), out var minimized) =>
                     SetMinimizedAsync(minimized, commandId),
+            (WindowCommandType.SendNotification, var payload, var commandId)
+                when payload.TryParse(
+                    BridgeJsonContext.Default.SendNotificationCommandPayload, out var notificationPayload) =>
+                    SendNotificationAsync(notificationPayload, commandId),
             _ => throw new NotImplementedException($"Action {action} is not implemented or payload is missing.")
         };
 
@@ -33,5 +37,12 @@ public sealed class WindowViewModel(IEventDispatcher eventDispatcher, IWindowSer
 
         await Task.Delay(100); // Allow time for the window state to change
         Dispatch(new(commandId), BridgeJsonContext.Default.SetMinimizedResultEvent);
+    }
+
+    private ValueTask SendNotificationAsync(SendNotificationCommandPayload payload, Guid? commandId)
+    {
+        windowService.SendNotification(payload.Title, payload.Message);
+        Dispatch(new(commandId), BridgeJsonContext.Default.SendNotificationResultEvent);
+        return ValueTask.CompletedTask;
     }
 }

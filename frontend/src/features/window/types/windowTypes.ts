@@ -12,6 +12,13 @@ export type WindowCommandEnvelope =
       command: 'setMinimized'
       payload: boolean
     }
+  | {
+      command: 'sendNotification'
+      payload: {
+        title: string
+        message: string
+      }
+    }
 
 export type WindowEventEnvelope =
   | {
@@ -22,4 +29,8 @@ export type WindowEventEnvelope =
   | {
       event: 'receive:setMinimized'
       commandName: 'setMinimized'
+    }
+  | {
+      event: 'receive:sendNotification'
+      commandName: 'sendNotification'
     }

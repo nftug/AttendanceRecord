@@ -13,6 +13,8 @@ namespace BrowserBridge;
 [JsonSerializable(typeof(MessageBoxResultEvent))]
 [JsonSerializable(typeof(MessageBoxCommandPayload))]
 [JsonSerializable(typeof(SetMinimizedResultEvent))]
+[JsonSerializable(typeof(SendNotificationResultEvent))]
+[JsonSerializable(typeof(SendNotificationCommandPayload))]
 #endregion
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
