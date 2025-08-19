@@ -87,7 +87,10 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
   const handleDateSelect = async (date: Dayjs) => {
     if (!(await confirmDiscard())) return
     setSelectedDate(date)
-    setMonthDate(date)
+
+    if (date.year() !== monthDate.year() || date.month() !== monthDate.month()) {
+      setMonthDate(date)
+    }
   }
 
   const handleDateModalSelect = async (initialDate: Dayjs | null) => {

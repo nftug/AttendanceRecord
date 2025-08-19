@@ -1,4 +1,3 @@
-import { useWindowViewModel } from '@/features/window/atoms/windowViewModel'
 import { ItemId } from '@/lib/api/types/brandedTypes'
 import TimeField from '@/lib/components/TimeField'
 import { formatDate } from '@/lib/utils/dayjsUtils'
@@ -36,7 +35,6 @@ export type HistoryItemViewHandle = { submit: () => void }
 const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
   ({ invoke, isInitialized, itemId, date, onChangeCanSubmit, onChangeIsDirty }, ref) => {
     const { enqueueSnackbar } = useSnackbar()
-    const { invoke: invokeWindow } = useWindowViewModel()
 
     const { form, mutation, workRecordData } = useWorkRecordEditForm({
       viewModel: { invoke, isInitialized },
@@ -49,26 +47,16 @@ const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
       }
     })
 
-    // 親から呼べる submit ハンドラを公開
+    // Expose submit handler
     useImperativeHandle(
       ref,
       () => ({
         submit: async () => {
           const values = form.getValues() as unknown as WorkRecordSaveRequestDto
           await mutation.mutateAsync(values)
-        },
-        confirmDiscard: async () => {
-          if (!form.formState.isDirty) return true
-          const result = await invokeWindow('messageBox', {
-            title: '確認',
-            message: '保存されていない変更があります。移動してもよいですか？',
-            buttons: 'OkCancel',
-            icon: 'Warning'
-          })
-          return result === 'Ok'
         }
       }),
-      [form, mutation, invokeWindow]
+      [form, mutation]
     )
 
     useEffect(() => {
