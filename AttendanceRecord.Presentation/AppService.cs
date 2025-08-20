@@ -32,11 +32,8 @@ public sealed class AppService(
     {
         base.HandleWindowCreated(sender, e);
 
-        if (OperatingSystem.IsWindows())
-        {
-            Window.WindowMinimized += (_, _) => trayIconService.ToggleShowWindow();
-            trayIconService.CreateNotifyIcon();
-        }
+        trayIconService.CreateNotifyIcon();
+        Window.WindowMinimized += (_, _) => trayIconService.ToggleShowWindow();
 
         Task.Run(async () =>
         {

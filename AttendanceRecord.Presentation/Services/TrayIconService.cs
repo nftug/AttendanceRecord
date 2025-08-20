@@ -20,7 +20,7 @@ public sealed class WindowsTrayIconService(PhotinoWindowInstance windowInstance)
 
     public void CreateNotifyIcon()
     {
-        if (!OperatingSystem.IsWindows()) return;
+        if (!OperatingSystem.IsWindowsVersionAtLeast(5, 1, 2600)) return;
         if (windowInstance.Value is not { } window) return;
 
         _trayIcon = new()
