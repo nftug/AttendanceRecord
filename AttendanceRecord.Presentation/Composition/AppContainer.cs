@@ -13,6 +13,7 @@ namespace AttendanceRecord.Presentation.Composition;
 #region Modules
 [RegisterModule(typeof(PhotinoContainerModule))]
 [RegisterModule(typeof(MinimalLoggerModule))]
+[RegisterModule(typeof(PlatformModule))]
 [Register(typeof(AppService), Scope.SingleInstance)]
 public class AppBaseModule;
 

@@ -9,4 +9,8 @@ public class PhotinoWindowInstance
     public void Inject(PhotinoWindow window) => _window = window;
 
     public PhotinoWindow? Value => _window;
+
+    public event Action? OnWindowClosing;
+
+    public void InvokeOnWindowClosing() => OnWindowClosing?.Invoke();
 }

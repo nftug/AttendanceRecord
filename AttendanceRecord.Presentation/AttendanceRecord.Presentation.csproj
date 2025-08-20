@@ -16,6 +16,8 @@
     <IlcDisableUnhandledExceptionExperience>false</IlcDisableUnhandledExceptionExperience>
     <IsAotCompatible>true</IsAotCompatible>
 
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+
     <Version>1.0.0.0</Version>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <AssemblyName>AttendanceRecord</AssemblyName>
@@ -43,6 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="H.NotifyIcon" Version="2.3.0" />
     <PackageReference Include="Mediator.Switch" Version="1.17.0" />
   </ItemGroup>
 </Project>

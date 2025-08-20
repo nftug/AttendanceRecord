@@ -1,8 +1,8 @@
 using AttendanceRecord.Domain.Interfaces;
+using AttendanceRecord.Presentation.Services;
 using AttendanceRecord.Presentation.Utils;
 using BrowserBridge;
 using BrowserBridge.Photino;
-using BrowserBridge.Photino.Utils;
 using Photino.NET;
 
 namespace AttendanceRecord.Presentation;
@@ -12,11 +12,10 @@ public sealed class AppService(
     PhotinoWindowInstance windowInstance,
     CommandDispatcher dispatcher,
     IErrorHandler errorHandler,
-    ISingleInstanceGuard singleInstanceGuard
+    ISingleInstanceGuard singleInstanceGuard,
+    ITrayIconService trayIconService
 ) : PhotinoAppServiceBase(containerInstance, windowInstance, dispatcher, errorHandler)
 {
-    // Windows tray behavior is implemented in the nested helper class below.
-
     protected override string LocalDebugUrl => "http://localhost:5173";
 
     protected override PhotinoWindow SetupWindow(PhotinoWindow window)
@@ -33,12 +32,10 @@ public sealed class AppService(
     {
         base.HandleWindowCreated(sender, e);
 
-        // If on Windows, initialize helper and subscribe to minimized event (left-click restore only).
         if (OperatingSystem.IsWindows())
         {
-            if (Window.WindowHandle == IntPtr.Zero) return;
-            WindowsTrayHelper.Initialize(Window.WindowHandle);
-            Window.WindowMinimized += (_, _) => WindowsTrayHelper.HideToTray(Window.WindowHandle);
+            Window.WindowMinimized += (_, _) => trayIconService.ToggleShowWindow();
+            trayIconService.CreateNotifyIcon();
         }
 
         Task.Run(async () =>

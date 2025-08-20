@@ -78,6 +78,10 @@ public abstract class PhotinoAppServiceBase(
         if (IsClosing is { } isClosing)
         {
             IsClosing = null;
+
+            if (isClosing == true)
+                windowInstance.InvokeOnWindowClosing();
+
             return !isClosing;
         }
 
