@@ -32,8 +32,8 @@ public sealed class AppService(
     {
         base.HandleWindowCreated(sender, e);
 
-        trayIconService.CreateNotifyIcon();
-        Window.WindowMinimized += (_, _) => trayIconService.ToggleShowWindow();
+        trayIconService.CreateTrayIcon();
+        Window.WindowMinimized += (_, _) => trayIconService.SetShowWindow(true);
 
         Task.Run(async () =>
         {
@@ -46,7 +46,7 @@ public sealed class AppService(
 
             await NamedPipeServer.ReceiveMessageAsync(message =>
             {
-                if (message?.Content == "ShowWindow") Window.SetMinimized(false);
+                if (message?.Content == "ShowWindow") trayIconService.SetShowWindow(true);
             });
         });
     }
