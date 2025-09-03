@@ -23,7 +23,7 @@ const useAskDeleteWorkRecord = ({
   const mutation = useMutation({
     mutationFn: async () => {
       if (!itemId) throw new Error('Item ID is required')
-      await viewModel.invoke('deleteWorkRecord', itemId)
+      await viewModel.invoke({ command: 'deleteWorkRecord', payload: itemId })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getWorkRecordListQueryKey() })
@@ -33,11 +33,14 @@ const useAskDeleteWorkRecord = ({
   })
 
   const askAndDelete = async () => {
-    const answer = await invokeWindow('messageBox', {
-      title: '削除の確認',
-      message: 'この記録を削除してもよろしいですか？',
-      buttons: 'YesNo',
-      icon: 'Warning'
+    const answer = await invokeWindow({
+      command: 'messageBox',
+      payload: {
+        title: '削除の確認',
+        message: 'この記録を削除してもよろしいですか？',
+        buttons: 'YesNo',
+        icon: 'Warning'
+      }
     })
     if (answer === 'Yes') mutation.mutate()
   }

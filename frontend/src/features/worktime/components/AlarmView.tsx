@@ -14,16 +14,22 @@ const AlarmView = () => {
       const messageContent =
         type === 'WorkEnd' ? 'まもなく退勤時間です。' : '休憩時間になりました。'
 
-      dispatchWindow('sendNotification', { title: messageTitle, message: messageContent })
+      dispatchWindow({
+        command: 'sendNotification',
+        payload: { title: messageTitle, message: messageContent }
+      })
 
-      const result = await invokeWindow('messageBox', {
-        title: messageTitle,
-        message: `${messageContent}\nスヌーズするには「キャンセル」を選択してください。`,
-        buttons: 'OkCancel'
+      const result = await invokeWindow({
+        command: 'messageBox',
+        payload: {
+          title: messageTitle,
+          message: `${messageContent}\nスヌーズするには「キャンセル」を選択してください。`,
+          buttons: 'OkCancel'
+        }
       })
 
       if (result === 'Cancel') {
-        dispatch('snooze', { type })
+        dispatch({ command: 'snooze', payload: { type } })
         enqueueSnackbar('スヌーズしました。', { variant: 'info' })
       }
     })

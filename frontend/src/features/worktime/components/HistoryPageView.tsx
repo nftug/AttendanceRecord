@@ -58,11 +58,14 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
 
   const confirmDiscard = async () => {
     if (!isFormDirty) return true
-    const result = await invokeWindow('messageBox', {
-      title: '確認',
-      message: '保存されていない変更があります。このまま移動しますか？',
-      buttons: 'OkCancel',
-      icon: 'Warning'
+    const result = await invokeWindow({
+      command: 'messageBox',
+      payload: {
+        title: '確認',
+        message: '保存されていない変更があります。このまま移動しますか？',
+        buttons: 'OkCancel',
+        icon: 'Warning'
+      }
     })
     return result === 'Ok'
   }

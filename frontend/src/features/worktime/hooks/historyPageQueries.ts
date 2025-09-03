@@ -17,7 +17,7 @@ export const useWorkRecordListQuery = ({
 }: UseGetWorkRecordListQueryOptions) => {
   return useQuery({
     queryKey: getWorkRecordListQueryKey(options),
-    queryFn: async () => await invoke('getWorkRecordList', options),
+    queryFn: () => invoke({ command: 'getWorkRecordList', payload: options }),
     enabled: isInitialized
   })
 }
@@ -36,7 +36,7 @@ export const useWorkRecordQuery = ({
 }: UseGetWorkRecordQueryOptions) => {
   return useQuery({
     queryKey: getWorkRecordQueryKey(itemId),
-    queryFn: async () => (itemId ? await invoke('getWorkRecord', itemId) : null),
+    queryFn: () => (itemId ? invoke({ command: 'getWorkRecord', payload: itemId }) : null),
     enabled: isInitialized
   })
 }

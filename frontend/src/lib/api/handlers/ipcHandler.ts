@@ -11,13 +11,7 @@ import {
   ViewId
 } from '../types/apiTypes'
 import { AppCommandEnvelope, AppEventEnvelope } from '../types/appTypes'
-import {
-  CommandArguments,
-  CommandResult,
-  EmitterKey,
-  EmitterKeyOptions,
-  Event
-} from '../types/handlerTypes'
+import { CommandResult, EmitterKey, EmitterKeyOptions, Event } from '../types/handlerTypes'
 import { ViewModelError } from '../types/viewModelError'
 
 let ipcMessenger: IpcMessenger
@@ -53,15 +47,8 @@ export const createSubscriber = <TEvent extends EventEnvelope>(viewId: ViewId) =
 }
 
 export const createDispatcher = <TCommand extends CommandEnvelope>(viewId: ViewId) => {
-  return <TName extends TCommand['command']>(
-    commandName: TName,
-    ...args: CommandArguments<TCommand, TName>
-  ) => {
-    const message: CommandMessage = {
-      viewId,
-      command: commandName,
-      payload: args[0]
-    }
+  return <TName extends TCommand['command']>(input: Extract<TCommand, { command: TName }>) => {
+    const message: CommandMessage = { viewId, ...input }
     ipcMessenger.sendMessage(JSON.stringify(message))
   }
 }
@@ -70,19 +57,13 @@ export const createInvoker = <TEvent extends EventEnvelope, TCommand extends Com
   viewId: ViewId
 ) => {
   return <TName extends TCommand['command'] & CommandResult<TEvent, string>['commandName']>(
-    commandName: TName,
-    ...args: CommandArguments<TCommand, TName>
+    input: Extract<TCommand, { command: TName }>
   ): Promise<CommandResult<TEvent, TName>['payload']> => {
     const commandId = crypto.randomUUID() as CommandId
-    const message: CommandMessage = {
-      viewId,
-      command: commandName,
-      payload: args[0],
-      commandId
-    }
+    const message: CommandMessage = { viewId, commandId, ...input }
 
     return new Promise<CommandResult<TEvent, TName>['payload']>((resolve, reject) => {
-      const key = generateEmitterKey({ commandName, commandId })
+      const key = generateEmitterKey({ commandName: input.command, commandId })
 
       const removeSubscription = eventEmitter.on(key, (payload) => {
         removeAllSubscriptions()
@@ -121,15 +102,15 @@ export const createInitViewHandler = (viewId: ViewId, viewType: string) => {
     console.error(error.details)
   })
 
-  const handlePageHide = () => dispatch('leave')
+  const handlePageHide = () => dispatch({ command: 'leave' })
 
   return {
     init: async () => {
-      await invoke('init', { type: viewType })
+      await invoke({ command: 'init', payload: { type: viewType } })
       window.addEventListener('pagehide', handlePageHide)
     },
     dispose: () => {
-      dispatch('leave')
+      dispatch({ command: 'leave' })
       disposeErrorLogger()
       window.removeEventListener('pagehide', handlePageHide)
     }

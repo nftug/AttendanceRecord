@@ -28,13 +28,13 @@ const HomePageViewInternal = ({ state, invoke }: HomePageViewModel) => {
   ]
 
   const { mutate: toggleWork, isPending: isTogglingWork } = useMutation({
-    mutationFn: async () => await invoke('toggleWork'),
+    mutationFn: () => invoke({ command: 'toggleWork' }),
     onSuccess: (result) => {
       enqueueSnackbar(result.isActive ? '勤務を開始しました' : '勤務を終了しました')
     }
   })
   const { mutate: toggleRest, isPending: isTogglingRest } = useMutation({
-    mutationFn: async () => await invoke('toggleRest'),
+    mutationFn: () => invoke({ command: 'toggleRest' }),
     onSuccess: (result) => {
       enqueueSnackbar(result.isResting ? '休憩を開始しました' : '休憩を終了しました')
     }

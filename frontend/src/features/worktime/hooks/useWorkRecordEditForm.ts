@@ -36,12 +36,13 @@ const useWorkRecordEditForm = ({
   }, [workRecordData, form])
 
   const mutation = useMutation({
-    mutationFn: async (formData: WorkRecordSaveRequestDto) => {
-      await viewModel.invoke('saveWorkRecord', formData)
-    },
+    mutationFn: (formData: WorkRecordSaveRequestDto) =>
+      viewModel.invoke({ command: 'saveWorkRecord', payload: formData }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: getWorkRecordQueryKey() })
-      await queryClient.invalidateQueries({ queryKey: getWorkRecordListQueryKey() })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: getWorkRecordQueryKey() }),
+        queryClient.invalidateQueries({ queryKey: getWorkRecordListQueryKey() })
+      ])
       onSuccess?.()
     },
     onError

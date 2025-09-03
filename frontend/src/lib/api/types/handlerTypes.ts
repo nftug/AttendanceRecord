@@ -1,4 +1,4 @@
-import { CommandEnvelope, CommandId, EventEnvelope, ViewId } from './apiTypes'
+import { CommandId, EventEnvelope, ViewId } from './apiTypes'
 
 export type EmitterKey = `state:${ViewId}:${string}` | `result:${CommandId}:${string}`
 
@@ -12,6 +12,3 @@ export type CommandResult<T extends EventEnvelope, TName extends T['commandName'
   T,
   { commandName: TName }
 >
-
-export type CommandArguments<TCommand extends CommandEnvelope, TName extends TCommand['command']> =
-  Extract<TCommand, { command: TName }> extends { payload: infer P } ? [payload: P] : []
