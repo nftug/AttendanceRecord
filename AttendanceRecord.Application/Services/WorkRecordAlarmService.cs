@@ -6,7 +6,7 @@ using R3;
 
 namespace AttendanceRecord.Application.Services;
 
-public class WorkRecordAlarmService : IDisposable
+public sealed class WorkRecordAlarmService : IDisposable
 {
     private readonly AppConfigStore _appConfigStore;
     private readonly CompositeDisposable _disposables = [];
@@ -61,11 +61,7 @@ public class WorkRecordAlarmService : IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        _disposables.Dispose();
-    }
+    public void Dispose() => _disposables.Dispose();
 }
 
 file record AlarmTriggered(AlarmType Type, bool Triggered);

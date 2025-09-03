@@ -8,7 +8,7 @@ using R3;
 
 namespace AttendanceRecord.Application.Services;
 
-public class CurrentWorkRecordStateStore : IDisposable
+public sealed class CurrentWorkRecordStateStore : IDisposable
 {
     private readonly IntervalService _interval;
     private readonly IWorkRecordRepository _repository;
@@ -43,11 +43,7 @@ public class CurrentWorkRecordStateStore : IDisposable
             .AddTo(_disposables);
     }
 
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        _disposables.Dispose();
-    }
+    public void Dispose() => _disposables.Dispose();
 
     private async ValueTask LoadAsync(bool forceReload = false)
     {
