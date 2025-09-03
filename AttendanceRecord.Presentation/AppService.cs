@@ -53,8 +53,16 @@ public sealed class AppService(
 
     protected override ValueTask<bool> ShouldCloseAsync()
     {
-        var result = Window.ShowMessage(
-            "確認", "アプリケーションを終了しますか？", PhotinoDialogButtons.YesNo, PhotinoDialogIcon.Question);
-        return new(result == PhotinoDialogResult.Yes);
+        if (trayIconService.IsTrayIconAvailable)
+        {
+            trayIconService.SetShowWindow(false);
+            return ValueTask.FromResult(false);
+        }
+        else
+        {
+            var result = Window.ShowMessage(
+                "確認", "アプリケーションを終了しますか？", PhotinoDialogButtons.YesNo, PhotinoDialogIcon.Question);
+            return ValueTask.FromResult(result == PhotinoDialogResult.Yes);
+        }
     }
 }

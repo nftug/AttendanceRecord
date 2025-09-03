@@ -3,11 +3,13 @@ using System.Runtime.Versioning;
 using AttendanceRecord.Presentation.Utils;
 using BrowserBridge.Photino;
 using H.NotifyIcon.Core;
+using Photino.NET;
 
 namespace AttendanceRecord.Presentation.Services;
 
 public interface ITrayIconService : IDisposable
 {
+    bool IsTrayIconAvailable { get; }
     void CreateTrayIcon();
     void SetShowWindow(bool isVisible);
 }
@@ -17,10 +19,11 @@ public sealed class WindowsTrayIconService(PhotinoWindowInstance windowInstance)
 {
     private TrayIconWithContextMenu? _trayIcon;
 
+    public bool IsTrayIconAvailable => _trayIcon is not null;
+
     public void CreateTrayIcon()
     {
         if (!OperatingSystem.IsWindowsVersionAtLeast(5, 1, 2600)) return;
-        if (windowInstance.Value is not { } window) return;
 
         _trayIcon = new()
         {
@@ -30,8 +33,8 @@ public sealed class WindowsTrayIconService(PhotinoWindowInstance windowInstance)
             {
                 Items =
                 {
-                    new PopupMenuItem("メインウィンドウの表示", (_, _) => SetShowWindow(true)),
-                    new PopupMenuItem("終了", (_, _) => window.Close())
+                    new PopupMenuItem("表示", (_, _) => SetShowWindow(true)),
+                    new PopupMenuItem("終了", (_, _) => HandleClickExit())
                 }
             }
         };
@@ -55,11 +58,21 @@ public sealed class WindowsTrayIconService(PhotinoWindowInstance windowInstance)
         else Win32WindowHelper.Hide(window.WindowHandle);
     }
 
+    private void HandleClickExit()
+    {
+        if (windowInstance.Value is not { } window) return;
+        var result = window.ShowMessage(
+            "確認", "アプリケーションを終了しますか？", PhotinoDialogButtons.YesNo, PhotinoDialogIcon.Question);
+        if (result == PhotinoDialogResult.Yes) Environment.Exit(0);
+    }
+
     public void Dispose() => _trayIcon?.Dispose();
 }
 
-public class NoopTrayIconService : ITrayIconService
+public sealed class NoopTrayIconService : ITrayIconService
 {
+    public bool IsTrayIconAvailable => false;
+
     public void CreateTrayIcon()
     {
     }
