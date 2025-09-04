@@ -1,5 +1,5 @@
 import { ItemId } from '@/lib/api/types/brandedTypes'
-import TimeField from '@/lib/components/TimeField'
+import TimeField from '@/lib/ui/form/components/TimeField'
 import { formatDate } from '@/lib/utils/dayjsUtils'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -21,6 +21,7 @@ import { forwardRef, useEffect, useImperativeHandle } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { HistoryPageViewModel } from '../atoms/historyPageViewModel'
 import useWorkRecordEditForm from '../hooks/useWorkRecordEditForm'
+import { createDefaultRestRecord } from '../schemas/workRecordFormSchema'
 import type { WorkRecordSaveRequestDto } from '../types/workTimeTypes'
 
 type HistoryItemViewProps = {
@@ -38,7 +39,7 @@ const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
 
     const { form, mutation, workRecordData } = useWorkRecordEditForm({
       viewModel: { invoke, isInitialized },
-      itemId: itemId,
+      itemId,
       onSuccess: () => {
         enqueueSnackbar('勤務記録を保存しました。', { variant: 'success' })
       },
@@ -122,10 +123,7 @@ const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
             <Box>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Typography variant="h6">休憩</Typography>
-                <Button
-                  startIcon={<AddIcon />}
-                  onClick={() => append({ id: null, duration: { startedOn: '', finishedOn: '' } })}
-                >
+                <Button startIcon={<AddIcon />} onClick={() => append(createDefaultRestRecord())}>
                   追加
                 </Button>
               </Stack>

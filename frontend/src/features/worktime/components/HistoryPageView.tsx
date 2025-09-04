@@ -1,5 +1,5 @@
 import { useWindowViewModel } from '@/features/window/atoms/windowViewModel'
-import DateSelectModal from '@/lib/components/DateSelectModal'
+import DateSelectModal from '@/lib/ui/form/components/DateSelectModal'
 import { formatDate, formatDateTime, toDateTimeString } from '@/lib/utils/dayjsUtils'
 import {
   CalendarMonth,
@@ -45,7 +45,7 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
   const [isFormDirty, setIsFormDirty] = useState(false)
 
   const { data: listData, isLoading: isLoadingList } = useWorkRecordListQuery({
-    options: { recordedMonthDate: toDateTimeString(monthDate)! },
+    options: { recordedMonthDate: toDateTimeString(monthDate) },
     viewModel: { invoke, isInitialized }
   })
 

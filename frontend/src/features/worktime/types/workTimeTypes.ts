@@ -1,6 +1,6 @@
 import { DateTimeString, ItemId, TimeSpanString } from '@/lib/api/types/brandedTypes'
 
-export type TimeDuration = { startedOn: DateTimeString; finishedOn?: DateTimeString }
+export type TimeDuration = { startedOn: string; finishedOn: string | null }
 
 export type CurrentWorkRecordStateDto = {
   currentDateTime: DateTimeString
@@ -48,7 +48,7 @@ export type RestRecordResponseDto = {
 }
 
 export type WorkRecordSaveRequestDto = {
-  id: ItemId | null
+  id: string | null
   duration: TimeDuration
-  restRecords: { id: ItemId | null; duration: TimeDuration }[]
+  restRecords: { id: string | null; duration: TimeDuration }[]
 }

@@ -1,11 +1,8 @@
 import { ItemId } from '@/lib/api/types/brandedTypes'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import useResourceEditForm from '@/lib/ui/form/hooks/useResourceEditForm'
+import { useQueryClient } from '@tanstack/react-query'
 import { HistoryPageViewModel } from '../atoms/historyPageViewModel'
-import { workRecordSaveSchema } from '../schemas/workRecordFormSchema'
-import { WorkRecordSaveRequestDto } from '../types/workTimeTypes'
+import { createDefaultWorkRecord, workRecordSaveSchema } from '../schemas/workRecordFormSchema'
 import {
   getWorkRecordListQueryKey,
   getWorkRecordQueryKey,
@@ -26,18 +23,13 @@ const useWorkRecordEditForm = ({
   onError
 }: UseWorkRecordEditFormOptions) => {
   const queryClient = useQueryClient()
-  const form = useForm({ resolver: zodResolver(workRecordSaveSchema), mode: 'onChange' })
   const { data: workRecordData, isLoading } = useWorkRecordQuery({ viewModel, itemId })
 
-  useEffect(() => {
-    form.reset(
-      workRecordData ?? { id: null, duration: { startedOn: '', finishedOn: null }, restRecords: [] }
-    )
-  }, [workRecordData, form])
-
-  const mutation = useMutation({
-    mutationFn: (formData: WorkRecordSaveRequestDto) =>
-      viewModel.invoke({ command: 'saveWorkRecord', payload: formData }),
+  const { form, mutation } = useResourceEditForm({
+    resourceData: workRecordData,
+    schema: workRecordSaveSchema,
+    toFormFields: (data) => data ?? createDefaultWorkRecord(),
+    saveFn: (formData) => viewModel.invoke({ command: 'saveWorkRecord', payload: formData }),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: getWorkRecordQueryKey() }),
