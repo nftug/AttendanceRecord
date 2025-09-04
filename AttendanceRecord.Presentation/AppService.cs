@@ -33,7 +33,7 @@ public sealed class AppService(
         base.HandleWindowCreated(sender, e);
 
         trayIconService.CreateTrayIcon();
-        Window.WindowMinimized += (_, _) => trayIconService.SetShowWindow(true);
+        Window.WindowMinimized += (_, _) => trayIconService.SetShowWindow(false);
 
         Task.Run(async () =>
         {
