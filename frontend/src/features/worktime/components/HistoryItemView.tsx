@@ -48,9 +48,10 @@ const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
   ({ viewModel, itemId, date, onChangeCanSubmit, onChangeIsDirty }, ref) => {
     const { enqueueSnackbar } = useSnackbar()
     const queryClient = useQueryClient()
-    const { data: workRecordData } = useWorkRecordQuery({ viewModel, itemId })
+
+    const { data: resourceData } = useWorkRecordQuery({ viewModel, itemId })
     const { form, mutation } = useResourceEditForm({
-      resourceData: workRecordData,
+      resourceData,
       schema: workRecordSaveSchema,
       toFormFields: (data) => data ?? createDefaultWorkRecord(),
       saveFn: (formData) => viewModel.invoke({ command: 'saveWorkRecord', payload: formData }),
@@ -87,9 +88,9 @@ const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
     }, [form.formState.isDirty, onChangeIsDirty])
 
     const timeTrackingInfo = [
-      { label: '勤務時間', value: workRecordData?.workTime || 'N/A' },
-      { label: '休憩時間', value: workRecordData?.restTime || 'N/A' },
-      { label: '残業時間', value: workRecordData?.overtime || 'N/A' }
+      { label: '勤務時間', value: resourceData?.workTime || 'N/A' },
+      { label: '休憩時間', value: resourceData?.restTime || 'N/A' },
+      { label: '残業時間', value: resourceData?.overtime || 'N/A' }
     ]
 
     // field array for restRecords

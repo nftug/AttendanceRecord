@@ -53,11 +53,11 @@ const HistoryPageViewInternal = (viewModel: HistoryPageViewModel) => {
     listData?.workRecords.find((x) => dayjs(x.date).isSame(selectedDate, 'day'))?.id ?? null
 
   const theme = useTheme()
-  const { invoke: invokeWindow } = useWindowViewModel()
+  const window = useWindowViewModel()
 
   const confirmDiscard = async () => {
     if (!isFormDirty) return true
-    const result = await invokeWindow({
+    const result = await window.invoke({
       command: 'messageBox',
       payload: {
         title: '確認',

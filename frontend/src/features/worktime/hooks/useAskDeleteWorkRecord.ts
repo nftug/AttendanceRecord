@@ -18,7 +18,7 @@ const useAskDeleteWorkRecord = ({
   onError
 }: UseWorkRecordDeleteOptions) => {
   const queryClient = useQueryClient()
-  const { invoke: invokeWindow } = useWindowViewModel()
+  const window = useWindowViewModel()
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -33,7 +33,7 @@ const useAskDeleteWorkRecord = ({
   })
 
   const askAndDelete = async () => {
-    const answer = await invokeWindow({
+    const answer = await window.invoke({
       command: 'messageBox',
       payload: {
         title: '削除の確認',

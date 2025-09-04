@@ -36,7 +36,7 @@ export const useWorkRecordQuery = ({
 }: UseGetWorkRecordQueryOptions) => {
   return useQuery({
     queryKey: getWorkRecordQueryKey(itemId),
-    queryFn: () => (itemId ? invoke({ command: 'getWorkRecord', payload: itemId }) : undefined),
+    queryFn: () => (itemId ? invoke({ command: 'getWorkRecord', payload: itemId }) : null),
     enabled: isInitialized
   })
 }

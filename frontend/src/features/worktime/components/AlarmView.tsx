@@ -5,34 +5,36 @@ import { useAlarmViewModel } from '../atoms/alarmViewModel'
 
 const AlarmView = () => {
   const { subscribe, dispatch } = useAlarmViewModel()
-  const { invoke: invokeWindow, dispatch: dispatchWindow } = useWindowViewModel()
+  const window = useWindowViewModel()
   const { enqueueSnackbar } = useSnackbar()
 
-  useEffect(() =>
-    subscribe('triggered', async ({ type }) => {
-      const messageTitle = type === 'WorkEnd' ? '勤務終了のアラーム' : '休憩開始のアラーム'
-      const messageContent =
-        type === 'WorkEnd' ? 'まもなく退勤時間です。' : '休憩時間になりました。'
+  useEffect(
+    () =>
+      subscribe('triggered', async ({ type }) => {
+        const messageTitle = type === 'WorkEnd' ? '勤務終了のアラーム' : '休憩開始のアラーム'
+        const messageContent =
+          type === 'WorkEnd' ? 'まもなく退勤時間です。' : '休憩時間になりました。'
 
-      dispatchWindow({
-        command: 'sendNotification',
-        payload: { title: messageTitle, message: messageContent }
-      })
+        window.dispatch({
+          command: 'sendNotification',
+          payload: { title: messageTitle, message: messageContent }
+        })
 
-      const result = await invokeWindow({
-        command: 'messageBox',
-        payload: {
-          title: messageTitle,
-          message: `${messageContent}\nスヌーズするには「キャンセル」を選択してください。`,
-          buttons: 'OkCancel'
+        const result = await window.invoke({
+          command: 'messageBox',
+          payload: {
+            title: messageTitle,
+            message: `${messageContent}\nスヌーズするには「キャンセル」を選択してください。`,
+            buttons: 'OkCancel'
+          }
+        })
+
+        if (result === 'Cancel') {
+          dispatch({ command: 'snooze', payload: { type } })
+          enqueueSnackbar('スヌーズしました。', { variant: 'info' })
         }
-      })
-
-      if (result === 'Cancel') {
-        dispatch({ command: 'snooze', payload: { type } })
-        enqueueSnackbar('スヌーズしました。', { variant: 'info' })
-      }
-    })
+      }),
+    [subscribe, dispatch, window, enqueueSnackbar]
   )
 
   return null
