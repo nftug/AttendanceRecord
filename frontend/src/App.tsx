@@ -1,33 +1,37 @@
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import 'dayjs/locale/ja'
-import { SnackbarProvider } from 'notistack'
-import { BrowserRouter } from 'react-router-dom'
-import AppContent from './AppContent'
-
-const theme = createTheme({ colorSchemes: { dark: true } })
-const queryClient = new QueryClient()
+import { Box } from '@mui/material'
+import { Route, Routes } from 'react-router-dom'
+import { useWindowViewModelAtom } from './features/window/atoms/windowViewModel'
+import AlarmView from './features/worktime/components/AlarmView'
+import HomePageView from './features/worktime/components/HomePageView'
+import { HeaderProvider } from './lib/layout/components/HeaderContext'
+import TheDrawer from './lib/layout/components/TheDrawer'
+import TheHeader from './lib/layout/components/TheHeader'
+import AboutPage from './pages/AboutPage'
+import HistoryPage from './pages/HistoryPage'
+import SettingsPage from './pages/SettingsPage'
 
 const App = () => {
+  useWindowViewModelAtom()
+
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <SnackbarProvider
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            preventDuplicate
-            disableWindowBlurListener
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
-              <AppContent />
-            </LocalizationProvider>
-          </SnackbarProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <AlarmView />
+
+      <HeaderProvider>
+        <TheHeader />
+        <TheDrawer />
+      </HeaderProvider>
+
+      {/* main エリアはヘッダーを除いた領域を占有し、内部スクロールはここで処理する */}
+      <Box component="main" sx={{ flex: '1 1 0', minHeight: 0, overflow: 'auto' }}>
+        <Routes>
+          <Route index element={<HomePageView />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Routes>
+      </Box>
+    </Box>
   )
 }
 
