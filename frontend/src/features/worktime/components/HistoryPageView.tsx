@@ -38,7 +38,7 @@ const HistoryPageView = () => {
   return viewModel && <HistoryPageViewInternal {...viewModel} />
 }
 
-const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel) => {
+const HistoryPageViewInternal = (viewModel: HistoryPageViewModel) => {
   const [monthDate, setMonthDate] = useState(dayjs())
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs())
   const [pendingAutoSelect, setPendingAutoSelect] = useState(false)
@@ -46,12 +46,11 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
 
   const { data: listData, isLoading: isLoadingList } = useWorkRecordListQuery({
     options: { recordedMonthDate: toDateTimeString(monthDate) },
-    viewModel: { invoke, isInitialized }
+    viewModel
   })
 
-  const selectedItemId = selectedDate
-    ? (listData?.workRecords.find((x) => dayjs(x.date).isSame(selectedDate, 'day'))?.id ?? null)
-    : null
+  const selectedItemId =
+    listData?.workRecords.find((x) => dayjs(x.date).isSame(selectedDate, 'day'))?.id ?? null
 
   const theme = useTheme()
   const { invoke: invokeWindow } = useWindowViewModel()
@@ -103,7 +102,7 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
 
   const handleClickDeleteSelected = useAskDeleteWorkRecord({
     itemId: selectedItemId,
-    viewModel: { invoke, isInitialized },
+    viewModel,
     onSuccess: () => setSelectedDate(null)
   })
 
@@ -194,7 +193,7 @@ const HistoryPageViewInternal = ({ invoke, isInitialized }: HistoryPageViewModel
             date={selectedDate}
             onChangeCanSubmit={setCanSubmit}
             onChangeIsDirty={setIsFormDirty}
-            {...{ invoke, isInitialized }}
+            viewModel={viewModel}
           />
         </Box>
       </Split>

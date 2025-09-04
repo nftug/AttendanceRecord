@@ -1,5 +1,6 @@
 import { ItemId } from '@/lib/api/types/brandedTypes'
 import TimeField from '@/lib/ui/form/components/TimeField'
+import useResourceEditForm from '@/lib/ui/form/hooks/useResourceEditForm'
 import { formatDate } from '@/lib/utils/dayjsUtils'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -15,13 +16,22 @@ import {
   Stack,
   Typography
 } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import type { Dayjs } from 'dayjs'
 import { useSnackbar } from 'notistack'
 import { forwardRef, useEffect, useImperativeHandle } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { HistoryPageViewModel } from '../atoms/historyPageViewModel'
-import useWorkRecordEditForm from '../hooks/useWorkRecordEditForm'
-import { createDefaultRestRecord } from '../schemas/workRecordFormSchema'
+import {
+  getWorkRecordListQueryKey,
+  getWorkRecordQueryKey,
+  useWorkRecordQuery
+} from '../hooks/historyPageQueries'
+import {
+  createDefaultRestRecord,
+  createDefaultWorkRecord,
+  workRecordSaveSchema
+} from '../schemas/workRecordFormSchema'
 import type { WorkRecordSaveRequestDto } from '../types/workTimeTypes'
 
 type HistoryItemViewProps = {
@@ -29,18 +39,26 @@ type HistoryItemViewProps = {
   date: Dayjs | null
   onChangeCanSubmit?: (canSubmit: boolean) => void
   onChangeIsDirty?: (isDirty: boolean) => void
-} & Pick<HistoryPageViewModel, 'invoke' | 'isInitialized'>
+  viewModel: HistoryPageViewModel
+}
 
 export type HistoryItemViewHandle = { submit: () => void }
 
 const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
-  ({ invoke, isInitialized, itemId, date, onChangeCanSubmit, onChangeIsDirty }, ref) => {
+  ({ viewModel, itemId, date, onChangeCanSubmit, onChangeIsDirty }, ref) => {
     const { enqueueSnackbar } = useSnackbar()
-
-    const { form, mutation, workRecordData } = useWorkRecordEditForm({
-      viewModel: { invoke, isInitialized },
-      itemId,
-      onSuccess: () => {
+    const queryClient = useQueryClient()
+    const { data: workRecordData } = useWorkRecordQuery({ viewModel, itemId })
+    const { form, mutation } = useResourceEditForm({
+      resourceData: workRecordData,
+      schema: workRecordSaveSchema,
+      toFormFields: (data) => data ?? createDefaultWorkRecord(),
+      saveFn: (formData) => viewModel.invoke({ command: 'saveWorkRecord', payload: formData }),
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: getWorkRecordQueryKey() }),
+          queryClient.invalidateQueries({ queryKey: getWorkRecordListQueryKey() })
+        ])
         enqueueSnackbar('勤務記録を保存しました。', { variant: 'success' })
       },
       onError: () => {
