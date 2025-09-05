@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { Route, Routes } from 'react-router-dom'
-import { useWindowViewModelAtom } from './features/window/atoms/windowViewModel'
+import { useProvideWindowViewModel } from './features/window/atoms/windowViewModel'
 import AlarmView from './features/worktime/components/AlarmView'
 import HomePageView from './features/worktime/components/HomePageView'
 import { HeaderProvider } from './lib/layout/components/HeaderContext'
@@ -11,7 +11,7 @@ import HistoryPage from './pages/HistoryPage'
 import SettingsPage from './pages/SettingsPage'
 
 const App = () => {
-  useWindowViewModelAtom()
+  useProvideWindowViewModel()
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>

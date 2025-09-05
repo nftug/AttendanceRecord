@@ -27,11 +27,7 @@ import {
   getWorkRecordQueryKey,
   useWorkRecordQuery
 } from '../hooks/historyPageQueries'
-import {
-  createDefaultRestRecord,
-  createDefaultWorkRecord,
-  workRecordSaveSchema
-} from '../schemas/workRecordFormSchema'
+import { restRecordSchema, workRecordSaveSchema } from '../schemas/workRecordFormSchema'
 import type { WorkRecordSaveRequestDto } from '../types/workTimeTypes'
 
 type HistoryItemViewProps = {
@@ -53,7 +49,7 @@ const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
     const { form, mutation } = useResourceEditForm({
       resourceData,
       schema: workRecordSaveSchema,
-      toFormFields: (data) => data ?? createDefaultWorkRecord(),
+      toFormFields: (data) => data,
       saveFn: (formData) => viewModel.invoke({ command: 'saveWorkRecord', payload: formData }),
       onSuccess: async () => {
         await Promise.all([
@@ -142,13 +138,19 @@ const HistoryItemView = forwardRef<HistoryItemViewHandle, HistoryItemViewProps>(
             <Box>
               <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Typography variant="h6">休憩</Typography>
-                <Button startIcon={<AddIcon />} onClick={() => append(createDefaultRestRecord())}>
+                <Button startIcon={<AddIcon />} onClick={() => append(restRecordSchema.parse({}))}>
                   追加
                 </Button>
               </Stack>
 
-              <Paper variant="outlined" sx={{ mt: 2, height: 200, overflowY: 'auto', p: 1 }}>
+              <Paper variant="outlined" sx={{ mt: 2, p: 1 }}>
                 <List>
+                  {fields.length === 0 && (
+                    <ListItem>
+                      <Typography color="text.secondary">休憩記録がありません。</Typography>
+                    </ListItem>
+                  )}
+
                   {fields.map((f, idx) => (
                     <ListItem
                       key={f.id}
