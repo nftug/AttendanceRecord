@@ -1,3 +1,4 @@
+using AttendanceRecord.Application.UseCases.AppConfig;
 using AttendanceRecord.Application.UseCases.WorkRecords;
 using Mediator.Switch;
 using StrongInject;
@@ -10,6 +11,8 @@ namespace AttendanceRecord.Presentation.Composition;
 [Register(typeof(GetWorkRecordHandler), Scope.SingleInstance)]
 [Register(typeof(SaveWorkRecordHandler), Scope.SingleInstance)]
 [Register(typeof(DeleteWorkRecordHandler), Scope.SingleInstance)]
+[Register(typeof(GetAppConfigHandler), Scope.SingleInstance)]
+[Register(typeof(SaveAppConfigHandler), Scope.SingleInstance)]
 [Register(typeof(Application.Mediator), Scope.SingleInstance, typeof(ISender), typeof(IPublisher))]
 [Register(typeof(SwitchMediatorServiceProvider), Scope.SingleInstance, typeof(ISwitchMediatorServiceProvider))]
 public class MediatorModule;
@@ -19,4 +22,6 @@ public interface IMediatorContainer : IContainer<ToggleWorkHandler>,
                                       IContainer<GetWorkRecordTallyHandler>,
                                       IContainer<GetWorkRecordHandler>,
                                       IContainer<SaveWorkRecordHandler>,
-                                      IContainer<DeleteWorkRecordHandler>;
+                                      IContainer<DeleteWorkRecordHandler>,
+                                      IContainer<GetAppConfigHandler>,
+                                      IContainer<SaveAppConfigHandler>;

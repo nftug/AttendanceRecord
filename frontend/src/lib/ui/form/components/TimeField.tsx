@@ -14,7 +14,7 @@ const toDateStringWithBase = (time: Dayjs | null, baseDate: Dayjs | null) => {
   if (!time) return null
   if (!baseDate) return toDateTimeString(time)
 
-  const date = baseDate.hour(time.hour()).minute(time.minute()).second(time.second())
+  const date = baseDate.hour(time.hour()).minute(time.minute()).second(0).millisecond(0)
   return toDateTimeString(date)
 }
 
