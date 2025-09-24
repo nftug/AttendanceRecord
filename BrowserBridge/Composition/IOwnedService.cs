@@ -9,7 +9,7 @@ public interface IOwnedService<out T> : IDisposable
     T Value { get; }
 }
 
-public class StrongInjectOwnedService<T>(IOwned<T> owned) : IOwnedService<T>
+public sealed class StrongInjectOwnedService<T>(IOwned<T> owned) : IOwnedService<T>
     where T : notnull
 {
     public T Value => owned.Value;
@@ -17,10 +17,10 @@ public class StrongInjectOwnedService<T>(IOwned<T> owned) : IOwnedService<T>
     public void Dispose() => owned.Dispose();
 }
 
-public class MsDependencyInjectionOwnedService<T>(IServiceProvider serviceProvider) : IOwnedService<T>
+public sealed class MsDependencyInjectionOwnedService<T>(IServiceProvider serviceProvider) : IOwnedService<T>
     where T : notnull
 {
-    private readonly IServiceScope scope = serviceProvider.CreateAsyncScope();
+    private readonly IServiceScope scope = serviceProvider.CreateScope();
 
     public T Value => scope.ServiceProvider.GetRequiredService<T>();
 
