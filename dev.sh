@@ -8,8 +8,8 @@ case "$1" in
   run)
     echo "🟢 Starting frontend and app..."
     cd frontend
-    pnpm install
-    pnpm run dev &
+    bun install
+    bun run dev &
     FRONTEND_PID=$!
     cd ..
 
@@ -19,8 +19,8 @@ case "$1" in
   publish)
     echo "🌱 Building frontend..."
     cd frontend
-    pnpm install
-    pnpm run build
+    bun install
+    bun run build
     cd ..
 
     echo "🧹 Cleaning wwwroot..."

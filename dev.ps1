@@ -10,8 +10,8 @@ switch ($mode) {
         Write-Host "🟢 Starting frontend and app..."
 
         Push-Location ./frontend
-        pnpm install
-        $frontend = Start-Process -FilePath "cmd" -ArgumentList "/c pnpm run dev" -PassThru
+        bun install
+        $frontend = Start-Process -FilePath "cmd" -ArgumentList "/c bun run dev" -PassThru
         Pop-Location
 
         dotnet watch --project "$PROJECT_NAME" run
@@ -25,8 +25,8 @@ switch ($mode) {
         Write-Host "🌱 Building frontend..."
 
         Push-Location ./frontend
-        pnpm install
-        pnpm run build
+        bun install
+        bun run build
         Pop-Location
 
         Write-Host "🧹 Cleaning wwwroot..."
