@@ -42,7 +42,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
     public static WorkRecord Create(TimeDuration duration, IEnumerable<RestRecord> restRecords) =>
         new(Guid.NewGuid(), duration, restRecords);
 
-    internal WorkRecord ToggleRest()
+    public WorkRecord ToggleRest()
     {
         if (!IsTodaysOngoing)
             throw new DomainException("進行中ではない勤務記録は一時停止できません。");
@@ -53,7 +53,7 @@ public class WorkRecord(Guid id, TimeDuration duration, IEnumerable<RestRecord> 
         return this;
     }
 
-    internal WorkRecord ToggleWork()
+    public WorkRecord ToggleWork()
     {
         if (!IsTodays)
             throw new DomainException("本日付以外の出勤状態の切り替えはできません。");

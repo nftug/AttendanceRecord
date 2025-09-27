@@ -1,8 +1,8 @@
 using AttendanceRecord.Application.Dtos.Requests;
 using AttendanceRecord.Application.Services;
 using AttendanceRecord.Domain.Entities;
+using AttendanceRecord.Domain.Exceptions;
 using AttendanceRecord.Domain.Interfaces;
-using AttendanceRecord.Domain.Services;
 using Mediator.Switch;
 
 namespace AttendanceRecord.Application.UseCases.WorkRecords;
@@ -11,7 +11,7 @@ public sealed record SaveWorkRecord(WorkRecordSaveRequestDto Body) : IRequest<Un
 
 public sealed class SaveWorkRecordHandler(
     CurrentWorkRecordStateStore workRecordStore,
-    WorkRecordService workRecordService,
+    IWorkRecordRepository repository,
     IWorkRecordRepository workRecordRepository
 ) : IRequestHandler<SaveWorkRecord, Unit>
 {
@@ -35,7 +35,11 @@ public sealed class SaveWorkRecordHandler(
             );
         }
 
-        await workRecordService.SaveAsync(workRecord);
+        var existingRecord = await workRecordRepository.FindByDateAsync(workRecord.RecordedDate);
+        if (existingRecord != null && existingRecord.Id != workRecord.Id)
+            throw new DomainException("同じ日に複数の勤務記録を保存することはできません。");
+
+        await repository.SaveAsync(workRecord);
         await workRecordStore.ReloadAsync();
         return Unit.Value;
     }
