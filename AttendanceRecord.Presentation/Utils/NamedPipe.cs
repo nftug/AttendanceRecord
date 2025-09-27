@@ -17,9 +17,8 @@ public class NamedPipeServer : NamedPipeBase
         {
             using var stream = new NamedPipeServerStream(PipeName);
             await stream.WaitForConnectionAsync();
-            using var reader = new StreamReader(stream);
-            var json = await reader.ReadToEndAsync();
-            action(NamedPipeMessage.Deserialize(json));
+            var message = await JsonSerializer.DeserializeAsync(stream, AppJsonContext.Default.NamedPipeMessage);
+            action(message);
         }
     }
 }
@@ -32,13 +31,8 @@ public class NamedPipeClient : NamedPipeBase
         {
             using var stream = new NamedPipeClientStream(PipeName);
             await stream.ConnectAsync(3000);
-
-            using var writer = new StreamWriter(stream);
-
             var message = new NamedPipeMessage(Environment.ProcessId.ToString(), content);
-            var json = message.Serialize();
-            await writer.WriteAsync(json);
-
+            await JsonSerializer.SerializeAsync(stream, message, AppJsonContext.Default.NamedPipeMessage);
             return true;
         }
         catch (TimeoutException)
@@ -49,22 +43,4 @@ public class NamedPipeClient : NamedPipeBase
     }
 }
 
-public record NamedPipeMessage(string Sender, string Content)
-{
-    public string Serialize() => JsonSerializer.Serialize(this, AppJsonContext.Default.NamedPipeMessage);
-
-    public static NamedPipeMessage? Deserialize(string? serialized)
-    {
-        try
-        {
-            if (serialized is not { Length: > 0 })
-                return null;
-            return JsonSerializer.Deserialize<NamedPipeMessage>(serialized, AppJsonContext.Default.NamedPipeMessage);
-        }
-        catch (JsonException e)
-        {
-            System.Diagnostics.Debug.WriteLine($"Failed to deserialize NamedPipeMessage: {e.Message}");
-        }
-        return null;
-    }
-}
+public record NamedPipeMessage(string Sender, string Content);

@@ -12,5 +12,5 @@ public class TrayIconServiceFactory(PhotinoWindowInstance windowInstance) : IFac
     public ITrayIconService Create() =>
         OperatingSystem.IsWindowsVersionAtLeast(5, 1, 2600)
             ? new WindowsTrayIconService(windowInstance)
-            : new NoopTrayIconService();
+            : new NoopTrayIconService(windowInstance);
 }

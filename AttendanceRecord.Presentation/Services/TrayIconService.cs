@@ -69,7 +69,7 @@ public sealed class WindowsTrayIconService(PhotinoWindowInstance windowInstance)
     public void Dispose() => _trayIcon?.Dispose();
 }
 
-public sealed class NoopTrayIconService : ITrayIconService
+public sealed class NoopTrayIconService(PhotinoWindowInstance windowInstance) : ITrayIconService
 {
     public bool IsTrayIconAvailable => false;
 
@@ -79,6 +79,7 @@ public sealed class NoopTrayIconService : ITrayIconService
 
     public void SetShowWindow(bool isVisible)
     {
+        windowInstance.Value?.SetMinimized(!isVisible);
     }
 
     public void Dispose()
