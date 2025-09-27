@@ -2,7 +2,6 @@ namespace AttendanceRecord.Domain.Config;
 
 public record AppConfig(
     int StandardWorkMinutes,
-    bool ResidentNotificationEnabled,
     AppConfig.WorkEndAlarmConfig WorkEndAlarm,
     AppConfig.RestStartAlarmConfig RestStartAlarm,
     AppConfig.StatusFormatConfig StatusFormat
@@ -34,7 +33,6 @@ public record AppConfig(
 
     public static readonly AppConfig Default = new(
         StandardWorkMinutes: 480,
-        ResidentNotificationEnabled: true,
         WorkEndAlarm: new(
             IsEnabled: true,
             RemainingMinutes: 15,

@@ -4,7 +4,6 @@ namespace AttendanceRecord.Infrastructure.Dtos;
 
 public record AppConfigFileDto(
     int StandardWorkMinutes,
-    bool ResidentNotificationEnabled,
     AppConfigFileDto.WorkTimeAlarmConfigFileDto WorkTimeAlarm,
     AppConfigFileDto.RestTimeAlarmConfigFileDto RestTimeAlarm,
     AppConfigFileDto.StatusFormatConfigFileDto StatusFormat
@@ -13,7 +12,6 @@ public record AppConfigFileDto(
     public static AppConfigFileDto FromDomain(AppConfig config)
         => new(
             config.StandardWorkMinutes,
-            config.ResidentNotificationEnabled,
             new(
                 config.WorkEndAlarm.IsEnabled,
                 config.WorkEndAlarm.RemainingMinutes,
@@ -33,7 +31,6 @@ public record AppConfigFileDto(
     public AppConfig ToDomain() =>
         new(
             StandardWorkMinutes,
-            ResidentNotificationEnabled,
             new(
                 WorkTimeAlarm.IsEnabled,
                 WorkTimeAlarm.RemainingMinutes,

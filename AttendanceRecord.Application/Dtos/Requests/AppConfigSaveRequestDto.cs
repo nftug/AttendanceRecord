@@ -2,7 +2,6 @@ namespace AttendanceRecord.Application.Dtos.Requests;
 
 public record AppConfigSaveRequestDto(
     int StandardWorkMinutes,
-    bool ResidentNotificationEnabled,
     AppConfigSaveRequestDto.WorkEndAlarmConfigRequest WorkEndAlarm,
     AppConfigSaveRequestDto.RestStartAlarmConfigRequest RestStartAlarm,
     AppConfigSaveRequestDto.StatusFormatConfigRequest StatusFormat)
@@ -15,7 +14,6 @@ public record AppConfigSaveRequestDto(
 
     public Domain.Config.AppConfig ToDomain() => new(
         StandardWorkMinutes,
-        ResidentNotificationEnabled,
         new Domain.Config.AppConfig.WorkEndAlarmConfig(
             WorkEndAlarm.IsEnabled,
             WorkEndAlarm.RemainingMinutes,

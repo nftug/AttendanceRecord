@@ -19,8 +19,7 @@ const AppConfigSettingsSection: React.FC = () => {
     control,
     register,
     formState: { isDirty, isValid, errors },
-    isWorkEndEnabled,
-    isRestStartEnabled,
+    watch,
     onSubmit,
     handleReset
   } = useAppConfigSettings()
@@ -42,22 +41,6 @@ const AppConfigSettingsSection: React.FC = () => {
                 errors.standardWorkMinutes?.message ?? '1日の標準勤務時間を分で指定します。'
               }
               {...register('standardWorkMinutes')}
-            />
-
-            <Controller
-              name="residentNotificationEnabled"
-              control={control}
-              render={({ field }) => (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={field.value}
-                      onChange={(event) => field.onChange(event.target.checked)}
-                    />
-                  }
-                  label="常駐通知を有効にする"
-                />
-              )}
             />
           </Stack>
         </Paper>
@@ -90,9 +73,9 @@ const AppConfigSettingsSection: React.FC = () => {
                 type="number"
                 fullWidth
                 slotProps={{ htmlInput: { min: 0 } }}
-                disabled={!isWorkEndEnabled}
                 error={Boolean(errors.workEndAlarm?.remainingMinutes)}
                 helperText={errors.workEndAlarm?.remainingMinutes?.message}
+                disabled={!watch('workEndAlarm.isEnabled')}
                 {...register('workEndAlarm.remainingMinutes')}
               />
               <TextField
@@ -100,9 +83,9 @@ const AppConfigSettingsSection: React.FC = () => {
                 type="number"
                 fullWidth
                 slotProps={{ htmlInput: { min: 1 } }}
-                disabled={!isWorkEndEnabled}
                 error={Boolean(errors.workEndAlarm?.snoozeMinutes)}
                 helperText={errors.workEndAlarm?.snoozeMinutes?.message}
+                disabled={!watch('workEndAlarm.isEnabled')}
                 {...register('workEndAlarm.snoozeMinutes')}
               />
             </Stack>
@@ -137,9 +120,9 @@ const AppConfigSettingsSection: React.FC = () => {
                 type="number"
                 fullWidth
                 slotProps={{ htmlInput: { min: 0 } }}
-                disabled={!isRestStartEnabled}
                 error={Boolean(errors.restStartAlarm?.elapsedMinutes)}
                 helperText={errors.restStartAlarm?.elapsedMinutes?.message}
+                disabled={!watch('restStartAlarm.isEnabled')}
                 {...register('restStartAlarm.elapsedMinutes')}
               />
               <TextField
@@ -147,9 +130,9 @@ const AppConfigSettingsSection: React.FC = () => {
                 type="number"
                 fullWidth
                 slotProps={{ htmlInput: { min: 1 } }}
-                disabled={!isRestStartEnabled}
                 error={Boolean(errors.restStartAlarm?.snoozeMinutes)}
                 helperText={errors.restStartAlarm?.snoozeMinutes?.message}
+                disabled={!watch('restStartAlarm.isEnabled')}
                 {...register('restStartAlarm.snoozeMinutes')}
               />
             </Stack>

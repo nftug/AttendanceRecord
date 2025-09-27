@@ -7,25 +7,6 @@ import { useAppConfigViewModel } from '../atoms/appConfigViewModel'
 import { AppConfigFormValues, appConfigSchema } from '../schemas/appConfigSchema'
 import { AppConfigSaveRequestDto } from '../types/appConfigTypes'
 
-const defaultValues: AppConfigFormValues = {
-  standardWorkMinutes: 0,
-  residentNotificationEnabled: false,
-  workEndAlarm: {
-    isEnabled: false,
-    remainingMinutes: 0,
-    snoozeMinutes: 0
-  },
-  restStartAlarm: {
-    isEnabled: false,
-    elapsedMinutes: 0,
-    snoozeMinutes: 0
-  },
-  statusFormat: {
-    statusFormat: '',
-    timeSpanFormat: ''
-  }
-}
-
 const useAppConfigSettings = () => {
   const viewModel = useAppConfigViewModel()
   const { enqueueSnackbar } = useSnackbar()
@@ -33,16 +14,12 @@ const useAppConfigSettings = () => {
 
   const { control, handleSubmit, register, reset, watch, formState } = useForm<AppConfigFormValues>(
     {
-      defaultValues,
       mode: 'onChange',
       resolver: standardSchemaResolver(appConfigSchema)
     }
   )
 
-  const queryKey = useMemo(
-    () => ['settings', 'appConfig', viewModel.viewId] as const,
-    [viewModel.viewId]
-  )
+  const queryKey = useMemo(() => ['settings', 'appConfig'] as const, [])
 
   const query = useQuery({
     queryKey,
@@ -70,6 +47,8 @@ const useAppConfigSettings = () => {
           timeSpanFormat: statusFormat.timeSpanFormat
         }
       })
+    } else {
+      reset(appConfigSchema.parse({}))
     }
   }, [query.data, reset])
 
@@ -93,17 +72,13 @@ const useAppConfigSettings = () => {
     await mutation.mutateAsync(values)
   })
 
-  const isWorkEndEnabled = watch('workEndAlarm.isEnabled')
-  const isRestStartEnabled = watch('restStartAlarm.isEnabled')
-
   return {
     query,
     mutation,
     control,
     register,
     formState,
-    isWorkEndEnabled,
-    isRestStartEnabled,
+    watch,
     onSubmit,
     handleReset
   }
